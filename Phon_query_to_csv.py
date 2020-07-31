@@ -1,7 +1,20 @@
 # -*- coding: utf-8 -*-
 """
-Created on Thu Jul 30 18:18:01 2020
+Two functions, intended to be used in sequence, to batch process Phon query
+output csv files in a directory or subdirectories.
 
+Note: participant, phase, language, analysis variables should be modified to
+    extract values from the current data structure. These values are usually
+    extracted from the filenames or their containing directory (see lines 114-139)
+
+
+#Example use case:
+directory = "D:\Data\Spanish Tx Singletons"
+res = gen_csv(directory)
+merge_csv(separate_participants=True, participant_list=res[0])
+
+
+Created on Thu Jul 30 18:18:01 2020
 @author: Philip
 """
 # Preliminaries
@@ -54,7 +67,13 @@ ch.setFormatter(formatter)
 log.addHandler(ch)
 
 def gen_csv(directory):
-    with change_dir(os.path.normpat(directory)):
+    participant_list = []
+    phase_list = []
+    language_list = []
+    analysis_list = []
+    file_count = 0
+    assert 'Compiled' not in os.listdir(directory), "Compiled directory already exists. Move or remove before executing script,"
+    with change_dir(os.path.normpath(directory)):
         for dirName, subdirList, fileList in os.walk(os.getcwd()):
             ## Check for Excel files in directory
             if any(fname.endswith('.xls') for fname in os.listdir(dirName)):
@@ -71,7 +90,7 @@ def gen_csv(directory):
                 log.warning(dirName)
             log.info('extracting from %s' %dirName)
             try:
-                os.makedirs(os.path.join(directory, 'Compiled Data'))
+                os.makedirs(os.path.join(directory, 'Compiled', 'uniform_files'))
             except WindowsError:
                 log.warning(sys.exc_info()[1])
                 log.warning('Compiled Data directory already created.')     
@@ -95,21 +114,27 @@ def gen_csv(directory):
                     substring_list = ['Accurate', 'Deleted', 'Deletions', 'Substitutions']
                     if any(substring in cur_csv for substring in substring_list):                
                         # open CSV file in read mode with UTF-8 encoding
+                        file_count += 1
                         with io.open(os.path.join(dirName, cur_csv), mode='r', encoding='utf-8') as current_csv:
                             # create pandas DataFrame df from csv file
                             df = pd.read_csv(current_csv, encoding='utf-8')                            
-                            # Add keyword column
+                            ###################################################
+                            #### Extract keyword and column values
                             keyword = 'Consonant Accuracy Phon 2.2b21 wDiacritics' # Write keyword here
                             label = 'Query' # Write column label for keyword here
                             df[label] = keyword        
                             analysis = "Singleton Accuracy"
+                            analysis_list.append(analysis)
                             df['Analysis'] = analysis
                             #if re.match("BL\d|\d-MoPost|Pre|Post|Mid", cur_csv).group(0)
                             phase = re.findall(r"BL\d|\d-MoPost|Pre|Post|Mid", cur_csv)[0]
+                            phase_list.append(phase)
                             df['Phase'] = phase  
                             language = 'Spanish'
+                            language_list.append(language)
                             df['Language'] = language
                             participant = cur_csv.split('_')[1]
+                            participant_list.append(participant)
                             df['Participant'] = participant
                             # Add column of Speaker ID extracted from filename
                             df['Speaker'] = participant                            
@@ -118,47 +143,71 @@ def gen_csv(directory):
                             if accuracy == 'Deletions':
                                 accuracy = 'Deleted'
                             df['Accuracy'] = accuracy
-
+                            ###################################################
                             print ('***********************************************\n', list(df))
                             
                             # Save REV_csv 
                             # With UTF-8 BOM encoding for Excel readability
-                            
-
                             log.info('Current working directory'+os.getcwd())
                             try:
-                                df.to_csv(os.path.join(directory,'Compiled Data', '%s_%s_%s_%s_%s.csv' % (participant, language, phase, analysis, accuracy)), encoding = 'utf-8-sig', index=False)
+                                df.to_csv(os.path.join(directory,'Compiled', 'uniform_files', '%s_%s_%s_%s_%s.csv' % (participant, language, phase, analysis, accuracy)), encoding = 'utf-8-sig', index=False)
                             except FileNotFoundError:
                                 log.error(sys.exc_info()[1])
                                 log.error('Compiled Data folder not yet created')
+        return (set(participant_list), set(phase_list), set(language_list), set(analysis_list), file_count)
 
-                            ### After one session is compiled, add to other sessions for that participant
-
-####### START HERE. Part below now yet edited. Seems to require separation by participant beforehand?
-                            
-            ## THIS NEEDS TO HAPPEN AFTER COMPILING ALL FILES FOR THAT PARTICIPANT                
-                            
-            ## Merge revised csvs into a single master csv file
-
-            try:
-                os.makedirs(os.path.join(directory, 'Compiled Data', 'Full'))
-            except WindowsError:
-                log.warning(sys.exc_info()[1])
-                log.warning('Compiled Data directory already created.')
-            
-            with io.open(os.path.join(directory, 'Compiled Data','Full', '%s.csv' % (participant)), 'wb') as outfile:
-                log.info(outfile)
-                # participantdata = os.path.join(directory, 'Compiled Data', '%s*.csv' (participant))
-                for i, fname in enumerate(glob.glob(directory + r"\\Compiled Data\\" + participant + "*.csv")):      
-
-                    with io.open(fname, 'rb') as infile:
-                        if i != 0:
-                            infile.readline()  # Throw away header on all but first file
-                        # Block copy rest of file from input to output without parsing
-                        shutil.copyfileobj(infile, outfile)
-                        log.info(fname + " has been imported.")
-                csv.writer(outfile)
-                log.info('Saved', outfile)
-                
-
+def merge_csv(participant_list=['AllPart'], language_list=['AllLang'], 
+              analysis_list=['AllAnalyses'], separate_participants=False, 
+              separate_languages=False, separate_analyses=False):
+    try:
+        os.makedirs(os.path.join(directory, 'Compiled', 'merged_files'))
+    except WindowsError:
+        log.warning(sys.exc_info()[1])
+        log.warning('Compiled Data directory already created.')        
+    for participant in participant_list:
+        for language in language_list:
+            for analysis in analysis_list:
+                with io.open(os.path.join(directory, 'Compiled','merged_files', 
+                                          f'{participant}_{language}_{analysis}_data.csv'), 'wb') as outfile:
+                    log.info(outfile)
+                    # participantdata = os.path.join(directory, 'Compiled Data', '%s*.csv' (participant))            
+                    if separate_participants:
+                        if separate_languages:
+                            if separate_analyses:
+                                file_search_term = f"{directory}\\Compiled\\uniform_files\\*{participant}*{language}*{analysis}*.csv"
+                            else:
+                                file_search_term = f"{directory}\\Compiled\\uniform_files\\*{participant}*{language}*.csv"
+                        else:
+                            if separate_analyses:
+                                file_search_term = f"{directory}\\Compiled\\uniform_files\\*{participant}*{analysis}*.csv"
+                            else:
+                                file_search_term = f"{directory}\\Compiled\\uniform_files\\*{participant}*.csv"                       
+                    else:
+                        if separate_languages:
+                            if separate_analyses:
+                                file_search_term = f"{directory}\\Compiled\\uniform_files\\*{language}*{analysis}*.csv"
+                            else:
+                                file_search_term = f"{directory}\\Compiled\\uniform_files\\*{language}*.csv"
+                        else:
+                            if separate_analyses:
+                                file_search_term = f"{directory}\\Compiled\\uniform_files\\*{analysis}*.csv"
+                            else:
+                                file_search_term = f"{directory}\\Compiled\\uniform_files\\*.csv"
+                    for i, fname in enumerate(glob.glob(file_search_term)):      
+                        with io.open(fname, 'rb') as infile:
+                            if i != 0:
+                                infile.readline()  # Throw away header on all but first file
+                            # Block copy rest of file from input to output without parsing
+                            shutil.copyfileobj(infile, outfile)
+                            log.info(fname + " has been imported.")                            
+                    csv.writer(outfile)
+                    log.info('Saved', outfile)        
+             
+"""
+#Example use case:
+    
+directory = "D:\Data\Spanish Tx Singletons"
+res = gen_csv(directory)
+merge_csv(separate_participants=True, participant_list=res[0])
+"""
             
