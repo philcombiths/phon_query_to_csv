@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 """
-Created on Thu Jul 30 18:51:18 2020
+Simple script to make modifications to filenames in a directory.
 
+Created on Thu Jul 30 18:51:18 2020
 @author: Philip
 """
 

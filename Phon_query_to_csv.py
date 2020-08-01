@@ -1,18 +1,22 @@
 # -*- coding: utf-8 -*-
 """
-Two functions, intended to be used in sequence, to batch process Phon query
+Three functions, intended to be used in sequence, to batch process Phon query
 output csv files in a directory or subdirectories.
 
-Note: participant, phase, language, analysis variables should be modified to
-    extract values from the current data structure. These values are usually
-    extracted from the filenames or their containing directory (see lines 114-139)
+Note: participant, phase, language, analysis variables must be modified to 
+    specify or extract values from the current data structure. These values 
+    are usually extracted from the filename str or containing directory 
+    name str (see lines 131-159).
 
 
-#Example use case:
-directory = "D:\Data\Spanish Tx Singletons"
+###
+Example use case:
+    
+directory = "D:\Data\Spanish Singleton Analysis"
 res = gen_csv(directory)
-merge_csv(separate_participants=True, participant_list=res[0])
-
+merge_csv()
+result = column_match(os.path.join(directory,"Compiled", "merged_files", "AllPart_AllLang_AllAnalyses_data.csv"))
+###
 
 Created on Thu Jul 30 18:18:01 2020
 @author: Philip
@@ -67,6 +71,26 @@ ch.setFormatter(formatter)
 log.addHandler(ch)
 
 def gen_csv(directory):
+    """
+    Formats a directory or subdirectories containing csv Phon query output files
+    with unified column structure for input into merge_csv to generate a single
+    master data file.
+    
+    Args:
+        directory : directory path for original Phon query output files
+           
+    Note: participant, phase, language, analysis variables must be modified to 
+        specify or extract values from the current data structure. These values 
+        are usually extracted from the filename str or containing directory 
+        name str (see lines 131-159).
+        
+    Generates a new csv file in "Compiled/uniform_files" directory for each 
+        processed output file.
+    
+    Returns:
+        tuple: (participant_list, phase_list, language_list, analysis_list, file_count)
+    """
+    
     participant_list = []
     phase_list = []
     language_list = []
@@ -159,6 +183,10 @@ def gen_csv(directory):
 def merge_csv(participant_list=['AllPart'], language_list=['AllLang'], 
               analysis_list=['AllAnalyses'], separate_participants=False, 
               separate_languages=False, separate_analyses=False):
+    """
+    
+    """
+    
     try:
         os.makedirs(os.path.join(directory, 'Compiled', 'merged_files'))
     except WindowsError:
@@ -201,13 +229,97 @@ def merge_csv(participant_list=['AllPart'], language_list=['AllLang'],
                             shutil.copyfileobj(infile, outfile)
                             log.info(fname + " has been imported.")                            
                     csv.writer(outfile)
-                    log.info('Saved', outfile)        
-             
-"""
-#Example use case:
+                    log.info('Saved', outfile)
+    return
+                    
+                    
+def column_match(table_to_modify, column_key="column_alignment.csv", 
+                 table_to_match=None, output_filename = "compatible_data"):
+    """
+    Rearranges and renames columns in a DataFrame or CSV table to fit column
+    structure specified in a column_key.
     
-directory = "D:\Data\Spanish Tx Singletons"
+    Args:
+        table_to_modify : file path, buffer object, or DataFrame
+        column_key : file path. Default = 'column_alignment.csv'
+        table_to_match : file path (optional). Default = None.
+        output_filename : str. Default = "compatible_data"
+    
+    Generates output_filename csv file
+    
+    Returns:
+        tuple: (new_table, actual_cols_omitted_renamed, actual_cols_added)
+        
+    """
+    
+    # Import table_to_modify as DataFrame
+    try:
+        table_to_modify = pd.read_csv(table_to_modify, encoding='utf-8')
+    except ValueError:
+        warning = "table_to_modify must be valid file path, buffer object, or DataFrame"
+        assert type(table_to_modify) == pd.core.frame.DataFrame, warning
+    finally:
+        new_table = table_to_modify
+    
+    with open(column_key, mode = 'r') as key_file:
+        key_reader = csv.reader(key_file)
+        # Extract column information
+        for i, row in enumerate(key_reader):
+            if i == 2:                
+                target_cols = row
+            if i == 3:
+                actual_cols = row
+                
+        # Check actual columns
+        actual_cols_omitted_renamed = []
+        actual_cols_added = []
+        for col in list(table_to_modify.columns):
+            if col not in actual_cols:
+                actual_cols_omitted_renamed.append(col)
+        for col in actual_cols:
+            if col not in list(table_to_modify.columns):        
+                actual_cols_added.append(col)
+        # Rename actual columns
+        for col_name_pair in zip(target_cols, actual_cols):
+            if col_name_pair[1] == '':
+                continue
+            elif col_name_pair[0] != col_name_pair[1]:
+                new_table = new_table.rename(columns={col_name_pair[1]:col_name_pair[0]})                       
+        new_table = new_table.reindex(columns=target_cols)
+           
+        # Potential enhancement: Use optional table_to_match to import XLSX and test for compatibility.
+        
+        # Check new table
+        valid_transformation = True
+        if list(new_table.columns) == target_cols:
+            pass
+        elif len(list(new_table.columns)) < target_cols:
+                print("WARNING: Target column(s) unaccounted for")
+                valid_transformation = False
+        for i, col_name_pair in enumerate(zip(list(new_table.columns), 
+                                              target_cols)):
+            if col_name_pair[0] != col_name_pair[1]:
+                if i < len(target_cols):
+                    print("WARNING: Column mismatch")
+                    valid_transformation = False
+                else:
+                    print(f"Column {col_name_pair[1]} appended.")
+        if valid_transformation == True:
+            print("*****************************")
+            print('Valid transformation achieved.')
+        new_table.to_csv(os.path.join(directory, "Compiled", "merged_files", 
+                                      f"{output_filename}.csv"), 
+                                      encoding='utf-8', index=False)
+        return (new_table, actual_cols_omitted_renamed, actual_cols_added)
+    
+"""
+###
+Example use case:
+    
+directory = "D:\Data\Spanish Singleton Analysis"
 res = gen_csv(directory)
-merge_csv(separate_participants=True, participant_list=res[0])
+merge_csv()
+result = column_match(os.path.join(directory,"Compiled", "merged_files", "AllPart_AllLang_AllAnalyses_data.csv"))
+###
 """
             
