@@ -1,0 +1,403 @@
+IPA,name,token,category
+ǃ,Latin Letter Retroflex Click,CONSONANT,consonants
+b,Latin Letter Small B,CONSONANT,consonants
+c,Latin Letter Small C,CONSONANT,consonants
+d,Latin Letter Small D,CONSONANT,consonants
+f,Latin Letter Small F,CONSONANT,consonants
+g,Latin Letter Small G,CONSONANT,consonants
+h,Latin Letter Small H,CONSONANT,consonants
+k,Latin Letter Small K,CONSONANT,consonants
+l,Latin Letter Small L,CONSONANT,consonants
+m,Latin Letter Small M,CONSONANT,consonants
+n,Latin Letter Small N,CONSONANT,consonants
+p,Latin Letter Small P,CONSONANT,consonants
+q,Latin Letter Small Q,CONSONANT,consonants
+r,Latin Letter Small R,CONSONANT,consonants
+s,Latin Letter Small S,CONSONANT,consonants
+t,Latin Letter Small T,CONSONANT,consonants
+v,Latin Letter Small V,CONSONANT,consonants
+x,Latin Letter Small X,CONSONANT,consonants
+z,Latin Letter Small Z,CONSONANT,consonants
+¡,Inverted Exclamation Mark,CONSONANT,consonants
+ç,Latin Letter Small C with cedilla,CONSONANT,consonants
+ð,Latin Letter Small Eth,CONSONANT,consonants
+ħ,Latin Letter Small H with Stroke,CONSONANT,consonants
+ŋ,Latin Letter Small Eng,CONSONANT,consonants
+ƀ,Latin Letter Small B with Stroke,CONSONANT,consonants
+ƈ,Latin Letter Small C with Hook,CONSONANT,consonants
+ƙ,Latin Letter Small K with Hook,CONSONANT,consonants
+ƛ,Latin Letter Small Lamda with Stroke,CONSONANT,consonants
+ƞ,Latin Letter Small N with Long Right Leg,CONSONANT,consonants
+ƥ,Latin Letter Small P with Hook,CONSONANT,consonants
+ƫ,Latin Letter Small T with Palatal Hook,CONSONANT,consonants
+ƹ,Latin Letter Small Ezh Reversed,CONSONANT,consonants
+ƺ,Latin Letter Small Ezh with Tail,CONSONANT,consonants
+ǀ,Latin Letter Dental Click,CONSONANT,consonants
+ǁ,Latin Letter Lateral Click,CONSONANT,consonants
+ǂ,Latin Letter Alveopalatal Click,CONSONANT,consonants
+ȴ,Latin Letter Small L with Curl,CONSONANT,consonants
+ȵ,Latin Letter Small N with Curl,CONSONANT,consonants
+ȶ,Latin Letter Small T with Curl,CONSONANT,consonants
+ɓ,Latin Letter Small B with Hook,CONSONANT,consonants
+ɕ,Latin Letter Small C with Curl,CONSONANT,consonants
+ɖ,Latin Letter Small D with Tail,CONSONANT,consonants
+ɗ,Latin Letter Small D with Hook,CONSONANT,consonants
+ɟ,Latin Letter Small Dotless J with Stroke,CONSONANT,consonants
+ɠ,Latin Letter Small G with Hook,CONSONANT,consonants
+ɡ,Latin Letter Small Script G,CONSONANT,consonants
+ɢ,Latin Letter Small Capital G,CONSONANT,consonants
+ɣ,Latin Letter Small Gamma,CONSONANT,consonants
+ɦ,Latin Letter Small H with Hook,CONSONANT,consonants
+ɧ,Latin Letter Small Heng with Hook,CONSONANT,consonants
+ɫ,Latin Letter Small L with middle Tilde,CONSONANT,consonants
+ɬ,Latin Letter Small L with Belt,CONSONANT,consonants
+ɭ,Latin Letter Small L with Retroflex Hook,CONSONANT,consonants
+ɮ,Latin Letter Small LEzh,CONSONANT,consonants
+ɱ,Latin Letter Small M with Hook,CONSONANT,consonants
+ɲ,Latin Letter Small N with Left Hook,CONSONANT,consonants
+ɳ,Latin Letter Small N with Retroflex Hook,CONSONANT,consonants
+ɴ,Latin Letter Small Capital N,CONSONANT,consonants
+ɸ,Latin Letter Small Phi,CONSONANT,consonants
+ɹ,Latin Letter Small Turned R,CONSONANT,consonants
+ɺ,Latin Letter Small Turned R with Long Leg,CONSONANT,consonants
+ɻ,Latin Letter Small Turned R with Hook,CONSONANT,consonants
+ɼ,Latin Letter Small R with Long Leg,CONSONANT,consonants
+ɽ,Latin Letter Small R with Tail,CONSONANT,consonants
+ɾ,Latin Letter Small R with Fish Hook,CONSONANT,consonants
+ʀ,Latin Letter Small Capital R,CONSONANT,consonants
+ʁ,Latin Letter Small Capital Inverted R,CONSONANT,consonants
+ʂ,Latin Letter Small S with Hook,CONSONANT,consonants
+ʃ,Latin Letter Small Esh,CONSONANT,consonants
+ʄ,Latin Letter Small Dotless J with Stroke and Hook,CONSONANT,consonants
+ʆ,Latin Letter Small Esh with Curl,CONSONANT,consonants
+ʇ,Latin Letter Small Turned T,CONSONANT,consonants
+ʈ,Latin Letter Small T with Retroflex Hook,CONSONANT,consonants
+ʋ,Latin Letter Small V with Hook,CONSONANT,consonants
+ʍ,Latin Letter Small Turned W,CONSONANT,consonants
+ʎ,Latin Letter Small Turned Y,CONSONANT,consonants
+ʐ,Latin Letter Small Z with Retroflex Hook,CONSONANT,consonants
+ʑ,Latin Letter Small Z with Curl,CONSONANT,consonants
+ʒ,Latin Letter Small Ezh,CONSONANT,consonants
+ʓ,Latin Letter Small Ezh with Curl,CONSONANT,consonants
+ʔ,Latin Letter Glottal Stop,CONSONANT,consonants
+ʕ,Latin Letter Pharyngeal Voiced Fricative,CONSONANT,consonants
+ʖ,Latin Letter Inverted Glottal Stop,CONSONANT,consonants
+ʗ,Latin Letter Stretched C,CONSONANT,consonants
+ʘ,Latin Letter Bilabial Click,CONSONANT,consonants
+ʙ,Latin Letter Small Capital B,CONSONANT,consonants
+ʛ,Latin Letter Small Capital G with Hook,CONSONANT,consonants
+ʜ,Latin Letter Small Capital H,CONSONANT,consonants
+ʝ,Latin Letter Small J with Crossed-Tail,CONSONANT,consonants
+ʞ,Latin Letter Small Turned K,CONSONANT,consonants
+ʟ,Latin Letter Small Capital L,CONSONANT,consonants
+ʠ,Latin Letter Small Q with Hook,CONSONANT,consonants
+ʡ,Latin Letter Glottal Stop with Stroke,CONSONANT,consonants
+ʢ,Latin Letter Reversed Glottal Stop with Stroke,CONSONANT,consonants
+ʣ,Latin Letter Small DZ Digraph,CONSONANT,consonants
+ʤ,Latin Letter Small DEzh Digraph,CONSONANT,consonants
+ʥ,Latin Letter Small DZ Digraph with Curl,CONSONANT,consonants
+ʦ,Latin Letter Small TS Digraph,CONSONANT,consonants
+ʧ,Latin Letter Small TEsh Digraph,CONSONANT,consonants
+ʨ,Latin Letter Small TC Digraph with Curl,CONSONANT,consonants
+ʩ,Latin Letter Small FEng Digraph,CONSONANT,consonants
+ʪ,Latin Letter Small LS Digraph,CONSONANT,consonants
+ʫ,Latin Letter Small LZ Digraph,CONSONANT,consonants
+ʬ,Latin Letter Bilabial Percussive,CONSONANT,consonants
+ʭ,Latin Letter Bidental Percussive,CONSONANT,consonants
+β,Greek Small Letter Beta,CONSONANT,consonants
+δ,Greek Small Letter Delta,CONSONANT,consonants
+θ,Greek Small Letter Theta,CONSONANT,consonants
+λ,Greek Small Letter Lamda,CONSONANT,consonants
+π,Greek Small Letter Pi,CONSONANT,consonants
+χ,Greek Small Letter Chi,CONSONANT,consonants
+ᶑ,Latin Letter Small D with Hook and Tail,CONSONANT,consonants
+ƒ,Latin Letter Small F with Hook,CONSONANT,consonants
+ƪ,Latin Letter Reversed Esh with Loop,CONSONANT,consonants
+ƭ,Latin Letter Small T with Hook,CONSONANT,consonants
+ɥ,Latin Letter Small Turned H,CONSONANT,consonants
+ɰ,Latin Letter Small Turned M with Long Leg,CONSONANT,consonants
+ⱱ,Latin Letter Small V with Right Hook,CONSONANT,consonants
+>,Greater-than Sign,GLIDE,glides
+j,Latin Letter Small J,GLIDE,glides
+w,Latin Letter Small W,GLIDE,glides
+ɥ,Latin Letter Small Turned H,GLIDE,glides
+ɰ,Latin Letter Small Turned M with Long Leg,GLIDE,glides
+a,Latin Letter Small A,VOWEL,vowels
+e,Latin Letter Small E,VOWEL,vowels
+i,Latin Letter Small I,VOWEL,vowels
+o,Latin Letter Small O,VOWEL,vowels
+u,Latin Letter Small U,VOWEL,vowels
+y,Latin Letter Small Y,VOWEL,vowels
+æ,Latin Letter Small AE,VOWEL,vowels
+ø,Latin Letter Small O with Stroke,VOWEL,vowels
+œ,Latin Small Ligature OE,VOWEL,vowels
+ɐ,Latin Letter Small Turned A,VOWEL,vowels
+ɑ,Latin Letter Small Alpha,VOWEL,vowels
+ɒ,Latin Letter Small Turned Alpha,VOWEL,vowels
+ɔ,Latin Letter Small Open O,VOWEL,vowels
+ɘ,Latin Letter Small Reversed E,VOWEL,vowels
+ə,Latin Letter Small Schwa,VOWEL,vowels
+ɚ,Latin Letter Small Schwa with Hook,VOWEL,vowels
+ɛ,Latin Letter Small Open E,VOWEL,vowels
+ɜ,Latin Letter Small Reversed Open E,VOWEL,vowels
+ɝ,Latin Letter Small Reversed Open E with Hook,VOWEL,vowels
+ɞ,Latin Letter Small Closed Reversed Open E,VOWEL,vowels
+ɤ,Latin Letter Small Ram’s Horns,VOWEL,vowels
+ɨ,Latin Letter Small I with Stroke,VOWEL,vowels
+ɩ,Latin Letter Small Iota,VOWEL,vowels
+ɪ,Latin Letter Small Capital I,VOWEL,vowels
+ɯ,Latin Letter Small Turned M,VOWEL,vowels
+ɵ,Latin Letter Small Barred O,VOWEL,vowels
+ɶ,Latin Letter Small Capital OE,VOWEL,vowels
+ɷ,Latin Letter Small Closed Omega,VOWEL,vowels
+ʉ,Latin Letter Small U Bar,VOWEL,vowels
+ʊ,Latin Letter Small Upsilon,VOWEL,vowels
+ʌ,Latin Letter Small Turned V,VOWEL,vowels
+ʏ,Latin Letter Small Capital Y,VOWEL,vowels
+ʚ,Latin Letter Small Closed Open E,VOWEL,vowels
+ʮ,Latin Letter Small Turned H with Fish Hook,VOWEL,vowels
+α,Greek Small Letter Alpha,VOWEL,vowels
+ı,Latin Letter Small Dotless I,VOWEL,vowels
+⁰,Superscript Zero (Number 0),TONE_NUMBER,diacritics
+¹,Superscript One (Number 1),TONE_NUMBER,diacritics
+²,Superscript Two (Number 2),TONE_NUMBER,diacritics
+³,Superscript Three (Number 3),TONE_NUMBER,diacritics
+⁴,Superscript Four (Number 4),TONE_NUMBER,diacritics
+⁵,Superscript Five (Number 5),TONE_NUMBER,diacritics
+⁶,Superscript Six (Number 6),TONE_NUMBER,diacritics
+⁷,Superscript Seven (Number 7),TONE_NUMBER,diacritics
+⁸,Superscript Eight (Number 8),TONE_NUMBER,diacritics
+⁹,Superscript Nine (Number 9),TONE_NUMBER,diacritics
+ʰ,Modifier Letter Small H,SUFFIX_DIACRITIC,diacritics
+ʱ,Modifier Letter Small H with Hook,SUFFIX_DIACRITIC,diacritics
+ʲ,Modifier Letter Small J,SUFFIX_DIACRITIC,diacritics
+ʳ,Modifier Letter Small R,SUFFIX_DIACRITIC,diacritics
+ʴ,Modifier Letter Small Turned R,SUFFIX_DIACRITIC,diacritics
+ʵ,Modifier Letter Small Turned R with Hook,SUFFIX_DIACRITIC,diacritics
+ʶ,Modifier Letter Small Capital Inverted R,SUFFIX_DIACRITIC,diacritics
+ʷ,Modifier Letter Small W,SUFFIX_DIACRITIC,diacritics
+ʸ,Modifier Letter Small Y,SUFFIX_DIACRITIC,diacritics
+ʻ,Modifier Letter Turned Comma,SUFFIX_DIACRITIC,diacritics
+ʼ,Modifier Letter Apostrophe,SUFFIX_DIACRITIC,diacritics
+ʽ,Modifier Letter Reversed Comma,SUFFIX_DIACRITIC,diacritics
+ʾ,Modifier Letter Right Half Ring,SUFFIX_DIACRITIC,diacritics
+ʿ,Modifier Letter Left Half Ring,SUFFIX_DIACRITIC,diacritics
+ˀ,Modifier Letter Glottal Stop,SUFFIX_DIACRITIC,diacritics
+ˁ,Modifier Letter Reversed Glottal Stop,SUFFIX_DIACRITIC,diacritics
+ˈ,Modifier Letter Vertical Line,PRIMARY_STRESS,diacritics
+ˌ,Modifier Letter Low Vertical Line,SECONDARY_STRESS,diacritics
+ː,Modifier Letter Triangular Colon,LONG,diacritics
+ˑ,Modifier Letter Half Triangular Colon,HALF_LONG,diacritics
+˞,Modifier Letter Rhotic Hook,SUFFIX_DIACRITIC,diacritics
+ˠ,Modifier Letter Small Gamma,SUFFIX_DIACRITIC,diacritics
+ˡ,Modifier Letter Small L,SUFFIX_DIACRITIC,diacritics
+˥,Modifier Letter Extra-High Tone Bar,SUFFIX_DIACRITIC,diacritics
+˦,Modifier Letter High Tone Bar,SUFFIX_DIACRITIC,diacritics
+˧,Modifier Letter Mid Tone Bar,SUFFIX_DIACRITIC,diacritics
+˨,Modifier Letter Low Tone Bar,SUFFIX_DIACRITIC,diacritics
+˩,Modifier Letter Extra-Low Tone Bar,SUFFIX_DIACRITIC,diacritics
+ˬ,Modifier Letter Voicing,SUFFIX_DIACRITIC,diacritics
+˭,Modifier Letter Unaspirated,SUFFIX_DIACRITIC,diacritics
+̀,Combining Grave Accent,COMBINING_DIACRITIC,diacritics
+́,Combining Acute Accent,COMBINING_DIACRITIC,diacritics
+̂,Combining Circumflex Accent,COMBINING_DIACRITIC,diacritics
+̃,Combining Tilde,COMBINING_DIACRITIC,diacritics
+̄,Combining Macron,COMBINING_DIACRITIC,diacritics
+̆,Combining Breve,COMBINING_DIACRITIC,diacritics
+̇,Combining Dot Above,COMBINING_DIACRITIC,diacritics
+̈,Combining Diaeresis,COMBINING_DIACRITIC,diacritics
+̊,Combining Ring Above,COMBINING_DIACRITIC,diacritics
+̋,Combining Double Acute Accent,COMBINING_DIACRITIC,diacritics
+̌,Combining Caron,COMBINING_DIACRITIC,diacritics
+̏,Combining Double Grave Accent,COMBINING_DIACRITIC,diacritics
+̑,Combining Inverted Breve,COMBINING_DIACRITIC,diacritics
+̘,Combining Left Tack Below,COMBINING_DIACRITIC,diacritics
+̙,Combining Right Tack Below,COMBINING_DIACRITIC,diacritics
+̚,Combining Left Angle Above,COMBINING_DIACRITIC,diacritics
+̜,Combining Left Half Ring Below,COMBINING_DIACRITIC,diacritics
+̝,Combining Up Tack Below,COMBINING_DIACRITIC,diacritics
+̞,Combining Down Tack Below,COMBINING_DIACRITIC,diacritics
+̟,Combining Plus Sign Below,COMBINING_DIACRITIC,diacritics
+̠,Combining Minus Sign Below,COMBINING_DIACRITIC,diacritics
+̡,Combining Palatalized Hook Below,COMBINING_DIACRITIC,diacritics
+̢,Combining Retroflex Hook Below,COMBINING_DIACRITIC,diacritics
+̣,Combining Dot Below,COMBINING_DIACRITIC,diacritics
+̤,Combining Diaeresis Below,COMBINING_DIACRITIC,diacritics
+̥,Combining Ring Below,COMBINING_DIACRITIC,diacritics
+̩,Combining Vertical Line Below,COMBINING_DIACRITIC,diacritics
+̪,Combining Bridge Below,COMBINING_DIACRITIC,diacritics
+̬,Combining Caron Below,COMBINING_DIACRITIC,diacritics
+̯,Combining Inverted Breve Below,COMBINING_DIACRITIC,diacritics
+̰,Combining Tilde Below,COMBINING_DIACRITIC,diacritics
+̴,Combining Tilde Overlay,COMBINING_DIACRITIC,diacritics
+̹,Combining Right Half Ring Below,COMBINING_DIACRITIC,diacritics
+̺,Combining Inverted Bridge Below,COMBINING_DIACRITIC,diacritics
+̻,Combining Square Below,COMBINING_DIACRITIC,diacritics
+̼,Combining Seagull Below,COMBINING_DIACRITIC,diacritics
+̽,Combining X Above,COMBINING_DIACRITIC,diacritics
+͆,Combining Bridge Above,COMBINING_DIACRITIC,diacritics
+͇,Combining Equal Sign Below,COMBINING_DIACRITIC,diacritics
+͈,Combining Double Vertical Line Below,COMBINING_DIACRITIC,diacritics
+͉,Combining Left Angle Below,COMBINING_DIACRITIC,diacritics
+͊,Combining Not Tilde Above,COMBINING_DIACRITIC,diacritics
+͋,Combining Homothetic Above,COMBINING_DIACRITIC,diacritics
+͌,Combining Almost Equal To Above,COMBINING_DIACRITIC,diacritics
+͍,Combining Left Right Arrow Below,COMBINING_DIACRITIC,diacritics
+͎,Combining Upwards Arrow Below,COMBINING_DIACRITIC,diacritics
+͔,Combining Left Arrow Head Below,COMBINING_DIACRITIC,diacritics
+͕,Combining Right Arrow Head Below,COMBINING_DIACRITIC,diacritics
+͜,Combining Double Breve Below,LIGATURE,diacritics
+͡,Combining Double Inverted Breve,LIGATURE,diacritics
+͢,Combining Double Rightwards Arrow Below,LIGATURE,diacritics
+ᵊ,Modifier Letter Small Schwa,SUFFIX_DIACRITIC,diacritics
+ᵐ,Modifier Letter Small M,PREFIX_DIACRITIC,diacritics
+ᵑ,Modifier Letter Small Eng,PREFIX_DIACRITIC,diacritics
+ⁿ,Modifier Letter Small N,PREFIX_DIACRITIC,diacritics
+ᶬ,Modifier Letter Small M with Hook,PREFIX_DIACRITIC,diacritics
+ᶮ,Modifier Letter Small N with Left Hook,PREFIX_DIACRITIC,diacritics
+ᶯ,Modifier Letter Small N with Retroflex Hook,PREFIX_DIACRITIC,diacritics
+ᶰ,Modifier Letter Small Capital N,PREFIX_DIACRITIC,diacritics
+̵,Combining Short Stroke Overlay - Affix Diacritic Role Switcher,ROLE_REVERSAL,diacritics
+‿,Undertie,SANDHI,diacritics
+⁀,Overtie,SANDHI,diacritics
+᷄,Combining Macron-Acute,COMBINING_DIACRITIC,diacritics
+᷅,Combining Grave-Macron,COMBINING_DIACRITIC,diacritics
+᷆,Combining Macron-Grave,COMBINING_DIACRITIC,diacritics
+᷇,Combining Acute-Macron,COMBINING_DIACRITIC,diacritics
+᷈,Combining Grave-Acute-Grave,COMBINING_DIACRITIC,diacritics
+ꜛ,Modifier Letter Raised Up Arrow,COMBINING_DIACRITIC,diacritics
+ꜜ,Modifier Letter Raised Down Arrow,COMBINING_DIACRITIC,diacritics
+˂,Modifier Letter Left Arrowhead,SUFFIX_DIACRITIC,diacritics
+˃,Modifier Letter Right Arrowhead,SUFFIX_DIACRITIC,diacritics
+˄,Modifier Letter Up Arrowhead,SUFFIX_DIACRITIC,diacritics
+˅,Modifier Letter Down Arrowhead,SUFFIX_DIACRITIC,diacritics
+ˆ,Modifier Letter Circumflex Accent,COMBINING_DIACRITIC,diacritics
+ˇ,Caron,COMBINING_DIACRITIC,diacritics
+ˉ,Modifier Letter Macron,COMBINING_DIACRITIC,diacritics
+ˊ,Modifier Letter Acute Accent,COMBINING_DIACRITIC,diacritics
+ˋ,Modifier Letter Grave Accent,COMBINING_DIACRITIC,diacritics
+˔,Modifier Letter Up Tack,COMBINING_DIACRITIC,diacritics
+˕,Modifier Letter Down Tack,COMBINING_DIACRITIC,diacritics
+˖,Modifier Letter Plus Sign,SUFFIX_DIACRITIC,diacritics
+˗,Modifier Letter Minus Sign,SUFFIX_DIACRITIC,diacritics
+˜,Small Tilde,SUFFIX_DIACRITIC,diacritics
+ˢ,Modifier Letter Small S,SUFFIX_DIACRITIC,diacritics
+ˣ,Modifier Letter Small X,SUFFIX_DIACRITIC,diacritics
+ˤ,Modifier Letter Small Reversed Glottal Stop,SUFFIX_DIACRITIC,diacritics
+˯,Modifier Letter Low Down Arrowhead,SUFFIX_DIACRITIC,diacritics
+˰,Modifier Letter Low Up Arrowhead,SUFFIX_DIACRITIC,diacritics
+˱,Modifier Letter Low Left Arrowhead,SUFFIX_DIACRITIC,diacritics
+˲,Modifier Letter Low Right Arrowhead,SUFFIX_DIACRITIC,diacritics
+˵,Modifier Letter Middle Double Grave Accent,COMBINING_DIACRITIC,diacritics
+˶,Modifier Letter Middle Double Acute Accent,COMBINING_DIACRITIC,diacritics
+˸,Modifier Letter Raised Colon,COMBINING_DIACRITIC,diacritics
+˹,Modifier Letter Begin High Tone,COMBINING_DIACRITIC,diacritics
+˺,Modifier Letter End High Tone,COMBINING_DIACRITIC,diacritics
+˻,Modifier Letter Begin Low Tone,COMBINING_DIACRITIC,diacritics
+˼,Modifier Letter End Low Tone,COMBINING_DIACRITIC,diacritics
+˽,Modifier Letter Shelf,COMBINING_DIACRITIC,diacritics
+˾,Modifier Letter Open Shelf,COMBINING_DIACRITIC,diacritics
+˿,Modifier Letter Low Left Arrow,COMBINING_DIACRITIC,diacritics
+ᶻ,Modifier Letter Small Z,SUFFIX_DIACRITIC,diacritics
+ᶴ,Modifier Letter Small Esh,SUFFIX_DIACRITIC,diacritics
+ᶾ,Modifier Letter Small Ezh,SUFFIX_DIACRITIC,diacritics
+ᶿ,Modifier Letter Small Theta,SUFFIX_DIACRITIC,diacritics
+ᵖ,Modifier Letter Small P,SUFFIX_DIACRITIC,diacritics
+ᵗ,Modifier Letter Small T,SUFFIX_DIACRITIC,diacritics
+ᵏ,Modifier Letter Small K,SUFFIX_DIACRITIC,diacritics
+ᵇ,Modifier Letter Smalll B,SUFFIX_DIACRITIC,diacritics
+ᵈ,Modifier Letter Small D,SUFFIX_DIACRITIC,diacritics
+ᵍ,Modifier Letter Small G,SUFFIX_DIACRITIC,diacritics
+⁼,Superscript Equals Sign,SUFFIX_DIACRITIC,diacritics
+̉,Combining Hook Above,COMBINING_DIACRITIC,diacritics
+̐,Combining Candrabindu,COMBINING_DIACRITIC,diacritics
+̒,Combining Turned Comma Above,COMBINING_DIACRITIC,diacritics
+̔,Combining Reversed Comma Above,COMBINING_DIACRITIC,diacritics
+̖,Combining Grave Accent Below,COMBINING_DIACRITIC,diacritics
+̫,Combining Inverted Double Arch Below,COMBINING_DIACRITIC,diacritics
+̮,Combining Breve Below,COMBINING_DIACRITIC,diacritics
+̱,Combining Macron Below,COMBINING_DIACRITIC,diacritics
+̲,Combining Low Line,COMBINING_DIACRITIC,diacritics
+̳,Combining Double Low Line,COMBINING_DIACRITIC,diacritics
+̾,Combining Vertical Tilde,COMBINING_DIACRITIC,diacritics
+̿,Combining Double Overline,COMBINING_DIACRITIC,diacritics
+͐,Combining Right Arrowhead Above,COMBINING_DIACRITIC,diacritics
+͑,Combining Left Half Ring Above,COMBINING_DIACRITIC,diacritics
+͒,Combining Fermata,COMBINING_DIACRITIC,diacritics
+͓,Combining X Below,COMBINING_DIACRITIC,diacritics
+͖,Combining Right Arrowhead and Up Arrowhead Below,COMBINING_DIACRITIC,diacritics
+͗,Combining Right Half Ring Above,COMBINING_DIACRITIC,diacritics
+͝,Combining Double Breve,COMBINING_DIACRITIC,diacritics
+͞,Combining Double Macron,COMBINING_DIACRITIC,diacritics
+͟,Combining Double Macron Below,COMBINING_DIACRITIC,diacritics
+͠,Combining Double Tilde,COMBINING_DIACRITIC,diacritics
+ͣ,Combining Latin Letter Small A,COMBINING_DIACRITIC,diacritics
+ͤ,Combining Latin Letter Small E,COMBINING_DIACRITIC,diacritics
+ͥ,Combining Latin Letter Small I,COMBINING_DIACRITIC,diacritics
+ͦ,Combining Latin Letter Small O,COMBINING_DIACRITIC,diacritics
+ͧ,Combining Latin Letter Small U,COMBINING_DIACRITIC,diacritics
+ͨ,Combining Latin Letter Small C,COMBINING_DIACRITIC,diacritics
+ͩ,Combining Latin Letter Small D,COMBINING_DIACRITIC,diacritics
+ͪ,Combining Latin Letter Small H,COMBINING_DIACRITIC,diacritics
+ͫ,Combining Latin Letter Small M,COMBINING_DIACRITIC,diacritics
+ͬ,Combining Latin Letter Small R,COMBINING_DIACRITIC,diacritics
+ͭ,Combining Latin Letter Small T,COMBINING_DIACRITIC,diacritics
+ͮ,Combining Latin Letter Small V,COMBINING_DIACRITIC,diacritics
+ͯ,Combining Latin Letter Small X,COMBINING_DIACRITIC,diacritics
+·,Greek Ano Teleia,SUFFIX_DIACRITIC,diacritics
+᷉,Falling Rising Tone,COMBINING_DIACRITIC,diacritics
+ꜝ,MODIFIER LETTER AFRICANIST DOWNSTEP,SUFFIX_DIACRITIC,diacritics
+ꜞ,MODIFIER LETTER AFRICANIST UPSTEP,SUFFIX_DIACRITIC,diacritics
+ᶦ,MODIFIER LETTER SMALL CAPITAL I,SUFFIX_DIACRITIC,diacritics
+ᶷ,MODIFIER LETTER SMALL UPSILON,SUFFIX_DIACRITIC,diacritics
+∅,Empty Set,COVER_SYMBOL,others
+ ,Space,SPACE,others
+$,Dollar Sign,DOLLAR_SIGN,others
+{,Open Brace,OPEN_BRACE,others
+},Close Brace,CLOSE_BRACE,others
+:,Colon,COLON,others
+0,Zero,DIGIT,others
+1,One,DIGIT,others
+2,Two,DIGIT,others
+3,Three,DIGIT,others
+4,Four,DIGIT,others
+5,Five,DIGIT,others
+6,Six,DIGIT,others
+7,Seven,DIGIT,others
+8,Eight,DIGIT,others
+9,Nine,DIGIT,others
+^,Caret,INTRA_WORD_PAUSE,others
+↔,Left Right Arrow,ALIGNMENT,others
+(,Left Parenthesis,OPEN_PAREN,others
+),Right Parenthesis,CLOSE_PAREN,others
+*,Asterisk,COVER_SYMBOL,others
++,Plus sign,PLUS,others
+.,Full Stop,PERIOD,others
+A,Latin Capital Letter A,COVER_SYMBOL,others
+B,Latin Capital Letter B,COVER_SYMBOL,others
+C,Latin Capital Letter C,COVER_SYMBOL,others
+D,Latin Capital Letter D,COVER_SYMBOL,others
+E,Latin Capital Letter E,COVER_SYMBOL,others
+F,Latin Capital Letter F,COVER_SYMBOL,others
+G,Latin Capital Letter G,COVER_SYMBOL,others
+H,Latin Capital Letter H,COVER_SYMBOL,others
+I,Latin Capital Letter I,COVER_SYMBOL,others
+J,Latin Capital Letter J,COVER_SYMBOL,others
+K,Latin Capital Letter K,COVER_SYMBOL,others
+L,Latin Capital Letter L,COVER_SYMBOL,others
+M,Latin Capital Letter M,COVER_SYMBOL,others
+N,Latin Capital Letter N,COVER_SYMBOL,others
+O,Latin Capital Letter O,COVER_SYMBOL,others
+P,Latin Capital Letter P,COVER_SYMBOL,others
+Q,Latin Capital Letter Q,COVER_SYMBOL,others
+R,Latin Capital Letter R,COVER_SYMBOL,others
+S,Latin Capital Letter S,COVER_SYMBOL,others
+T,Latin Capital Letter T,COVER_SYMBOL,others
+U,Latin Capital Letter U,COVER_SYMBOL,others
+V,Latin Capital Letter V,COVER_SYMBOL,others
+W,Latin Capital Letter W,COVER_SYMBOL,others
+X,Latin Capital Letter X,COVER_SYMBOL,others
+Y,Latin Capital Letter Y,COVER_SYMBOL,others
+Z,Latin Capital Letter Z,COVER_SYMBOL,others
+‖,Double Vertical Line,MAJOR_GROUP,others
+|,Vertical Line,MINOR_GROUP,others

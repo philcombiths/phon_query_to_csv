@@ -312,14 +312,13 @@ def column_match(table_to_modify, column_key="column_alignment.csv",
                                       encoding='utf-8', index=False)
         return (new_table, actual_cols_omitted_renamed, actual_cols_added)
     
-"""
+
 ###
-Example use case:
+# Example use case:
     
-directory = "D:\Data\Spanish Singleton Analysis"
+directory = r"G:\My Drive\Phonological Typologies Lab\Projects\Spanish SSD Tx\Participant Analyses\Spanish Singleton Analysis\S102 1-MoPost"
 res = gen_csv(directory)
 merge_csv()
 result = column_match(os.path.join(directory,"Compiled", "merged_files", "AllPart_AllLang_AllAnalyses_data.csv"))
 ###
-"""
             
