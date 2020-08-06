@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 Created on Thu Aug  6 11:21:12 2020
-@author: Philip
+@author: Philip Combiths
 
 Parses Phon's ipa.xml reference file, extracting all valid IPA symbols by
 group and exports result to csv file.
