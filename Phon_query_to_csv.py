@@ -3,19 +3,17 @@
 Three functions, intended to be used in sequence, to batch process Phon query
 output csv files in a directory or subdirectories.
 
-Note: participant, phase, language, analysis variables must be modified to 
-    specify or extract values from the current data structure. These values 
-    are usually extracted from the filename str or containing directory 
-    name str (see lines 131-159).
-
-
-###
-Example use case:
+Note: participant, phase, language, analysis variables  in gen_csv() must be
+    modified to specify or extract values from the current data structure. 
+    These values are usually extracted from the filename str or containing 
+    directory name str (see lines 143-167).
     
-directory = "D:\Data\Spanish Singleton Analysis"
+###
+# Example use case:
+directory = r"D:/Data/Spanish Tx Singletons - Copy"
 res = gen_csv(directory)
-merge_csv()
-result = column_match(os.path.join(directory,"Compiled", "merged_files", "AllPart_AllLang_AllAnalyses_data.csv"))
+file_path = merge_csv()
+result = column_match(file_path)
 ###
 
 Created on Thu Jul 30 18:18:01 2020
@@ -82,7 +80,7 @@ def gen_csv(directory):
     Note: participant, phase, language, analysis variables must be modified to 
         specify or extract values from the current data structure. These values 
         are usually extracted from the filename str or containing directory 
-        name str (see lines 131-159).
+        name str (see lines 143-167).
         
     Generates a new csv file in "Compiled/uniform_files" directory for each 
         processed output file.
@@ -150,7 +148,6 @@ def gen_csv(directory):
                             analysis = "Singleton Accuracy"
                             analysis_list.append(analysis)
                             df['Analysis'] = analysis
-                            #if re.match("BL\d|\d-MoPost|Pre|Post|Mid", cur_csv).group(0)
                             phase = re.findall(r"BL\d|\d-MoPost|Pre|Post|Mid", cur_csv)[0]
                             phase_list.append(phase)
                             df['Phase'] = phase  
@@ -180,13 +177,41 @@ def gen_csv(directory):
                                 log.error('Compiled Data folder not yet created')
         return (set(participant_list), set(phase_list), set(language_list), set(analysis_list), file_count)
 
+
 def merge_csv(participant_list=['AllPart'], language_list=['AllLang'], 
               analysis_list=['AllAnalyses'], separate_participants=False, 
               separate_languages=False, separate_analyses=False):
     """
+    From a directory of uniformly structured csv files, merge into a single
+    file or several files, as defined by fx argumments.
     
+    Args:
+        participant_list : list of participants to include, requires 
+            separate_participants=True. Default includes all. 
+        language_list : list of languages to include, requires 
+            separate_languages=True. Default includes all. 
+        analysis_list : list of analyses to include, requires 
+            separate_analyses=True. Default includes all. 
+        separate_participants : bool. Default=False
+        separate_languages : bool. Default=False
+        separate_analyses : bool. Default=False
+        
+    Returns str save_path
+    
+    Note: If a custom list is passed, corresponding "separate" variable must
+        be set to True.
     """
-    
+    # Check for correct arguments
+    if participant_list != ['AllPart']:
+        warning = "If a custom participant_list is passed, separate_participants must = True"
+        assert separate_participants==True, warning
+    if language_list != ['AllLang']:
+        warning = "If a custom language_list is passed, separate_languages must = True"
+        assert separate_languages==True, warning
+    if analysis_list != ['AllAnalyses']:
+        warning = "If a custom analysis_list is passed, separate_analyses must = True"
+        assert separate_analyses==True, warning
+
     try:
         os.makedirs(os.path.join(directory, 'Compiled', 'merged_files'))
     except WindowsError:
@@ -195,8 +220,9 @@ def merge_csv(participant_list=['AllPart'], language_list=['AllLang'],
     for participant in participant_list:
         for language in language_list:
             for analysis in analysis_list:
-                with io.open(os.path.join(directory, 'Compiled','merged_files', 
-                                          f'{participant}_{language}_{analysis}_data.csv'), 'wb') as outfile:
+                save_path = os.path.join(directory, 'Compiled','merged_files', 
+                                          f'{participant}_{language}_{analysis}_data.csv')
+                with io.open(save_path, 'wb') as outfile:
                     log.info(outfile)
                     # participantdata = os.path.join(directory, 'Compiled Data', '%s*.csv' (participant))            
                     if separate_participants:
@@ -230,7 +256,8 @@ def merge_csv(participant_list=['AllPart'], language_list=['AllLang'],
                             log.info(fname + " has been imported.")                            
                     csv.writer(outfile)
                     log.info('Saved', outfile)
-    return
+
+    return save_path
                     
                     
 def column_match(table_to_modify, column_key="column_alignment.csv", 
@@ -249,7 +276,6 @@ def column_match(table_to_modify, column_key="column_alignment.csv",
     
     Returns:
         tuple: (new_table, actual_cols_omitted_renamed, actual_cols_added)
-        
     """
     
     # Import table_to_modify as DataFrame
@@ -313,12 +339,5 @@ def column_match(table_to_modify, column_key="column_alignment.csv",
         return (new_table, actual_cols_omitted_renamed, actual_cols_added)
     
 
-###
-# Example use case:
-    
-directory = r"G:\My Drive\Phonological Typologies Lab\Projects\Spanish SSD Tx\Participant Analyses\Spanish Singleton Analysis\S102 1-MoPost"
-res = gen_csv(directory)
-merge_csv()
-result = column_match(os.path.join(directory,"Compiled", "merged_files", "AllPart_AllLang_AllAnalyses_data.csv"))
-###
+
             
