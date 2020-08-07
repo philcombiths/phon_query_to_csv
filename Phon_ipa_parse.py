@@ -6,7 +6,7 @@ Created on Thu Aug  6 11:21:12 2020
 Parses Phon's ipa.xml reference file, extracting all valid IPA symbols by
 group and exports result to csv file.
 
- # XML references for navigating file:
+# XML references for navigation:
 root[#] = char
 root[#][0] = name
 root[#][1] = token
@@ -15,7 +15,7 @@ char.attrib.values()
 # Example use case:
 xml_path=r"C:/Users/Philip/Documents/GitHub/phon/RESOURCES/parser/ipa.xml"
 char_group_dict = get_Phon_char_list(xml_path=xml_path)
-chars_df = csv(char_group_dict)
+chars_df = chars_to_csv(char_group_dict)
 """
 
 import pandas as pd
@@ -94,7 +94,7 @@ def get_Phon_char_list(list_types='all', xml_path="ipa.xml"):
     print('IPA symbol lists created.')
     return char_group_dict
 
-def csv(char_group_dict, user_set_save_dir=False):        
+def chars_to_csv(char_group_dict, user_set_save_dir=False):        
     """
     Saves dictionary of character lists to csv.
     
