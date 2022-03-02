@@ -68,7 +68,7 @@ ch.setLevel(logging.DEBUG)
 ch.setFormatter(formatter)
 log.addHandler(ch)
 
-def gen_csv(directory):
+def gen_csv(directory, query_type='accuracy'):
     """
     Formats a directory or subdirectories containing csv Phon query output files
     with unified column structure for input into merge_csv to generate a single
@@ -76,6 +76,8 @@ def gen_csv(directory):
     
     Args:
         directory : directory path for original Phon query output files
+        query_type : str in ['accuracy', 'PCC'] specifying Phon query type.
+            Default='accuracy' NOTE: PCC query not yet implemented.
            
     Note: participant, phase, language, analysis variables must be modified to 
         specify or extract values from the current data structure. These values 
