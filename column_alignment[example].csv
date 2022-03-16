@@ -1,0 +1,4 @@
+PASTE TARGET COLUMN STRUCTURE IN ROW 3,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+ALIGN ACTUAL COLUMNS UNDER THEIR TARGETS IN ROW 4,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+ID,IPA Target,ID-Target,zero_preBLs_phones,zero_pre_phones,Target1,Target2,IPA Actual,Type,Session,Date,Age,Record #,Group #,Tier,Range,Result,Orthography (Word),IPA Target (Word),IPA Actual (Word),Target Stress (Word),Actual Stress (Word),Query,Analysis,Phase,Language,Accuracy,Accuracy2,Glides,bl_phone,Exclude,Note,SonT1,SonT2,SDTarget,T1Voiced,T1Place,T1Manner,T2Voiced,T2Place,T2Manner,T2Glide,SD_rev1,SD_rev2,SD_rev3,SD_eng,error_pattern,error_basic,error_score
+Participant,IPA Target,,,,,,IPA Actual,,Session,Date,Age,Record #,Group #,Tier,Range,Result,Orthography (Word),IPA Target (Word),IPA Actual (Word),Target Stress (Word),Actual Stress (Word),Query,Analysis,Phase,Language,Accuracy,,,,,,,,,,,,,,,,,,,,,,
