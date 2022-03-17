@@ -2,6 +2,8 @@
 """
 Simple script to make modifications to filenames in a directory.
 
+Deprecated/single-use for completed project
+
 Created on Thu Jul 30 18:51:18 2020
 @author: Philip
 """
