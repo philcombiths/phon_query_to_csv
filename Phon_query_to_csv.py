@@ -366,10 +366,10 @@ def column_match(table_to_modify, column_key="column_alignment.csv",
     
 ###
 # Example use case:
-# directory = r"C:\test\rev"
-# res = gen_csv(directory, compatibility="3-listing")
-# file_path = merge_csv()
-# result = column_match(file_path)
+directory = r"C:\test\rev"
+res = gen_csv(directory, compatibility="3-listing")
+file_path = merge_csv()
+result = column_match(file_path)
 ###
 
             
