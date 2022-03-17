@@ -68,7 +68,7 @@ ch.setLevel(logging.DEBUG)
 ch.setFormatter(formatter)
 log.addHandler(ch)
 
-def gen_csv(directory, query_type='accuracy', compatibility="2"):
+def gen_csv(directory, query_type='accuracy'):
     """
     Formats a directory or subdirectories containing csv Phon query output files
     with unified column structure for input into merge_csv to generate a single
@@ -78,13 +78,6 @@ def gen_csv(directory, query_type='accuracy', compatibility="2"):
         directory : directory path for original Phon query output files
         query_type : str in ['accuracy', 'PCC'] specifying Phon query type.
             Default='accuracy' NOTE: PCC query not yet implemented.
-        compatibiltiy : str in ['2', '3', '3-rev'] indicating version of Phon
-            output used. Default compatibility for Phon v2 analysis. Currently 
-            only Phon "3-rev" is supported.
-            2 = Phon v 2 output (Deleted, Accurate, Substituted files). Default
-            3 = Phon v 3 ouput [not yet supported]
-            3-rev = Phon v 3 output that has been modified by 
-                "Phon_phone_accuracy.py" 
            
     Note: participant, phase, language, analysis variables must be modified to 
         specify or extract values from the current data structure. These values 
@@ -141,14 +134,8 @@ def gen_csv(directory, query_type='accuracy', compatibility="2"):
                     continue              
                 # Include only CSV files
                 if cur_csv.endswith('.csv'):
-                    # Only uses files with identified filename components
-                    # according to compatibility setting
-                    if compatibility=="2":
-                        # Only works with "Accurate", "Deleted", and "Substitutions" files
-                        substring_list = ['Accurate', 'Deleted', 'Deletions', 'Substitutions']
-                    if compatibility=="3-rev":
-                        # Only works with "Accuracy" files
-                        substring_list = ['Accuracy']
+                    # Only works with "Accurate", "Deleted", and "Substitutions" files
+                    substring_list = ['Accurate', 'Deleted', 'Deletions', 'Substitutions']
                     if any(substring in cur_csv for substring in substring_list):                
                         # open CSV file in read mode with UTF-8 encoding
                         file_count += 1
@@ -157,25 +144,25 @@ def gen_csv(directory, query_type='accuracy', compatibility="2"):
                             df = pd.read_csv(current_csv, encoding='utf-8')                            
                             ###################################################
                             #### Extract keyword and column values
-                            keyword = 'Accuracy Phon 3.4.3.-b2 wDiacritics' # Write keyword here
+                            keyword = 'Accuracy Phon 3.4.2 wDiacritics' # Write keyword here
                             label = 'Query' # Write column label for keyword here
                             df[label] = keyword        
-                            analysis = "Singleton Accuracy"
+                            analysis = dirName.split(r'\\')[5]
                             analysis_list.append(analysis)
                             df['Analysis'] = analysis
-                            phase = re.findall(r"BL\d|1-MoPost|2-MoPost|2-WkPost|Pre|Post|Mid", cur_csv)[0]
+                            phase = re.findall(r"BL\d|\d-MoPost|Pre|Post|Mid", cur_csv)[0]
                             phase_list.append(phase)
                             df['Phase'] = phase  
-                            language = 'Spanish'
+                            language = dirName.split(r'\\')[4]
                             language_list.append(language)
                             df['Language'] = language
-                            participant = cur_csv.split('_')[1]
+                            participant = cur_csv.split('_')[0]
                             participant_list.append(participant)
                             df['Participant'] = participant
                             # Add column of Speaker ID extracted from filename
                             df['Speaker'] = participant                            
                             # Add column of source csv query type, extracted from filename
-                            accuracy = cur_csv.split('_')[0].split('.')[0]
+                            accuracy = cur_csv.split('_')[-1]
                             if accuracy == 'Deletions':
                                 accuracy = 'Deleted'
                             df['Accuracy'] = accuracy
@@ -353,12 +340,9 @@ def column_match(table_to_modify, column_key="column_alignment.csv",
                                       encoding='utf-8', index=False)
         return (new_table, actual_cols_omitted_renamed, actual_cols_added)
     
-###
-# Example use case:
-directory = r"C:\test\Phon_phone_accuracy-py-output - Copy - Copy"
-res = gen_csv(directory, compatibility="3-rev")
+directory = r"C:\test\accuracy - Copy"
+res = gen_csv(directory)
 file_path = merge_csv()
 result = column_match(file_path)
-###
 
             
