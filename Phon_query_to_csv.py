@@ -3,17 +3,27 @@
 Three functions, intended to be used in sequence, to batch process Phon query
 output csv files in a directory or subdirectories.
 
+directory variable must be specified before executing
+
 Note: participant, phase, language, analysis variables  in gen_csv() must be
     modified to specify or extract values from the current data structure. 
     These values are usually extracted from the filename str or containing 
     directory name str (see lines 143-167).
     
 ###
-# Example use case:
+# Example use case: CONVERT AND MERGE DIRECTORY+SUBDIRECTORIES OF PHON OUTPUT
 directory = r"D:/Data/Spanish Tx Singletons - Copy"
 res = gen_csv(directory)
 file_path = merge_csv()
 result = column_match(file_path)
+###
+
+###
+# Example use case: CONVERT AND MERGE DIRECTORY+SUBDIRECTORIES OF PHON OUTPUT
+table_to_modify = r"D:\Data\English Mopho Tx 20-21\Phones - Copy\Compiled\merged_files\AllPart_AllLang_AllAnalyses_data.csv"
+directory = r"D:\Data\English Mopho Tx 20-21\Phones - Copy"
+column_match(table_to_modify, directory, column_key="column_alignment.csv", 
+                 table_to_match=None, output_filename = "compatible_data")
 ###
 
 Created on Thu Jul 30 18:18:01 2020
@@ -287,7 +297,8 @@ def merge_csv(participant_list=['AllPart'], language_list=['AllLang'],
                     
                     
 def column_match(table_to_modify, column_key="column_alignment.csv", 
-                 table_to_match=None, output_filename = "compatible_data"):
+                 table_to_match=None, output_filename = "compatible_data",
+                 ):
     """
     Rearranges and renames columns in a DataFrame or CSV table to fit column
     structure specified in a column_key.
@@ -359,17 +370,26 @@ def column_match(table_to_modify, column_key="column_alignment.csv",
         if valid_transformation == True:
             print("*****************************")
             print('Valid transformation achieved.')
+        
+        # Check for "directory". If not defined, request:
+        # Not implemented
         new_table.to_csv(os.path.join(directory, "Compiled", "merged_files", 
                                       f"{output_filename}.csv"), 
                                       encoding='utf-8', index=False)
         return (new_table, actual_cols_omitted_renamed, actual_cols_added)
     
 ###
-# Example use case:
-directory = r"C:\test\rev"
+# Example use case: CONVERT AND MERGE DIRECTORY+SUBDIRECTORIES OF PHON OUTPUT
+directory = r"D:\Data\English Mopho Tx 20-21\Phones - Copy"
 res = gen_csv(directory, compatibility="3-listing")
 file_path = merge_csv()
 result = column_match(file_path)
 ###
 
-            
+# ###
+# # Example use case: CONVERT AND MERGE DIRECTORY+SUBDIRECTORIES OF PHON OUTPUT
+# table_to_modify = r"D:\Data\English Mopho Tx 20-21\Phones - Copy\Compiled\merged_files\AllPart_AllLang_AllAnalyses_data.csv"
+# directory = r"D:\Data\English Mopho Tx 20-21\Phones - Copy"
+# column_match(table_to_modify, column_key="column_alignment.csv", 
+#                  table_to_match=None, output_filename = "compatible_data")
+# ###
