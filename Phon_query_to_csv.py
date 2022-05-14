@@ -19,7 +19,7 @@ result = column_match(file_path)
 ###
 
 ###
-# Example use case: CONVERT AND MERGE DIRECTORY+SUBDIRECTORIES OF PHON OUTPUT
+# Example use case: CONVERT A SINGLE TABLE TO NEW FORMAT
 table_to_modify = r"D:\Data\English Mopho Tx 20-21\Phones - Copy\Compiled\merged_files\AllPart_AllLang_AllAnalyses_data.csv"
 directory = r"D:\Data\English Mopho Tx 20-21\Phones - Copy"
 column_match(table_to_modify, directory, column_key="column_alignment.csv", 
@@ -40,6 +40,7 @@ import sys
 import logging
 from contextlib import contextmanager
 import regex as re
+from datetime import datetime
 
 @contextmanager
 def enter_dir(newdir):
@@ -119,6 +120,20 @@ def gen_csv(directory, query_type='listing', compatibility="3-listing"):
     file_count = 0
     assert 'Compiled' not in os.listdir(directory), "Compiled directory already exists. Move or remove before executing script,"
     with change_dir(os.path.normpath(directory)):
+        #
+        original_count=0
+        count = 0
+        os.mkdir('Compiled')
+        with enter_dir('Compiled'):
+            with open('readme.txt', 'w') as f:
+                f.write('Files generated with Phon_query_to_csv.py')
+                f.write('\n*********************************')
+                f.write('\nThree functions, intended to be used in sequence, to batch process Phon query output csv files in a directory or subdirectories.')
+                f.write(f'\nGenerated on: {datetime.now()}')
+                f.write('\n*********************************')
+                f.write('\ngen_csv() Output\n')
+                f.write('*******************************\n')
+        #
         for dirName, subdirList, fileList in os.walk(os.getcwd()):
             ## Check for Excel files in directory
             if any(fname.endswith('.xls') for fname in os.listdir(dirName)):
@@ -155,6 +170,7 @@ def gen_csv(directory, query_type='listing', compatibility="3-listing"):
                     continue              
                 # Include only CSV files
                 if cur_csv.endswith('.csv'):
+                    original_count+=1
                     # Only uses files with identified filename components
                     # according to compatibility setting
                     if compatibility=="2":
@@ -201,7 +217,7 @@ def gen_csv(directory, query_type='listing', compatibility="3-listing"):
                              #######################                           
 
                             ###################################################
-                            print ('***********************************************\n', list(df))
+                            print ('*********************************\n', list(df))
                             
                             # Save REV_csv 
                             # With UTF-8 BOM encoding for Excel readability
@@ -210,8 +226,17 @@ def gen_csv(directory, query_type='listing', compatibility="3-listing"):
                                 df.to_csv(os.path.join(directory,'Compiled', 'uniform_files', '%s_%s_%s_%s.csv' % (participant, language, phase, analysis)), encoding = 'utf-8-sig', index=False)
                             except FileNotFoundError:
                                 log.error(sys.exc_info()[1])
-                                log.error('Compiled Data folder not yet created')
-        return (set(participant_list), set(phase_list), set(language_list), set(analysis_list), file_count)
+                                log.error('Compiled Data folder not yet created')    
+                            count+=1
+                            with enter_dir('Compiled'):
+                                with open('readme.txt', 'a') as f:
+                                    f.write('%s_%s_%s_%s.csv\n' % (participant, language, phase, analysis))  
+        with enter_dir('Compiled'):
+            with open('readme.txt', 'a') as f:
+                 f.write('*********************************\n')
+                 f.write(f'Original File Count={original_count}\n')
+                 f.write(f'Revised File Count={count}')
+    return (set(participant_list), set(phase_list), set(language_list), set(analysis_list), file_count)
 
 
 def merge_csv(participant_list=['AllPart'], language_list=['AllLang'], 
@@ -237,6 +262,9 @@ def merge_csv(participant_list=['AllPart'], language_list=['AllLang'],
     Note: If a custom list is passed, corresponding "separate" variable must
         be set to True.
     """
+    #
+    count=0
+    #
     # Check for correct arguments
     if participant_list != ['AllPart']:
         warning = "If a custom participant_list is passed, separate_participants must = True"
@@ -247,7 +275,6 @@ def merge_csv(participant_list=['AllPart'], language_list=['AllLang'],
     if analysis_list != ['AllAnalyses']:
         warning = "If a custom analysis_list is passed, separate_analyses must = True"
         assert separate_analyses==True, warning
-
     try:
         os.makedirs(os.path.join(directory, 'Compiled', 'merged_files'))
     except WindowsError:
@@ -284,6 +311,7 @@ def merge_csv(participant_list=['AllPart'], language_list=['AllLang'],
                             else:
                                 file_search_term = f"{directory}\\Compiled\\uniform_files\\*.csv"
                     for i, fname in enumerate(glob.glob(file_search_term)):      
+                        count+=1
                         with io.open(fname, 'rb') as infile:
                             if i != 0:
                                 infile.readline()  # Throw away header on all but first file
@@ -292,7 +320,10 @@ def merge_csv(participant_list=['AllPart'], language_list=['AllLang'],
                             log.info(fname + " has been imported.")                            
                     csv.writer(outfile)
                     log.info('Saved', outfile)
-
+                    
+    with change_dir(os.path.join(directory,'Compiled')):
+        with open('readme.txt', 'a') as f:
+            f.write(f'\n*********************************\nmerge_csv() Count={count}')  
     return save_path
                     
                     
@@ -376,11 +407,27 @@ def column_match(table_to_modify, column_key="column_alignment.csv",
         new_table.to_csv(os.path.join(directory, "Compiled", "merged_files", 
                                       f"{output_filename}.csv"), 
                                       encoding='utf-8', index=False)
-        return (new_table, actual_cols_omitted_renamed, actual_cols_added)
     
+    with change_dir(os.path.join(directory,'Compiled')):
+        with open('readme.txt', 'a') as f:
+            f.write('\n*******************************\n')
+            f.write('column_match() Adjustments\n')
+            f.write('*******************************\n')
+            f.write(f'Target columns: {target_cols}\n')
+            f.write(f'Actual columns: {actual_cols}\n')
+            f.write(f'Actual columns omitted or renamed: {actual_cols_omitted_renamed}\n')
+            f.write(f'Actual columns added: {actual_cols_added}')
+
+    return (new_table, actual_cols_omitted_renamed, actual_cols_added)
+
+# IN PROGRESS:
+
+
+###
+
 ###
 # Example use case: CONVERT AND MERGE DIRECTORY+SUBDIRECTORIES OF PHON OUTPUT
-directory = r"D:\Data\English Mopho Tx 20-21\Phones - Copy"
+directory = r"D:\Data\English Mopho Tx 20-21\Original_phones"
 res = gen_csv(directory, compatibility="3-listing")
 file_path = merge_csv()
 result = column_match(file_path)
