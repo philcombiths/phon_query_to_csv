@@ -435,8 +435,8 @@ def column_match(table_to_modify, column_key="column_alignment.csv",
 
 # ###
 # # Example use case: CONVERT A SINGLE TABLE TO NEW FORMAT
-# table_to_modify = r"D:\Data\Phon\phoneListing\rev\Compiled\merged_files\AllPart_AllLang_AllAnalyses_data.csv"
-# directory = r"D:\Data\Phon\phoneListing\rev"
+# table_to_modify = r"C:\Users\Philip\OneDrive - University of Iowa\Documents - Clinical Linguistics and Disparities Lab\CLD Lab\projects\spanishSSDTx\Phase II Su21\data\Phon\phoneListing\rev\Compiled\merged_files\AllPart_AllLang_AllAnalyses_data.csv"
+# directory = r"C:\Users\Philip\OneDrive - University of Iowa\Documents - Clinical Linguistics and Disparities Lab\CLD Lab\projects\spanishSSDTx\Phase II Su21\data\Phon\phoneListing\rev"
 # column_match(table_to_modify, column_key="column_alignment.csv", 
 #                  table_to_match=None, output_filename = "compatible_data")
 # ###
