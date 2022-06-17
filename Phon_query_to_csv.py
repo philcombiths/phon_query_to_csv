@@ -22,7 +22,7 @@ result = column_match(file_path)
 # Example use case: CONVERT A SINGLE TABLE TO NEW FORMAT
 table_to_modify = r"D:\Data\English Mopho Tx 20-21\Phones - Copy\Compiled\merged_files\AllPart_AllLang_AllAnalyses_data.csv"
 directory = r"D:\Data\English Mopho Tx 20-21\Phones - Copy"
-column_match(table_to_modify, directory, column_key="column_alignment.csv", 
+column_match(table_to_modify, column_key="column_alignment.csv", 
                  table_to_match=None, output_filename = "compatible_data")
 ###
 
@@ -426,17 +426,17 @@ def column_match(table_to_modify, column_key="column_alignment.csv",
 ###
 
 ###
-# Example use case: CONVERT AND MERGE DIRECTORY+SUBDIRECTORIES OF PHON OUTPUT
-directory = r"D:\Data\English Mopho Tx 20-21\Original_phones"
-res = gen_csv(directory, compatibility="3-listing")
-file_path = merge_csv()
-result = column_match(file_path)
-###
+# # Example use case: CONVERT AND MERGE DIRECTORY+SUBDIRECTORIES OF PHON OUTPUT
+# directory = r"D:\Data\English Mopho Tx 20-21\Original_phones"
+# res = gen_csv(directory, compatibility="3-listing")
+# file_path = merge_csv()
+# result = column_match(file_path)
+# ###
 
 # ###
-# # Example use case: CONVERT AND MERGE DIRECTORY+SUBDIRECTORIES OF PHON OUTPUT
-# table_to_modify = r"D:\Data\English Mopho Tx 20-21\Phones - Copy\Compiled\merged_files\AllPart_AllLang_AllAnalyses_data.csv"
-# directory = r"D:\Data\English Mopho Tx 20-21\Phones - Copy"
+# # Example use case: CONVERT A SINGLE TABLE TO NEW FORMAT
+# table_to_modify = r"D:\Data\Phon\phoneListing\rev\Compiled\merged_files\AllPart_AllLang_AllAnalyses_data.csv"
+# directory = r"D:\Data\Phon\phoneListing\rev"
 # column_match(table_to_modify, column_key="column_alignment.csv", 
 #                  table_to_match=None, output_filename = "compatible_data")
 # ###
