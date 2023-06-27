@@ -73,6 +73,7 @@ ch.setFormatter(formatter)
 log.addHandler(ch)
 
 
+# Step 1: Transforms to uniform structure csv files
 def gen_csv(directory, query_type="accuracy"):
     """
     Formats a directory or subdirectories containing csv Phon query output files
@@ -141,84 +142,84 @@ def gen_csv(directory, query_type="accuracy"):
                     continue
                 # Include only CSV files
                 if cur_csv.endswith(".csv"):
-                    # Only works with "Accurate", "Deleted", and "Substitutions" files
-                    substring_list = [
-                        "Accurate",
-                        "Deleted",
-                        "Deletions",
-                        "Substitutions",
-                        "Accuracy",  # Added for processed _Accuracy queries
-                    ]
-                    if any(substring in cur_csv for substring in substring_list):
-                        # open CSV file in read mode with UTF-8 encoding
-                        file_count += 1
-                        # Unused line to extract a list of subdirectories in path
-                        # filepath_folder_list = os.path.normpath(dirName).split(os.sep)
-                        with io.open(
-                            os.path.join(dirName, cur_csv), mode="r", encoding="utf-8"
-                        ) as current_csv:
-                            # create pandas DataFrame df from csv file
-                            df = pd.read_csv(current_csv, encoding="utf-8")
-                            ###################################################
-                            #### Extract keyword and column values
-                            keyword = "Queries_v3_aggregate-accuracy-participant.xml"  # Write keyword here
-                            label = (
-                                "Query Source"  # Write column label for keyword here
-                            )
-                            df[label] = keyword
-                            # HAVE TO RENAME "SINGLETONS" FOLDER TO "ALL SINGLETONS"
-                            analysis = re.findall(
-                                r"Consonants|Initial Clusters|Final Clusters|Final Singletons|Initial Singletons|Medial Singletons|\/Singletons",
-                                dirName,
-                            )[0].replace(r"/", "")
-                            analysis_list.append(analysis)
-                            df["Analysis"] = analysis
+                    ## Removed code below to capture all csv files in directory
+                    # # Only works with "Accurate", "Deleted", and "Substitutions" files
+                    # substring_list = [
+                    #     "Accurate",
+                    #     "Deleted",
+                    #     "Deletions",
+                    #     "Substitutions",
+                    #     "Accuracy",  # Added for processed _Accuracy queries
+                    # ]
+                    # if any(substring in cur_csv for substring in substring_list):
+                    # open CSV file in read mode with UTF-8 encoding
 
-                            # Temporarily replacing phase with "pre"
-                            phase = "Pre"
-                            # phase = re.findall(r"BL\d|\d-MoPost|Pre|Post|Mid", dirName)[
-                            #     0
-                            # ]
-                            phase_list.append(phase)
-                            df["Phase"] = phase
-                            language = "English"
-                            language_list.append(language)
-                            df["Language"] = language
-                            participant = cur_csv.split(".")[0]
-                            participant_list.append(participant)
-                            df["Participant"] = participant
-                            # Add column of Speaker ID extracted from filename
-                            df["Speaker"] = participant
-                            # Add column of source csv query type, extracted from filename
-                            # Replaced with dummy "cur_csv.split("_")[0].split(".")[0]""
-                            accuracy = "binary"
-                            if accuracy == "Deletions":
-                                accuracy = "Deleted"
-                            df["Accuracy"] = accuracy
-                            ###################################################
-                            print(
-                                "***********************************************\n",
-                                list(df),
-                            )
+                    file_count += 1
+                    # Unused line to extract a list of subdirectories in path
+                    # filepath_folder_list = os.path.normpath(dirName).split(os.sep)
+                    with io.open(
+                        os.path.join(dirName, cur_csv), mode="r", encoding="utf-8"
+                    ) as current_csv:
+                        # create pandas DataFrame df from csv file
+                        df = pd.read_csv(current_csv, encoding="utf-8")
+                        ###################################################
+                        #### Extract keyword and column values
+                        keyword = "Queries_v3_aggregate-accuracy-participant.xml"  # Write keyword here
+                        label = "Query Source"  # Write column label for keyword here
+                        df[label] = keyword
+                        # HAVE TO RENAME "SINGLETONS" FOLDER TO "ALL SINGLETONS"
+                        analysis = re.findall(
+                            r"Consonants|Initial Clusters|Final Clusters|Final Singletons|Initial Singletons|Medial Singletons|\/Singletons",
+                            dirName,
+                        )[0].replace(r"/", "")
+                        analysis_list.append(analysis)
+                        df["Analysis"] = analysis
 
-                            # Save REV_csv
-                            # With UTF-8 BOM encoding for Excel readability
-                            log.info("Current working directory" + os.getcwd())
-                            try:
-                                df.to_csv(
-                                    os.path.join(
-                                        directory,
-                                        "Compiled",
-                                        "uniform_files",
-                                        "%s_%s_%s_%s.csv"
-                                        % (participant, language, phase, analysis),
-                                    ),
-                                    encoding="utf-8",
-                                    index=False,
-                                )
-                            except FileNotFoundError:
-                                log.error(sys.exc_info()[1])
-                                log.error("Compiled Data folder not yet created")
+                        # Temporarily replacing phase with "pre"
+                        phase = "Pre"
+                        # phase = re.findall(r"BL\d|\d-MoPost|Pre|Post|Mid", dirName)[
+                        #     0
+                        # ]
+                        phase_list.append(phase)
+                        df["Phase"] = phase
+                        language = "English"
+                        language_list.append(language)
+                        df["Language"] = language
+                        participant = cur_csv.split(".")[0]
+                        participant_list.append(participant)
+                        df["Participant"] = participant
+                        # Add column of Speaker ID extracted from filename
+                        df["Speaker"] = participant
+                        # Add column of source csv query type, extracted from filename
+                        # Replaced with dummy "cur_csv.split("_")[0].split(".")[0]""
+                        accuracy = "binary"
+                        if accuracy == "Deletions":
+                            accuracy = "Deleted"
+                        df["Accuracy"] = accuracy
+                        ###################################################
+                        print(
+                            "***********************************************\n",
+                            list(df),
+                        )
+
+                        # Save REV_csv
+                        # With UTF-8
+                        log.info("Current working directory" + os.getcwd())
+                        try:
+                            df.to_csv(
+                                os.path.join(
+                                    directory,
+                                    "Compiled",
+                                    "uniform_files",
+                                    "%s_%s_%s_%s.csv"
+                                    % (participant, language, phase, analysis),
+                                ),
+                                encoding="utf-8",
+                                index=False,
+                            )
+                        except FileNotFoundError:
+                            log.error(sys.exc_info()[1])
+                            log.error("Compiled Data folder not yet created")
         return (
             set(participant_list),
             set(phase_list),
@@ -228,6 +229,7 @@ def gen_csv(directory, query_type="accuracy"):
         )
 
 
+# Step 2: Merges uniformly structured csv files
 def merge_csv(
     participant_list=["AllPart"],
     language_list=["AllLang"],
@@ -323,6 +325,7 @@ def merge_csv(
     return save_path
 
 
+# Step 3: Organizes and renames columns according to column_alignment.csv
 def column_match(
     table_to_modify,
     column_key="column_alignment.csv",
@@ -413,7 +416,7 @@ def column_match(
 
 ###
 # Example use case:
-directory = "/Users/pcombiths/Documents/Analysis_accuracy RESUME HERE"
+directory = "/Volumes/rdss_pcombiths/Admin/Philip/Test Analysis"
 res = gen_csv(directory)
 file_path = merge_csv()
 result = column_match(file_path)
