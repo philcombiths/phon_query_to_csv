@@ -17,7 +17,9 @@ result = column_match(file_path)
 ###
 
 Created on Thu Jul 30 18:18:01 2020
+@modified: 2023-06-25
 @author: Philip
+
 """
 import csv
 import glob
@@ -120,7 +122,7 @@ def gen_csv(directory, query_type="accuracy"):
             log.info("extracting from %s" % dirName)
             try:
                 os.makedirs(os.path.join(directory, "Compiled", "uniform_files"))
-            except WindowsError:
+            except:  # Removed "WindowsError" for MacOS compatibility
                 log.warning(sys.exc_info()[1])
                 log.warning("Compiled Data directory already created.")
             for cur_csv in os.listdir(dirName):
@@ -145,10 +147,13 @@ def gen_csv(directory, query_type="accuracy"):
                         "Deleted",
                         "Deletions",
                         "Substitutions",
+                        "Accuracy",  # Added for processed _Accuracy queries
                     ]
                     if any(substring in cur_csv for substring in substring_list):
                         # open CSV file in read mode with UTF-8 encoding
                         file_count += 1
+                        # Unused line to extract a list of subdirectories in path
+                        # filepath_folder_list = os.path.normpath(dirName).split(os.sep)
                         with io.open(
                             os.path.join(dirName, cur_csv), mode="r", encoding="utf-8"
                         ) as current_csv:
@@ -156,27 +161,37 @@ def gen_csv(directory, query_type="accuracy"):
                             df = pd.read_csv(current_csv, encoding="utf-8")
                             ###################################################
                             #### Extract keyword and column values
-                            keyword = "Consonant Accuracy Phon 2.2b21 wDiacritics"  # Write keyword here
-                            label = "Query"  # Write column label for keyword here
+                            keyword = "Queries_v3_aggregate-accuracy-participant.xml"  # Write keyword here
+                            label = (
+                                "Query Source"  # Write column label for keyword here
+                            )
                             df[label] = keyword
-                            analysis = "Singleton Accuracy"
+                            # HAVE TO RENAME "SINGLETONS" FOLDER TO "ALL SINGLETONS"
+                            analysis = re.findall(
+                                r"Consonants|Initial Clusters|Final Clusters|Final Singletons|Initial Singletons|Medial Singletons|\/Singletons",
+                                dirName,
+                            )[0].replace(r"/", "")
                             analysis_list.append(analysis)
                             df["Analysis"] = analysis
-                            phase = re.findall(r"BL\d|\d-MoPost|Pre|Post|Mid", cur_csv)[
-                                0
-                            ]
+
+                            # Temporarily replacing phase with "pre"
+                            phase = "Pre"
+                            # phase = re.findall(r"BL\d|\d-MoPost|Pre|Post|Mid", dirName)[
+                            #     0
+                            # ]
                             phase_list.append(phase)
                             df["Phase"] = phase
-                            language = "Spanish"
+                            language = "English"
                             language_list.append(language)
                             df["Language"] = language
-                            participant = cur_csv.split("_")[1]
+                            participant = cur_csv.split(".")[0]
                             participant_list.append(participant)
                             df["Participant"] = participant
                             # Add column of Speaker ID extracted from filename
                             df["Speaker"] = participant
                             # Add column of source csv query type, extracted from filename
-                            accuracy = cur_csv.split("_")[0].split(".")[0]
+                            # Replaced with dummy "cur_csv.split("_")[0].split(".")[0]""
+                            accuracy = "binary"
                             if accuracy == "Deletions":
                                 accuracy = "Deleted"
                             df["Accuracy"] = accuracy
@@ -195,16 +210,10 @@ def gen_csv(directory, query_type="accuracy"):
                                         directory,
                                         "Compiled",
                                         "uniform_files",
-                                        "%s_%s_%s_%s_%s.csv"
-                                        % (
-                                            participant,
-                                            language,
-                                            phase,
-                                            analysis,
-                                            accuracy,
-                                        ),
+                                        "%s_%s_%s_%s.csv"
+                                        % (participant, language, phase, analysis),
                                     ),
-                                    encoding="utf-8-sig",
+                                    encoding="utf-8",
                                     index=False,
                                 )
                             except FileNotFoundError:
@@ -400,3 +409,12 @@ def column_match(
             index=False,
         )
         return (new_table, actual_cols_omitted_renamed, actual_cols_added)
+
+
+###
+# Example use case:
+directory = "/Users/pcombiths/Documents/Analysis_accuracy RESUME HERE"
+res = gen_csv(directory)
+file_path = merge_csv()
+result = column_match(file_path)
+###
