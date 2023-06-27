@@ -101,6 +101,8 @@ def gen_csv(directory, query_type="accuracy"):
     phase_list = []
     language_list = []
     analysis_list = []
+    probe_list = []
+    probe_type_list = []
     file_count = 0
     assert "Compiled" not in os.listdir(
         directory
@@ -175,24 +177,21 @@ def gen_csv(directory, query_type="accuracy"):
                         analysis_list.append(analysis)
                         df["Analysis"] = analysis
 
-                        # Temporarily replacing phase with "pre"
-                        phase = "Pre"
-                        # phase = re.findall(r"BL\d|\d-MoPost|Pre|Post|Mid", dirName)[
-                        #     0
-                        # ]
+                        # Locate Phase in path
+                        phase = re.findall(r"BL\d|\d-MoPost|Pre|Post|Mid", dirName)[0]
                         phase_list.append(phase)
                         df["Phase"] = phase
                         language = "English"
                         language_list.append(language)
                         df["Language"] = language
-                        participant = cur_csv.split(".")[0]
+                        participant = cur_csv.split(".")[1].split("_")[0]
                         participant_list.append(participant)
                         df["Participant"] = participant
                         # Add column of Speaker ID extracted from filename
                         df["Speaker"] = participant
                         # Add column of source csv query type, extracted from filename
                         # Replaced with dummy "cur_csv.split("_")[0].split(".")[0]""
-                        accuracy = "binary"
+                        accuracy = "phone listings"
                         if accuracy == "Deletions":
                             accuracy = "Deleted"
                         df["Accuracy"] = accuracy
@@ -201,7 +200,12 @@ def gen_csv(directory, query_type="accuracy"):
                             "***********************************************\n",
                             list(df),
                         )
-
+                        probe = cur_csv.split(".")[1].split("_")[1]
+                        probe_list.append(probe)
+                        df["Probe"] = probe
+                        probe_type = cur_csv.split(".")[1].split("_")[2].split(" ")[0]
+                        probe_type_list.append(probe_type)
+                        df["Probe Type"] = probe_type
                         # Save REV_csv
                         # With UTF-8
                         log.info("Current working directory" + os.getcwd())
@@ -211,8 +215,15 @@ def gen_csv(directory, query_type="accuracy"):
                                     directory,
                                     "Compiled",
                                     "uniform_files",
-                                    "%s_%s_%s_%s.csv"
-                                    % (participant, language, phase, analysis),
+                                    "%s_%s_%s_%s_%s_%s.csv"
+                                    % (
+                                        participant,
+                                        language,
+                                        phase,
+                                        analysis,
+                                        probe,
+                                        probe_type,
+                                    ),
                                 ),
                                 encoding="utf-8",
                                 index=False,
@@ -225,6 +236,8 @@ def gen_csv(directory, query_type="accuracy"):
             set(phase_list),
             set(language_list),
             set(analysis_list),
+            set(probe_list),
+            set(probe_type),
             file_count,
         )
 
@@ -270,10 +283,11 @@ def merge_csv(
     if analysis_list != ["AllAnalyses"]:
         warning = "If a custom analysis_list is passed, separate_analyses must = True"
         assert separate_analyses == True, warning
-
     try:
         os.makedirs(os.path.join(directory, "Compiled", "merged_files"))
-    except WindowsError:
+    # Was WindowsError for Windows operating system.
+    except FileExistsError as e:
+        log.warning(str(e))
         log.warning(sys.exc_info()[1])
         log.warning("Compiled Data directory already created.")
     for participant in participant_list:
@@ -291,26 +305,62 @@ def merge_csv(
                     if separate_participants:
                         if separate_languages:
                             if separate_analyses:
-                                file_search_term = f"{directory}\\Compiled\\uniform_files\\*{participant}*{language}*{analysis}*.csv"
+                                file_search_term = os.path.join(
+                                    directory,
+                                    "Compiled",
+                                    "uniform_files",
+                                    f"*{participant}*{language}*{analysis}*.csv",
+                                )
+                                # file_search_term = f"{directory}\\Compiled\\uniform_files\\*{participant}*{language}*{analysis}*.csv"
                             else:
-                                file_search_term = f"{directory}\\Compiled\\uniform_files\\*{participant}*{language}*.csv"
+                                file_search_term = os.path.join(
+                                    directory,
+                                    "Compiled",
+                                    "uniform_files",
+                                    f"*{participant}*{language}*.csv",
+                                )
                         else:
                             if separate_analyses:
-                                file_search_term = f"{directory}\\Compiled\\uniform_files\\*{participant}*{analysis}*.csv"
+                                file_search_term = os.path.join(
+                                    directory,
+                                    "Compiled",
+                                    "uniform_files",
+                                    f"*{participant}*{analysis}*.csv",
+                                )
                             else:
-                                file_search_term = f"{directory}\\Compiled\\uniform_files\\*{participant}*.csv"
+                                file_search_term = os.path.join(
+                                    directory,
+                                    "Compiled",
+                                    "uniform_files",
+                                    f"*{participant}*.csv",
+                                )
                     else:
                         if separate_languages:
                             if separate_analyses:
-                                file_search_term = f"{directory}\\Compiled\\uniform_files\\*{language}*{analysis}*.csv"
+                                file_search_term = os.path.join(
+                                    directory,
+                                    "Compiled",
+                                    "uniform_files",
+                                    f"*{language}*{analysis}*.csv",
+                                )
                             else:
-                                file_search_term = f"{directory}\\Compiled\\uniform_files\\*{language}*.csv"
+                                file_search_term = os.path.join(
+                                    directory,
+                                    "Compiled",
+                                    "uniform_files",
+                                    f"*{language}*.csv",
+                                )
                         else:
                             if separate_analyses:
-                                file_search_term = f"{directory}\\Compiled\\uniform_files\\*{analysis}*.csv"
+                                file_search_term = os.path.join(
+                                    directory,
+                                    "Compiled",
+                                    "uniform_files",
+                                    f"*{analysis}*.csv",
+                                )
                             else:
-                                file_search_term = (
-                                    f"{directory}\\Compiled\\uniform_files\\*.csv"
+                                file_search_term = os.path.join(
+                                    directory, "Compiled", "uniform_files", "*.csv"
                                 )
                     for i, fname in enumerate(glob.glob(file_search_term)):
                         with io.open(fname, "rb") as infile:
@@ -417,7 +467,7 @@ def column_match(
 ###
 # Example use case:
 directory = "/Volumes/rdss_pcombiths/Admin/Philip/Test Analysis"
-res = gen_csv(directory)
-file_path = merge_csv()
-result = column_match(file_path)
+# res = gen_csv(directory)
+# file_path = merge_csv()
+# result = column_match(file_path)
 ###
