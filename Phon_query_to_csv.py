@@ -399,14 +399,20 @@ def column_match(
     """
 
     # Import table_to_modify as DataFrame
-    try:
+    if os.path.isfile(table_to_modify):
+        table_directory = os.path.dirname(table_to_modify)
+        print("'table_to_modify' input is a filepath.")
         table_to_modify = pd.read_csv(table_to_modify, encoding="utf-8")
-    except ValueError:
-        warning = "table_to_modify must be valid file path, buffer object, or DataFrame"
+    else:
+        table_directory = None
+        if isinstance(table_to_modify, pd.DataFrame):
+            print("'table_to_modify' input is a DataFrame already.")
+            warning = (
+                "table_to_modify must be valid file path, buffer object, or DataFrame"
+            )
         assert type(table_to_modify) == pd.core.frame.DataFrame, warning
-    finally:
-        new_table = table_to_modify
-
+    new_table = table_to_modify
+    # os.path.join(table_directory,
     with open(column_key, mode="r") as key_file:
         key_reader = csv.reader(key_file)
         # Extract column information
@@ -454,6 +460,12 @@ def column_match(
         if valid_transformation == True:
             print("*****************************")
             print("Valid transformation achieved.")
+        else:
+            print("*****************************")
+            print(
+                "WARNING: Valid transformation NOT achieved. Check file when complete."
+            )
+        print("Creating file...")
         new_table.to_csv(
             os.path.join(
                 directory, "Compiled", "merged_files", f"{output_filename}.csv"
@@ -461,6 +473,7 @@ def column_match(
             encoding="utf-8",
             index=False,
         )
+        print("Process complete.")
         return (new_table, actual_cols_omitted_renamed, actual_cols_added)
 
 
@@ -469,5 +482,6 @@ def column_match(
 directory = "/Volumes/rdss_pcombiths/Admin/Philip/Test Analysis"
 # res = gen_csv(directory)
 # file_path = merge_csv()
-# result = column_match(file_path)
+file_path = "/Volumes/rdss_pcombiths/Admin/Philip/Test Analysis/Compiled/merged_files/AllPart_AllLang_AllAnalyses_data.csv"
+result = column_match(file_path)
 ###
