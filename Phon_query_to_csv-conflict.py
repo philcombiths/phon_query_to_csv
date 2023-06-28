@@ -17,21 +17,20 @@ result = column_match(file_path)
 ###
 
 Created on Thu Jul 30 18:18:01 2020
-@modified: 2023-06-25
 @author: Philip
-
 """
 import csv
 import glob
 import io
 import logging
 import os
-import re
 import shutil
 import sys
 from contextlib import contextmanager
 
+# Preliminaries
 import pandas as pd
+import regex as re
 
 
 @contextmanager
@@ -72,20 +71,7 @@ ch.setLevel(logging.DEBUG)
 ch.setFormatter(formatter)
 log.addHandler(ch)
 
-# thestring = df["Result"]
-# # Extract new columns from 'Result' column
-# result = thestring.split(";")[0].strip()
-# df["IPA Target"] = result.split("↔")[0].strip()
-# df["IPA Actual"] = result.split("↔")[1].strip()
-# tiers = thestring.split(";")[1]
-# df["Notes"] = tiers.split(",")[0].strip()
-# df["Orthography"] = tiers.split(",")[1].strip()
-# df["IPA Target Word"] = tiers.split(",")[2].strip()
-# df["IPA Actual Word"] = tiers.split(",")[3].strip()
-# df["IPA Alignment Word"] = tiers.split(",")[4:]
 
-
-# Step 1: Transforms to uniform structure csv files
 def gen_csv(directory, query_type="accuracy"):
     """
     Formats a directory or subdirectories containing csv Phon query output files
@@ -113,8 +99,6 @@ def gen_csv(directory, query_type="accuracy"):
     phase_list = []
     language_list = []
     analysis_list = []
-    probe_list = []
-    probe_type_list = []
     file_count = 0
     assert "Compiled" not in os.listdir(
         directory
@@ -137,7 +121,7 @@ def gen_csv(directory, query_type="accuracy"):
             log.info("extracting from %s" % dirName)
             try:
                 os.makedirs(os.path.join(directory, "Compiled", "uniform_files"))
-            except:  # Removed "WindowsError" for MacOS compatibility
+            except WindowsError:
                 log.warning(sys.exc_info()[1])
                 log.warning("Compiled Data directory already created.")
             for cur_csv in os.listdir(dirName):
@@ -156,128 +140,86 @@ def gen_csv(directory, query_type="accuracy"):
                     continue
                 # Include only CSV files
                 if cur_csv.endswith(".csv"):
-                    ## Removed code below to capture all csv files in directory
-                    # # Only works with "Accurate", "Deleted", and "Substitutions" files
-                    # substring_list = [
-                    #     "Accurate",
-                    #     "Deleted",
-                    #     "Deletions",
-                    #     "Substitutions",
-                    #     "Accuracy",  # Added for processed _Accuracy queries
-                    # ]
-                    # if any(substring in cur_csv for substring in substring_list):
-                    # open CSV file in read mode with UTF-8 encoding
-
-                    file_count += 1
-                    # Unused line to extract a list of subdirectories in path
-                    # filepath_folder_list = os.path.normpath(dirName).split(os.sep)
-                    with io.open(
-                        os.path.join(dirName, cur_csv), mode="r", encoding="utf-8"
-                    ) as current_csv:
-                        # create pandas DataFrame df from csv file
-                        df = pd.read_csv(current_csv, encoding="utf-8")
-                        ###################################################
-                        #### Extract keyword and column values
-                        keyword = "Queries_v3_phone_listings.xml"  # Write keyword here
-                        label = "Query Source"  # Write column label for keyword here
-                        df[label] = keyword
-                        # HAVE TO RENAME "SINGLETONS" FOLDER TO "ALL SINGLETONS"
-                        analysis = re.findall(
-                            r"Consonants|Initial Clusters|Final Clusters|Final Singletons|Initial Singletons|Medial Singletons|\/Singletons",
-                            dirName,
-                        )[0].replace(r"/", "")
-                        analysis_list.append(analysis)
-                        df["Analysis"] = analysis
-
-                        # Locate Phase in path
-                        phase = re.findall(r"BL\d|\d-MoPost|Pre|Post|Mid", dirName)[0]
-                        phase_list.append(phase)
-                        df["Phase"] = phase
-                        language = "English"
-                        language_list.append(language)
-                        df["Language"] = language
-                        participant = cur_csv.split(".")[1].split("_")[0]
-                        participant_list.append(participant)
-                        df["Participant"] = participant
-                        # Add column of Speaker ID extracted from filename
-                        df["Speaker"] = participant
-                        ###################################################
-                        print(
-                            "***********************************************\n",
-                            list(df),
-                        )
-                        probe = cur_csv.split(".")[1].split("_")[1]
-                        probe_list.append(probe)
-                        df["Probe"] = probe
-                        probe_type = cur_csv.split(".")[1].split("_")[2].split(" ")[0]
-                        probe_type_list.append(probe_type)
-                        df["Probe Type"] = probe_type
-
-                        # Apply transformation to 'Result' series to generate new columns
-                        derive_dict = {
-                            "IPA Alignment": lambda x: x.split(";")[0].strip(),
-                            "IPA Target": lambda x: x.split(";")[0]
-                            .strip()
-                            .split("↔")[0]
-                            .strip(),
-                            "IPA Actual": lambda x: x.split(";")[0]
-                            .strip()
-                            .split("↔")[1]
-                            .strip(),
-                            "Tiers": lambda x: x.split(";")[1],
-                            "Notes": lambda x: x.split(";")[1].split(",")[0].strip(),
-                            "Orthography": lambda x: x.split(";")[1]
-                            .split(",")[1]
-                            .strip(),
-                            "IPA Target Word": lambda x: x.split(";")[1]
-                            .split(",")[2]
-                            .strip(),
-                            "IPA Actual Word": lambda x: x.split(";")[1]
-                            .split(",")[3]
-                            .strip(),
-                            "IPA Alignment Word": lambda x: x.split(";")[1].split(",")[
-                                4:
-                            ],
-                        }
-                        for key in derive_dict.keys():
-                            df[key] = df["Result"].apply(derive_dict[key])
-
-                        # Save REV_csv, UTF-9
-                        log.info("Current working directory" + os.getcwd())
-                        try:
-                            df.to_csv(
-                                os.path.join(
-                                    directory,
-                                    "Compiled",
-                                    "uniform_files",
-                                    "%s_%s_%s_%s_%s_%s.csv"
-                                    % (
-                                        participant,
-                                        language,
-                                        phase,
-                                        analysis,
-                                        probe,
-                                        probe_type,
-                                    ),
-                                ),
-                                encoding="utf-8",
-                                index=False,
+                    # Only works with "Accurate", "Deleted", and "Substitutions" files
+                    substring_list = [
+                        "Accurate",
+                        "Deleted",
+                        "Deletions",
+                        "Substitutions",
+                    ]
+                    if any(substring in cur_csv for substring in substring_list):
+                        # open CSV file in read mode with UTF-8 encoding
+                        file_count += 1
+                        with io.open(
+                            os.path.join(dirName, cur_csv), mode="r", encoding="utf-8"
+                        ) as current_csv:
+                            # create pandas DataFrame df from csv file
+                            df = pd.read_csv(current_csv, encoding="utf-8")
+                            ###################################################
+                            #### Extract keyword and column values
+                            keyword = "Consonant Accuracy Phon 2.2b21 wDiacritics"  # Write keyword here
+                            label = "Query"  # Write column label for keyword here
+                            df[label] = keyword
+                            analysis = "Singleton Accuracy"
+                            analysis_list.append(analysis)
+                            df["Analysis"] = analysis
+                            phase = re.findall(r"BL\d|\d-MoPost|Pre|Post|Mid", cur_csv)[
+                                0
+                            ]
+                            phase_list.append(phase)
+                            df["Phase"] = phase
+                            language = "Spanish"
+                            language_list.append(language)
+                            df["Language"] = language
+                            participant = cur_csv.split("_")[1]
+                            participant_list.append(participant)
+                            df["Participant"] = participant
+                            # Add column of Speaker ID extracted from filename
+                            df["Speaker"] = participant
+                            # Add column of source csv query type, extracted from filename
+                            accuracy = cur_csv.split("_")[0].split(".")[0]
+                            if accuracy == "Deletions":
+                                accuracy = "Deleted"
+                            df["Accuracy"] = accuracy
+                            ###################################################
+                            print(
+                                "***********************************************\n",
+                                list(df),
                             )
-                        except FileNotFoundError:
-                            log.error(sys.exc_info()[1])
-                            log.error("Compiled Data folder not yet created")
+
+                            # Save REV_csv
+                            # With UTF-8 BOM encoding for Excel readability
+                            log.info("Current working directory" + os.getcwd())
+                            try:
+                                df.to_csv(
+                                    os.path.join(
+                                        directory,
+                                        "Compiled",
+                                        "uniform_files",
+                                        "%s_%s_%s_%s_%s.csv"
+                                        % (
+                                            participant,
+                                            language,
+                                            phase,
+                                            analysis,
+                                            accuracy,
+                                        ),
+                                    ),
+                                    encoding="utf-8-sig",
+                                    index=False,
+                                )
+                            except FileNotFoundError:
+                                log.error(sys.exc_info()[1])
+                                log.error("Compiled Data folder not yet created")
         return (
             set(participant_list),
             set(phase_list),
             set(language_list),
             set(analysis_list),
-            set(probe_list),
-            set(probe_type),
             file_count,
         )
 
 
-# Step 2: Merges uniformly structured csv files
 def merge_csv(
     participant_list=["AllPart"],
     language_list=["AllLang"],
@@ -318,11 +260,10 @@ def merge_csv(
     if analysis_list != ["AllAnalyses"]:
         warning = "If a custom analysis_list is passed, separate_analyses must = True"
         assert separate_analyses == True, warning
+
     try:
         os.makedirs(os.path.join(directory, "Compiled", "merged_files"))
-    # Was WindowsError for Windows operating system.
-    except FileExistsError as e:
-        log.warning(str(e))
+    except WindowsError:
         log.warning(sys.exc_info()[1])
         log.warning("Compiled Data directory already created.")
     for participant in participant_list:
@@ -340,62 +281,26 @@ def merge_csv(
                     if separate_participants:
                         if separate_languages:
                             if separate_analyses:
-                                file_search_term = os.path.join(
-                                    directory,
-                                    "Compiled",
-                                    "uniform_files",
-                                    f"*{participant}*{language}*{analysis}*.csv",
-                                )
-                                # file_search_term = f"{directory}\\Compiled\\uniform_files\\*{participant}*{language}*{analysis}*.csv"
+                                file_search_term = f"{directory}\\Compiled\\uniform_files\\*{participant}*{language}*{analysis}*.csv"
                             else:
-                                file_search_term = os.path.join(
-                                    directory,
-                                    "Compiled",
-                                    "uniform_files",
-                                    f"*{participant}*{language}*.csv",
-                                )
+                                file_search_term = f"{directory}\\Compiled\\uniform_files\\*{participant}*{language}*.csv"
                         else:
                             if separate_analyses:
-                                file_search_term = os.path.join(
-                                    directory,
-                                    "Compiled",
-                                    "uniform_files",
-                                    f"*{participant}*{analysis}*.csv",
-                                )
+                                file_search_term = f"{directory}\\Compiled\\uniform_files\\*{participant}*{analysis}*.csv"
                             else:
-                                file_search_term = os.path.join(
-                                    directory,
-                                    "Compiled",
-                                    "uniform_files",
-                                    f"*{participant}*.csv",
-                                )
+                                file_search_term = f"{directory}\\Compiled\\uniform_files\\*{participant}*.csv"
                     else:
                         if separate_languages:
                             if separate_analyses:
-                                file_search_term = os.path.join(
-                                    directory,
-                                    "Compiled",
-                                    "uniform_files",
-                                    f"*{language}*{analysis}*.csv",
-                                )
+                                file_search_term = f"{directory}\\Compiled\\uniform_files\\*{language}*{analysis}*.csv"
                             else:
-                                file_search_term = os.path.join(
-                                    directory,
-                                    "Compiled",
-                                    "uniform_files",
-                                    f"*{language}*.csv",
-                                )
+                                file_search_term = f"{directory}\\Compiled\\uniform_files\\*{language}*.csv"
                         else:
                             if separate_analyses:
-                                file_search_term = os.path.join(
-                                    directory,
-                                    "Compiled",
-                                    "uniform_files",
-                                    f"*{analysis}*.csv",
-                                )
+                                file_search_term = f"{directory}\\Compiled\\uniform_files\\*{analysis}*.csv"
                             else:
-                                file_search_term = os.path.join(
-                                    directory, "Compiled", "uniform_files", "*.csv"
+                                file_search_term = (
+                                    f"{directory}\\Compiled\\uniform_files\\*.csv"
                                 )
                     for i, fname in enumerate(glob.glob(file_search_term)):
                         with io.open(fname, "rb") as infile:
@@ -410,7 +315,6 @@ def merge_csv(
     return save_path
 
 
-# Step 3: Organizes and renames columns according to column_alignment.csv
 def column_match(
     table_to_modify,
     column_key="column_alignment.csv",
@@ -434,20 +338,14 @@ def column_match(
     """
 
     # Import table_to_modify as DataFrame
-    if os.path.isfile(table_to_modify):
-        table_directory = os.path.dirname(table_to_modify)
-        print("'table_to_modify' input is a filepath.")
+    try:
         table_to_modify = pd.read_csv(table_to_modify, encoding="utf-8")
-    else:
-        table_directory = None
-        if isinstance(table_to_modify, pd.DataFrame):
-            print("'table_to_modify' input is a DataFrame already.")
-            warning = (
-                "table_to_modify must be valid file path, buffer object, or DataFrame"
-            )
+    except ValueError:
+        warning = "table_to_modify must be valid file path, buffer object, or DataFrame"
         assert type(table_to_modify) == pd.core.frame.DataFrame, warning
-    new_table = table_to_modify
-    # os.path.join(table_directory,
+    finally:
+        new_table = table_to_modify
+
     with open(column_key, mode="r") as key_file:
         key_reader = csv.reader(key_file)
         # Extract column information
@@ -495,12 +393,6 @@ def column_match(
         if valid_transformation == True:
             print("*****************************")
             print("Valid transformation achieved.")
-        else:
-            print("*****************************")
-            print(
-                "WARNING: Valid transformation NOT achieved. Check file when complete."
-            )
-        print("Creating file...")
         new_table.to_csv(
             os.path.join(
                 directory, "Compiled", "merged_files", f"{output_filename}.csv"
@@ -508,15 +400,4 @@ def column_match(
             encoding="utf-8",
             index=False,
         )
-        print("Process complete.")
         return (new_table, actual_cols_omitted_renamed, actual_cols_added)
-
-
-###
-# Example use case:
-directory = r"R:\Admin\Philip\Test Analysis"
-# res = gen_csv(directory)
-# file_path = merge_csv()
-## RESUME HERE:
-result = column_match(file_path)
-###
