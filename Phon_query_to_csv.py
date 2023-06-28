@@ -166,7 +166,7 @@ def gen_csv(directory, query_type="accuracy"):
                         df = pd.read_csv(current_csv, encoding="utf-8")
                         ###################################################
                         #### Extract keyword and column values
-                        keyword = "Queries_v3_aggregate-accuracy-participant.xml"  # Write keyword here
+                        keyword = "Queries_v3_phone_listings.xml"  # Write keyword here
                         label = "Query Source"  # Write column label for keyword here
                         df[label] = keyword
                         # HAVE TO RENAME "SINGLETONS" FOLDER TO "ALL SINGLETONS"
@@ -189,12 +189,6 @@ def gen_csv(directory, query_type="accuracy"):
                         df["Participant"] = participant
                         # Add column of Speaker ID extracted from filename
                         df["Speaker"] = participant
-                        # Add column of source csv query type, extracted from filename
-                        # Replaced with dummy "cur_csv.split("_")[0].split(".")[0]""
-                        accuracy = "phone listings"
-                        if accuracy == "Deletions":
-                            accuracy = "Deleted"
-                        df["Accuracy"] = accuracy
                         ###################################################
                         print(
                             "***********************************************\n",
@@ -206,6 +200,19 @@ def gen_csv(directory, query_type="accuracy"):
                         probe_type = cur_csv.split(".")[1].split("_")[2].split(" ")[0]
                         probe_type_list.append(probe_type)
                         df["Probe Type"] = probe_type
+
+                        thestring = df["Result"]
+                        # Extract new columns from 'Result' column
+                        result = thestring.split(";")[0].strip()
+                        df["IPA Target"] = result.split("↔")[0].strip()
+                        df["IPA Actual"] = result.split("↔")[1].strip()
+                        tiers = thestring.split(";")[1]
+                        df["Notes"] = tiers.split(",")[0].strip()
+                        df["Orthography"] = tiers.split(",")[1].strip()
+                        df["IPA Target Word"] = tiers.split(",")[2].strip()
+                        df["IPA Actual Word="] = tiers.split(",")[3].strip()
+                        df["IPA Alignment Word"] = tiers.split(",")[4:]
+
                         # Save REV_csv
                         # With UTF-8
                         log.info("Current working directory" + os.getcwd())
@@ -479,9 +486,8 @@ def column_match(
 
 ###
 # Example use case:
-directory = "/Volumes/rdss_pcombiths/Admin/Philip/Test Analysis"
-# res = gen_csv(directory)
+directory = "/Users/pcombiths/Documents/Test Analysis"
+res = gen_csv(directory)
 # file_path = merge_csv()
-file_path = "/Volumes/rdss_pcombiths/Admin/Philip/Test Analysis/Compiled/merged_files/AllPart_AllLang_AllAnalyses_data.csv"
-result = column_match(file_path)
+# result = column_match(file_path)
 ###
