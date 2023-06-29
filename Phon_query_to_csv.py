@@ -72,18 +72,6 @@ ch.setLevel(logging.DEBUG)
 ch.setFormatter(formatter)
 log.addHandler(ch)
 
-# thestring = df["Result"]
-# # Extract new columns from 'Result' column
-# result = thestring.split(";")[0].strip()
-# df["IPA Target"] = result.split("↔")[0].strip()
-# df["IPA Actual"] = result.split("↔")[1].strip()
-# tiers = thestring.split(";")[1]
-# df["Notes"] = tiers.split(",")[0].strip()
-# df["Orthography"] = tiers.split(",")[1].strip()
-# df["IPA Target Word"] = tiers.split(",")[2].strip()
-# df["IPA Actual Word"] = tiers.split(",")[3].strip()
-# df["IPA Alignment Word"] = tiers.split(",")[4:]
-
 
 # Step 1: Transforms to uniform structure csv files
 def gen_csv(directory, query_type="accuracy"):
@@ -410,6 +398,54 @@ def merge_csv(
     return save_path
 
 
+# Step 3: Create accuracy columns
+def calculate_accuracy(filepath):
+    """
+    Calculate accuracy metrics based on IPA Target and IPA Actual columns in a CSV file.
+
+    Args:
+        filepath (str): The path to the CSV file.
+
+    Returns:
+        DataFrame: The updated DataFrame with accuracy metrics.
+    """
+    # Read the CSV file into a DataFrame
+    df = pd.read_csv(filepath, encoding="utf-8")
+
+    print("Processing...")
+
+    # Create masks based to derive accurate, substituted, and deleted phones
+    accurate_mask = df["IPA Target"] == df["IPA Actual"]
+    inaccurate_mask = df["IPA Target"] != df["IPA Actual"]
+    deletion_mask = df["IPA Actual"] == "∅"
+    substitution_mask = (df["IPA Target"] != df["IPA Actual"]) & (
+        df["IPA Actual"] != "∅"
+    )
+
+    # Initialize columns with default values
+    df["Accuracy"] = 0
+    df["Deletion"] = 0
+    df["Substitution"] = 0
+    df["Accuracy"] = 0
+
+    print("Processing...")
+
+    # Assign values to columns based on masks
+    df.loc[accurate_mask, "Accuracy"] = 1
+    df.loc[deletion_mask, "Deletion"] = 1
+    df.loc[substitution_mask, "Substitution"] = 1
+
+    # Save the updated DataFrame to a new CSV file
+    print("Generating CSV file...")
+
+    output_filepath = os.path.join(os.path.dirname(filepath), "data_accuracy.csv")
+    df.to_csv(output_filepath, encoding="utf-8")
+
+    print("Process complete.")
+
+    return df
+
+
 # Step 3: Organizes and renames columns according to column_alignment.csv
 def column_match(
     table_to_modify,
@@ -512,11 +548,11 @@ def column_match(
         return (new_table, actual_cols_omitted_renamed, actual_cols_added)
 
 
-###
 # Example use case:
-directory = r"C:\Users\Philip\Documents\DPA\data\DPA v1_6"
-res = gen_csv(directory)
-file_path = merge_csv()
-## RESUME HERE:
-result = column_match(file_path)
-###
+# directory = r"C:\Users\Philip\Documents\DPA\data\DPA v1_6"
+# filepath = gen_csv(directory)
+# filepath = merge_csv()
+# filepath = "R:\Admin\Philip\Test Analysis\Compiled\merged_files\AllPart_AllLang_AllAnalyses_data.csv"
+# calculate_accuracy(filepath)
+# result = column_match(filepath)
+
