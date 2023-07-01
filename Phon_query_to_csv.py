@@ -470,10 +470,13 @@ def column_match(
     """
 
     # Import table_to_modify as DataFrame
-    if os.path.isfile(table_to_modify):
-        table_directory = os.path.dirname(table_to_modify)
-        print("'table_to_modify' input is a filepath.")
-        table_to_modify = pd.read_csv(table_to_modify, encoding="utf-8")
+    try:
+        if os.path.isfile(table_to_modify):
+            table_directory = os.path.dirname(table_to_modify)
+            print("'table_to_modify' input is a filepath.")
+            table_to_modify = pd.read_csv(table_to_modify, encoding="utf-8")
+    except:
+        pass
     else:
         table_directory = None
         if isinstance(table_to_modify, pd.DataFrame):
@@ -537,22 +540,24 @@ def column_match(
                 "WARNING: Valid transformation NOT achieved. Check file when complete."
             )
         print("Creating file...")
+
+        output_filepath = os.path.join(
+            directory, "Compiled", "merged_files", f"{output_filename}.csv"
+        )
         new_table.to_csv(
-            os.path.join(
-                directory, "Compiled", "merged_files", f"{output_filename}.csv"
-            ),
+            output_filepath,
             encoding="utf-8",
             index=False,
         )
+        print("CSV file Generated:", os.path.abspath(output_filepath))
         print("Process complete.")
         return (new_table, actual_cols_omitted_renamed, actual_cols_added)
 
 
 # Example use case:
-# directory = r"C:\Users\Philip\Documents\DPA\data\DPA v1_6"
+directory = r"C:\Users\Philip\Documents\DPA\data\DPA v1_6"
 # filepath = gen_csv(directory)
 # filepath = merge_csv()
-# filepath = "R:\Admin\Philip\Test Analysis\Compiled\merged_files\AllPart_AllLang_AllAnalyses_data.csv"
-# calculate_accuracy(filepath)
-# result = column_match(filepath)
-
+filepath = r"C:\Users\Philip\Documents\DPA\data\DPA v1_6\Compiled\merged_files\AllPart_AllLang_AllAnalyses_data.csv"
+accuracy_df = calculate_accuracy(filepath)
+result = column_match(accuracy_df)
