@@ -178,13 +178,15 @@ def gen_csv(directory, query_type="accuracy"):
                         df["Analysis"] = analysis
 
                         # Locate Phase in path
-                        phase = re.findall(r"BL\d|\d-MoPost|Pre|Post|Mid", dirName)[0]
+                        phase = re.findall(
+                            r"BL-\d{1,2}|Post-\dmo|Pre|Post|Mid|Tx-\d{1,2}", cur_csv
+                        )[0]
                         phase_list.append(phase)
                         df["Phase"] = phase
-                        language = "English"
+                        language = cur_csv.split(".")[0]
                         language_list.append(language)
                         df["Language"] = language
-                        participant = cur_csv.split(".")[1].split("_")[0]
+                        participant = "S202"
                         participant_list.append(participant)
                         df["Participant"] = participant
                         # Add column of Speaker ID extracted from filename
@@ -194,39 +196,45 @@ def gen_csv(directory, query_type="accuracy"):
                             "***********************************************\n",
                             list(df),
                         )
-                        probe = cur_csv.split(".")[1].split("_")[1]
+                        probe = cur_csv.split("_")[1]
                         probe_list.append(probe)
                         df["Probe"] = probe
-                        probe_type = cur_csv.split(".")[1].split("_")[2].split(" ")[0]
+                        probe_type = phase
                         probe_type_list.append(probe_type)
                         df["Probe Type"] = probe_type
 
                         # Apply transformation to 'Result' series to generate new columns
                         derive_dict = {
-                            "IPA Alignment": lambda x: x.split(";")[0].strip(),
-                            "IPA Target": lambda x: x.split(";")[0]
+                            "IPA Alignment": lambda x: x.split(";", 1)[0].strip(),
+                            "IPA Target": lambda x: x.split(";", 1)[0]
                             .strip()
                             .split("↔")[0]
                             .strip(),
-                            "IPA Actual": lambda x: x.split(";")[0]
+                            "IPA Actual": lambda x: x.split(";", 1)[0]
                             .strip()
                             .split("↔")[1]
                             .strip(),
-                            "Tiers": lambda x: x.split(";")[1],
-                            "Notes": lambda x: x.split(";")[1].split(",")[0].strip(),
-                            "Orthography": lambda x: x.split(";")[1]
+                            "Tiers": lambda x: x.split(";", 1)[1],
+                            "Notes": lambda x: x.split(";", 1)[1].split(",")[0].strip(),
+                            "Orthography": lambda x: x.split(";", 1)[1]
                             .split(",")[1]
                             .strip(),
-                            "IPA Target Word": lambda x: x.split(";")[1]
+                            "IPA Target Word": lambda x: x.split(";", 1)[1]
                             .split(",")[2]
                             .strip(),
-                            "IPA Actual Word": lambda x: x.split(";")[1]
+                            "IPA Actual Word": lambda x: x.split(";", 1)[1]
                             .split(",")[3]
                             .strip(),
-                            "IPA Alignment Word": lambda x: x.split(";")[1].split(",")[
-                                4:
-                            ],
+                            "IPA Alignment Word": lambda x: x.split(";", 1)[1].split(
+                                ","
+                            )[4:],
                         }
+
+                        # Quick fix for when there are initials with a semicolon in the Note:
+                        # df["Result"] = df["Result"].str.replace(
+                        #     r"[A-Z]{2};|Eg;", r"EDITED", regex=True
+                        # )
+
                         for key in derive_dict.keys():
                             df[key] = df["Result"].apply(derive_dict[key])
 
@@ -398,7 +406,7 @@ def merge_csv(
     return save_path
 
 
-# Step 3: Create accuracy columns
+# Step 3: Create accuracy columns in dataframe
 def calculate_accuracy(filepath):
     """
     Calculate accuracy metrics based on IPA Target and IPA Actual columns in a CSV file.
@@ -555,9 +563,9 @@ def column_match(
 
 
 # Example use case:
-directory = r"C:\Users\Philip\Documents\DPA\data\DPA v1_6"
-# filepath = gen_csv(directory)
-# filepath = merge_csv()
-filepath = r"C:\Users\Philip\Documents\DPA\data\DPA v1_6\Compiled\merged_files\AllPart_AllLang_AllAnalyses_data.csv"
+directory = r"/Users/pcombiths/Documents/Sofia M Phon Analysis/Analysis"
+filepath = gen_csv(directory)
+filepath = merge_csv()
+# filepath = r"C:\Users\Philip\Documents\DPA\data\DPA v1_6\Compiled\merged_files\AllPart_AllLang_AllAnalyses_data.csv"
 accuracy_df = calculate_accuracy(filepath)
 result = column_match(accuracy_df)
