@@ -179,14 +179,15 @@ def gen_csv(directory, query_type="accuracy"):
 
                         # Locate Phase in path
                         phase = re.findall(
-                            r"BL-\d{1,2}|Post-\dmo|Pre|Post|Mid|Tx-\d{1,2}", cur_csv
+                            r"BL-\d{1,2}|Post-\dmo|post|Pre|Post|Mid|Tx-\d{1,2}",
+                            cur_csv,
                         )[0]
                         phase_list.append(phase)
                         df["Phase"] = phase
                         language = cur_csv.split(".")[0]
                         language_list.append(language)
                         df["Language"] = language
-                        participant = "S202"
+                        participant = "S201"
                         participant_list.append(participant)
                         df["Participant"] = participant
                         # Add column of Speaker ID extracted from filename
@@ -563,9 +564,9 @@ def column_match(
 
 
 # Example use case:
-directory = r"/Users/pcombiths/Documents/Sofia M Phon Analysis/Analysis"
+directory = r"/Users/pcombiths/Documents/Sofia M Phon Analysis/Analysis/S201"
 filepath = gen_csv(directory)
 filepath = merge_csv()
 # filepath = r"C:\Users\Philip\Documents\DPA\data\DPA v1_6\Compiled\merged_files\AllPart_AllLang_AllAnalyses_data.csv"
 accuracy_df = calculate_accuracy(filepath)
-result = column_match(accuracy_df)
+# result = column_match(accuracy_df)
