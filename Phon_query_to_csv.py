@@ -187,7 +187,11 @@ def gen_csv(directory, query_type="accuracy"):
                         language = cur_csv.split(".")[0]
                         language_list.append(language)
                         df["Language"] = language
-                        participant = "S201"
+                        participant = re.findall(
+                            r"S201|S202",
+                            dirName,
+                        )[0]
+
                         participant_list.append(participant)
                         df["Participant"] = participant
                         # Add column of Speaker ID extracted from filename
@@ -564,7 +568,7 @@ def column_match(
 
 
 # Example use case:
-directory = r"/Users/pcombiths/Documents/Sofia M Phon Analysis/Analysis/S201"
+directory = r"R:\CLD Lab\Member Folders\Sofia M\Phon Project"
 filepath = gen_csv(directory)
 filepath = merge_csv()
 # filepath = r"C:\Users\Philip\Documents\DPA\data\DPA v1_6\Compiled\merged_files\AllPart_AllLang_AllAnalyses_data.csv"
