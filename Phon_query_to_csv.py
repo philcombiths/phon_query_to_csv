@@ -17,7 +17,7 @@ result = column_match(file_path)
 ###
 
 Created on Thu Jul 30 18:18:01 2020
-@modified: 2023-06-25
+@modified: 2023-10-11
 @author: Philip
 
 """
@@ -178,7 +178,7 @@ def gen_csv(directory, query_type="accuracy"):
                         df["Analysis"] = analysis
 
                         # Locate Phase in path
-                        phase = re.findall(r"BL\d|\d-MoPost|Pre|Post|Mid", dirName)[0]
+                        phase = "NA"
                         phase_list.append(phase)
                         df["Phase"] = phase
                         language = "English"
@@ -197,7 +197,7 @@ def gen_csv(directory, query_type="accuracy"):
                         probe = cur_csv.split(".")[1].split("_")[1]
                         probe_list.append(probe)
                         df["Probe"] = probe
-                        probe_type = cur_csv.split(".")[1].split("_")[2].split(" ")[0]
+                        probe_type = cur_csv.split(".")[1].split("_")[1]
                         probe_type_list.append(probe_type)
                         df["Probe Type"] = probe_type
 
@@ -229,7 +229,6 @@ def gen_csv(directory, query_type="accuracy"):
                         }
                         for key in derive_dict.keys():
                             df[key] = df["Result"].apply(derive_dict[key])
-
                         # Save REV_csv, UTF-9
                         log.info("Current working directory" + os.getcwd())
                         try:
@@ -238,14 +237,11 @@ def gen_csv(directory, query_type="accuracy"):
                                     directory,
                                     "Compiled",
                                     "uniform_files",
-                                    "%s_%s_%s_%s_%s_%s.csv"
+                                    "%s_%s_%s.csv"
                                     % (
                                         participant,
-                                        language,
-                                        phase,
                                         analysis,
                                         probe,
-                                        probe_type,
                                     ),
                                 ),
                                 encoding="utf-8",
@@ -555,9 +551,9 @@ def column_match(
 
 
 # Example use case:
-directory = r"C:\Users\Philip\Documents\DPA\data\DPA v1_6"
-# filepath = gen_csv(directory)
-# filepath = merge_csv()
-filepath = r"C:\Users\Philip\Documents\DPA\data\DPA v1_6\Compiled\merged_files\AllPart_AllLang_AllAnalyses_data.csv"
+directory = r"/Users/pcombiths/Library/CloudStorage/OneDrive-UniversityofIowa/CLD Lab/Adult Language DLD/Pilot (IASCL 2023)/data"
+filepath = gen_csv(directory)
+filepath = merge_csv()
+# filepath = r"C:\Users\Philip\Documents\DPA\data\DPA v1_6\Compiled\merged_files\AllPart_AllLang_AllAnalyses_data.csv"
 accuracy_df = calculate_accuracy(filepath)
 result = column_match(accuracy_df)
