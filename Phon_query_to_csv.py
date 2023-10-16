@@ -171,7 +171,7 @@ def gen_csv(directory, query_type="accuracy"):
                         df[label] = keyword
                         # HAVE TO RENAME "SINGLETONS" FOLDER TO "ALL SINGLETONS"
                         analysis = re.findall(
-                            r"Consonants|Initial Clusters|Final Clusters|Final Singletons|Initial Singletons|Medial Singletons|Singletons",
+                            r"Consonants|Initial Clusters|Final Clusters|Final Singletons|Initial Singletons|Medial Singletons|Singletons|Vowels",
                             dirName,
                         )[0].replace(r"/", "")
                         analysis_list.append(analysis)
@@ -551,7 +551,7 @@ def column_match(
 
 
 # Example use case:
-directory = r"/Users/pcombiths/Library/CloudStorage/OneDrive-UniversityofIowa/CLD Lab/Adult Language DLD/Pilot (IASCL 2023)/data"
+directory = r"/Users/pcombiths/Library/CloudStorage/OneDrive-UniversityofIowa/CLD Lab/Adult Language DLD/Pilot (IASCL 2023)/data/Vowels Listing"
 filepath = gen_csv(directory)
 filepath = merge_csv()
 # filepath = r"C:\Users\Philip\Documents\DPA\data\DPA v1_6\Compiled\merged_files\AllPart_AllLang_AllAnalyses_data.csv"
