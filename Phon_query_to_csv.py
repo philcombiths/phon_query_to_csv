@@ -169,9 +169,8 @@ def gen_csv(directory, query_type="accuracy"):
                         keyword = "Queries_v3_phone_listings.xml"  # Write keyword here
                         label = "Query Source"  # Write column label for keyword here
                         df[label] = keyword
-                        # HAVE TO RENAME "SINGLETONS" FOLDER TO "ALL SINGLETONS"
                         analysis = re.findall(
-                            r"Consonants|Initial Clusters|Final Clusters|Final Singletons|Initial Singletons|Medial Singletons|Singletons",
+                            r"Consonants|Initial Clusters|Final Clusters|Final Singletons|Initial Singletons|Medial Singletons|Singletons|Vowels",
                             dirName,
                         )[0].replace(r"/", "")
                         analysis_list.append(analysis)
@@ -566,11 +565,21 @@ def column_match(
         print("Process complete.")
         return (new_table, actual_cols_omitted_renamed, actual_cols_added)
 
+# phone_data_expander [in progress]
+def phone_data_expander(dataframe):
+    # Split cluster targets into component phonemes
+    # For each component phoneme:
+    #   Create df columns for each of the useful feature details:
+    #   sonority, manner, voice, place, class
+    #   Use the IPA table project already started
+    # Draw on other required tables, including baseline phones to create additional cols
+    return 
+    
 
 # Example use case:
-directory = r"R:\CLD Lab\Member Folders\Sofia M\Phon Project"
+directory = "/Users/pcombiths/Library/CloudStorage/OneDrive-UniversityofIowa/Offline Work/SSD Tx III - BHL/analysis"
 filepath = gen_csv(directory)
 filepath = merge_csv()
-# filepath = r"C:\Users\Philip\Documents\DPA\data\DPA v1_6\Compiled\merged_files\AllPart_AllLang_AllAnalyses_data.csv"
 accuracy_df = calculate_accuracy(filepath)
 # result = column_match(accuracy_df)
+pass
