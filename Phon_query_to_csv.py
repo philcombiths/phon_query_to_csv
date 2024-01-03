@@ -566,14 +566,29 @@ def column_match(
         return (new_table, actual_cols_omitted_renamed, actual_cols_added)
 
 # phone_data_expander [in progress]
-def phone_data_expander(dataframe):
-    # Split cluster targets into component phonemes
+def phone_data_expander(df):
+    # Generate ['ID-Target-Lang'] column
+    df['ID-Target-Lang'] = df['ID'] + df['IPA Target'] + df['Language']
+    # Generate ['Type'] column
+    df['Type'] = np.where(df['IPA Target'].str.len() == 1, 'C', np.where(df['IPA Target'].str.len() == 2, 'CC', 'CCC'))
+    # Generate Target and Actual columns for each consonant in clusters
+    df['T1'] = df['IPA Target'].str[0]  # Get C1
+    df['T2'] = df['IPA Target'].str[1]  # Get C2
+    df['T3'] = df['IPA Target'].str[2]  # Get C3
+    df['A1'] = df['IPA Actual'].str[0]  # Get C1
+    df['A2'] = df['IPA Actual'].str[1]  # Get C2
+    df['A3'] = df['IPA Actual'].str[2]  # Get C3
+    df['A4'] = df['IPA Actual'].str[2]  # Get C4
+    df['A5'] = df['IPA Actual'].str[2]  # Get C5
+    # Fill NaN with empty string ''
+    df[['T1', 'T2', 'T3','A1', 'A2', 'A3', 'A4', 'A5']] = df[['T1', 'T2', 'T3','A1', 'A2', 'A3', 'A4', 'A5']].fillna('')
+
     # For each component phoneme:
     #   Create df columns for each of the useful feature details:
     #   sonority, manner, voice, place, class
     #   Use the IPA table project already started
     # Draw on other required tables, including baseline phones to create additional cols
-    return 
+    return  df
     
 
 # Example use case:
