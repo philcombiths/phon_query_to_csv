@@ -17,8 +17,8 @@ result = column_match(file_path)
 ###
 
 Created on Thu Jul 30 18:18:01 2020
-@modified: 2023-06-25
-@author: Philip
+@modified: 2024-01-03
+@author: Philip Combiths
 
 """
 import csv
@@ -105,9 +105,16 @@ def gen_csv(directory, query_type="accuracy"):
     probe_list = []
     probe_type_list = []
     file_count = 0
-    assert "Compiled" not in os.listdir(
-        directory
-    ), "Compiled directory already exists. Move or remove before executing script,"
+    try:
+        assert "Compiled" not in os.listdir(directory), "Compiled directory already exists. Must be moved or remove before executing script."
+    except AssertionError as e:
+        print(e)
+        response = input("Compiled directory already exists. Do you want to delete the 'Compiled' directory? (Y/N): ")
+        if response.lower() == "y":
+            shutil.rmtree(os.path.join(directory, 'Compiled'))
+            print("Existing 'Compiled' directory has been deleted.")
+        else:
+            sys.exit("Exiting script.")
     with change_dir(os.path.normpath(directory)):
         for dirName, subdirList, fileList in os.walk(os.getcwd()):
             ## Check for Excel files in directory
@@ -184,7 +191,20 @@ def gen_csv(directory, query_type="accuracy"):
                         )[0]
                         phase_list.append(phase)
                         df["Phase"] = phase
-                        language = cur_csv.split(".")[0]
+                        # More complex language identification based on dictionary
+                        lang_dict = {
+                            "PEEP": "English",
+                            "En": "English",
+                            "EFE": "Spanish",
+                            "Sp": "Spanish",
+                            "else": "Spanish"
+                        }
+                        language = "Spanish"  # Default language
+                        for key, value in lang_dict.items():
+                            if key in cur_csv and value == "English":
+                                language = "English"
+                                break
+                        # language = cur_csv.split(".")[0] # Look in filename for language
                         language_list.append(language)
                         df["Language"] = language
                         participant = re.findall(
@@ -596,8 +616,10 @@ def phone_data_expander(df):
 # Example use case:
 if __name__ == "__main__":
     directory = "/Users/pcombiths/Library/CloudStorage/OneDrive-UniversityofIowa/Offline Work/SSD Tx III - BHL/analysis"
+    directory = r"C:\Users\Philip\OneDrive - University of Iowa\Offline Work\SSD Tx III - BHL\analysis"
     filepath = gen_csv(directory)
     filepath = merge_csv()
     accuracy_df = calculate_accuracy(filepath)
+    phone_data_expander(accuracy_df)
     # result = column_match(accuracy_df)
     pass
