@@ -32,6 +32,7 @@ import sys
 from contextlib import contextmanager
 
 import pandas as pd
+from ipa_features import ipa_map
 
 
 @contextmanager
@@ -564,7 +565,8 @@ def column_match(
         print("CSV file Generated:", os.path.abspath(output_filepath))
         print("Process complete.")
         return (new_table, actual_cols_omitted_renamed, actual_cols_added)
-
+    
+    
 # phone_data_expander [in progress]
 def phone_data_expander(df):
     # Generate ['ID-Target-Lang'] column
@@ -592,9 +594,10 @@ def phone_data_expander(df):
     
 
 # Example use case:
-directory = "/Users/pcombiths/Library/CloudStorage/OneDrive-UniversityofIowa/Offline Work/SSD Tx III - BHL/analysis"
-filepath = gen_csv(directory)
-filepath = merge_csv()
-accuracy_df = calculate_accuracy(filepath)
-# result = column_match(accuracy_df)
-pass
+if __name__ == "__main__":
+    directory = "/Users/pcombiths/Library/CloudStorage/OneDrive-UniversityofIowa/Offline Work/SSD Tx III - BHL/analysis"
+    filepath = gen_csv(directory)
+    filepath = merge_csv()
+    accuracy_df = calculate_accuracy(filepath)
+    # result = column_match(accuracy_df)
+    pass
