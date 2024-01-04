@@ -31,8 +31,23 @@ import shutil
 import sys
 from contextlib import contextmanager
 
+import numpy as np
 import pandas as pd
 from ipa_features import ipa_map
+from tqdm import tqdm
+
+"""
+Two way to show progress:
+1. Progress through loop
+from tqdm import tqdm
+for x in tqdm(x, desc='Processing X'):
+    Some code...
+2. Progress through an "apply" function
+from tqdm import tqdm
+tqdm.pandas()
+progress_apply(Some lambda function)
+
+"""
 
 
 @contextmanager
@@ -589,22 +604,46 @@ def column_match(
     
 # phone_data_expander [in progress]
 def phone_data_expander(df):
+    if not isinstance(df, pd.DataFrame):
+        # If not, assume it's a file location and load the data
+        file_location = df
+        df = pd.read_csv(file_location)
     # Generate ['ID-Target-Lang'] column
-    df['ID-Target-Lang'] = df['ID'] + df['IPA Target'] + df['Language']
+    df['ID-Target-Lang'] = df['Participant'] + df['IPA Target'] + df['Language']
     # Generate ['Type'] column
     df['Type'] = np.where(df['IPA Target'].str.len() == 1, 'C', np.where(df['IPA Target'].str.len() == 2, 'CC', 'CCC'))
     # Generate Target and Actual columns for each consonant in clusters
     df['T1'] = df['IPA Target'].str[0]  # Get C1
     df['T2'] = df['IPA Target'].str[1]  # Get C2
     df['T3'] = df['IPA Target'].str[2]  # Get C3
+    # Actual segments not accurate because diacritics are treated as segments.
     df['A1'] = df['IPA Actual'].str[0]  # Get C1
     df['A2'] = df['IPA Actual'].str[1]  # Get C2
     df['A3'] = df['IPA Actual'].str[2]  # Get C3
-    df['A4'] = df['IPA Actual'].str[2]  # Get C4
-    df['A5'] = df['IPA Actual'].str[2]  # Get C5
+    df['A4'] = df['IPA Actual'].str[3]  # Get C4
+    df['A5'] = df['IPA Actual'].str[4]  # Get C5
     # Fill NaN with empty string ''
-    df[['T1', 'T2', 'T3','A1', 'A2', 'A3', 'A4', 'A5']] = df[['T1', 'T2', 'T3','A1', 'A2', 'A3', 'A4', 'A5']].fillna('')
+    columns = ['T1', 'T2', 'T3', 'A1', 'A2', 'A3', 'A4', 'A5']
+    df[columns] = df[columns].fillna('')
+    
+    properties = ['voice', 'place', 'manner', 'sonority']
+    for col in tqdm(columns, desc='Processing columns'):
+        for prop in properties:
+            df[f'{col}_{prop}'] = df[col].apply(lambda x: getattr(ipa_map.ph_element(x), prop, '') if x else '')
 
+    columns_more = ['IPA Target', 'IPA Actual']
+    properties_more = ['voice', 'place', 'manner', 'sonority', 'EML']
+    for col in tqdm(columns_more, desc='Processing columns'):
+        for prop in properties_more:
+            df[f'{col}_{prop}'] = df[col].apply(lambda x: getattr(ipa_map.ph_element(x), prop, '') if x else '')
+
+    return df
+    
+    # For all the 'T1', 'T2', 'T3','A1', 'A2', 'A3', 'A4', 'A5' columns that contain IPA:
+        # extract sonority, manner, voice, place as new columns in the df using ipa_map.py
+    # When Type== "CC"
+        # Sonority distance
+        # For each component, 
     # For each component phoneme:
     #   Create df columns for each of the useful feature details:
     #   sonority, manner, voice, place, class
@@ -616,10 +655,11 @@ def phone_data_expander(df):
 # Example use case:
 if __name__ == "__main__":
     directory = "/Users/pcombiths/Library/CloudStorage/OneDrive-UniversityofIowa/Offline Work/SSD Tx III - BHL/analysis"
-    directory = r"C:\Users\Philip\OneDrive - University of Iowa\Offline Work\SSD Tx III - BHL\analysis"
-    filepath = gen_csv(directory)
-    filepath = merge_csv()
-    accuracy_df = calculate_accuracy(filepath)
-    phone_data_expander(accuracy_df)
+    # directory = r"C:\Users\Philip\OneDrive - University of Iowa\Offline Work\SSD Tx III - BHL\analysis"
+    file = "/Users/pcombiths/Library/CloudStorage/OneDrive-UniversityofIowa/Offline Work/SSD Tx III - BHL/analysis/Compiled/merged_files/data_accuracy.csv"
+    # filepath = gen_csv(directory)
+    # filepath = merge_csv()
+    # accuracy_df = calculate_accuracy(filepath)
+    phone_data_expander(file)
     # result = column_match(accuracy_df)
     pass
