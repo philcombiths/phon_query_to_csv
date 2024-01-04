@@ -189,11 +189,12 @@ def gen_csv(directory, query_type="accuracy"):
                         df = pd.read_csv(current_csv, encoding="utf-8")
                         ###################################################
                         #### Extract keyword and column values
-                        keyword = "Queries_v3_phone_listings.xml"  # Write keyword here
+                        keyword = "Queries_v4_phone_listings.xml"  # Write keyword here
+                        record = df['Record #']
                         label = "Query Source"  # Write column label for keyword here
                         df[label] = keyword
                         analysis = re.findall(
-                            r"Consonants|Initial Clusters|Final Clusters|Final Singletons|Initial Singletons|Medial Singletons|Singletons|Vowels",
+                            r"Consonants|Onset Clusters|Coda Clusters|Final Singletons|Initial Singletons|Medial Singletons|Singletons|Vowels|Initial Clusters|Final Clusters",
                             dirName,
                         )[0].replace(r"/", "")
                         analysis_list.append(analysis)
@@ -212,7 +213,7 @@ def gen_csv(directory, query_type="accuracy"):
                             "En": "English",
                             "EFE": "Spanish",
                             "Sp": "Spanish",
-                            "else": "Spanish"
+                            "else": "Spanish" # When Tx is in Spanish, otherwise set to Tx language
                         }
                         language = "Spanish"  # Default language
                         for key, value in lang_dict.items():
@@ -223,8 +224,8 @@ def gen_csv(directory, query_type="accuracy"):
                         language_list.append(language)
                         df["Language"] = language
                         participant = re.findall(
-                            r"S201|S202",
-                            dirName,
+                            r"\w\d\d\d",
+                            dirName+cur_csv,
                         )[0]
 
                         participant_list.append(participant)
@@ -270,15 +271,10 @@ def gen_csv(directory, query_type="accuracy"):
                             )[4:],
                         }
 
-                        # Quick fix for when there are initials with a semicolon in the Note:
-                        # df["Result"] = df["Result"].str.replace(
-                        #     r"[A-Z]{2};|Eg;", r"EDITED", regex=True
-                        # )
-
                         for key in derive_dict.keys():
                             df[key] = df["Result"].apply(derive_dict[key])
 
-                        # Save REV_csv, UTF-9
+                        # Save REV_csv, UTF-8
                         log.info("Current working directory" + os.getcwd())
                         try:
                             df.to_csv(
@@ -491,7 +487,7 @@ def calculate_accuracy(filepath):
 
     print("Process complete.")
 
-    return df
+    return output_filepath
 
 
 # Step 3: Organizes and renames columns according to column_alignment.csv
@@ -603,10 +599,9 @@ def column_match(
     
     
 # phone_data_expander [in progress]
-def phone_data_expander(df):
-    if not isinstance(df, pd.DataFrame):
+def phone_data_expander(file_location):
+    if not isinstance(file_location, pd.DataFrame):
         # If not, assume it's a file location and load the data
-        file_location = df
         df = pd.read_csv(file_location)
     # Generate ['ID-Target-Lang'] column
     df['ID-Target-Lang'] = df['Participant'] + df['IPA Target'] + df['Language']
@@ -637,6 +632,16 @@ def phone_data_expander(df):
         for prop in properties_more:
             df[f'{col}_{prop}'] = df[col].apply(lambda x: getattr(ipa_map.ph_element(x), prop, '') if x else '')
 
+
+    output_filepath = os.path.join(
+        directory, "Compiled", "merged_files", f"{output_filename}.csv"
+    )
+    new_table.to_csv(
+        output_filepath,
+        encoding="utf-8",
+        index=False,
+    )
+
     return df
     
     # For all the 'T1', 'T2', 'T3','A1', 'A2', 'A3', 'A4', 'A5' columns that contain IPA:
@@ -654,12 +659,11 @@ def phone_data_expander(df):
 
 # Example use case:
 if __name__ == "__main__":
-    directory = "/Users/pcombiths/Library/CloudStorage/OneDrive-UniversityofIowa/Offline Work/SSD Tx III - BHL/analysis"
+    directory = "/Users/pcombiths/Library/CloudStorage/OneDrive-UniversityofIowa/Offline Work/SSD Tx III - BHL/analysis/phon_data/new"
     # directory = r"C:\Users\Philip\OneDrive - University of Iowa\Offline Work\SSD Tx III - BHL\analysis"
-    file = "/Users/pcombiths/Library/CloudStorage/OneDrive-UniversityofIowa/Offline Work/SSD Tx III - BHL/analysis/Compiled/merged_files/data_accuracy.csv"
-    # filepath = gen_csv(directory)
-    # filepath = merge_csv()
-    # accuracy_df = calculate_accuracy(filepath)
-    phone_data_expander(file)
-    # result = column_match(accuracy_df)
+    file = "/Users/pcombiths/Library/CloudStorage/OneDrive-UniversityofIowa/Offline Work/SSD Tx III - BHL/analysis/phon_data/new/Compiled/merged_files/data_accuracy.csv"
+    filepath = gen_csv(directory)
+    filepath = merge_csv()
+    filepath = calculate_accuracy(filepath)
+    phone_data_expander(filepath)
     pass
