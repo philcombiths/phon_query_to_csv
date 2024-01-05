@@ -17,7 +17,7 @@ result = column_match(file_path)
 ###
 
 Created on Thu Jul 30 18:18:01 2020
-@modified: 2024-01-03
+@modified: 2024-01-05
 @author: Philip Combiths
 
 """
@@ -202,19 +202,13 @@ def gen_csv(directory, query_type="accuracy"):
                         df["Analysis"] = analysis
 
                         # Locate Phase in path
-                        phase = re.findall(
-                            r"BL-\d{1,2}|Post-\dmo|post|Pre|Post|Mid|Tx-\d{1,2}",
-                            cur_csv,
-                        )[0]
+                        phase = ""
                         phase_list.append(phase)
                         df["Phase"] = phase
                         # More complex language identification based on dictionary
                         lang_dict = {
-                            "PEEP": "English",
-                            "En": "English",
-                            "EFE": "Spanish",
-                            "Sp": "Spanish",
-                            "else": "Spanish" # When Tx is in Spanish, otherwise set to Tx language
+                            "Spn": "Spanish",
+                            "Eng": "English"
                         }
                         language = "Spanish"  # Default language
                         for key, value in lang_dict.items():
@@ -225,14 +219,15 @@ def gen_csv(directory, query_type="accuracy"):
                         language_list.append(language)
                         df["Language"] = language
                         participant = re.findall(
-                            r"\w\d\d\d",
+                            r"\d\d\d\d",
                             dirName+cur_csv,
                         )[0]
 
                         participant_list.append(participant)
                         df["Participant"] = participant
                         # Add column of Speaker ID extracted from filename
-                        df["Speaker"] = participant
+
+                        df["Transcriber"] = cur_csv.split("_")[-1]
                         ###################################################
                         print(
                             "***********************************************\n",
@@ -240,8 +235,8 @@ def gen_csv(directory, query_type="accuracy"):
                         )
                         probe = cur_csv.split("_")[1]
                         probe_list.append(probe)
-                        df["Probe"] = probe
-                        probe_type = phase
+                        df["ID"] = probe
+                        probe_type = cur_csv.split("_")[2]
                         probe_type_list.append(probe_type)
                         df["Probe Type"] = probe_type
 
@@ -604,8 +599,10 @@ def phone_data_expander(file_location):
     if not isinstance(file_location, pd.DataFrame):
         # If not, assume it's a file location and load the data
         df = pd.read_csv(file_location)
+    else:
+        df = file_location # user provided a df instead
     # Generate ['ID-Target-Lang'] column
-    df['ID-Target-Lang'] = df['Participant'] + df['IPA Target'] + df['Language']
+    df['ID-Target-Lang'] = str(df['Participant']) + df['IPA Target'] + df['Language']
     # Generate ['Type'] column
     df['Type'] = np.where(df['IPA Target'].str.len() == 1, 'C', np.where(df['IPA Target'].str.len() == 2, 'CC', 'CCC'))
     # Generate Target and Actual columns for each consonant in clusters
@@ -635,9 +632,9 @@ def phone_data_expander(file_location):
 
 
     output_filepath = os.path.join(
-        directory, "Compiled", "merged_files", f"{output_filename}.csv"
+        directory, "Compiled", "merged_files", "full_phone_data.csv"
     )
-    new_table.to_csv(
+    df.to_csv(
         output_filepath,
         encoding="utf-8",
         index=False,
@@ -660,9 +657,9 @@ def phone_data_expander(file_location):
 
 # Example use case:
 if __name__ == "__main__":
-    directory = "/Users/pcombiths/Library/CloudStorage/OneDrive-UniversityofIowa/Offline Work/SSD Tx III - BHL/analysis/phon_data/new"
-    # directory = r"C:\Users\Philip\OneDrive - University of Iowa\Offline Work\SSD Tx III - BHL\analysis"
-    file = "/Users/pcombiths/Library/CloudStorage/OneDrive-UniversityofIowa/Offline Work/SSD Tx III - BHL/analysis/phon_data/new/Compiled/merged_files/data_accuracy.csv"
+    # directory = "/Users/pcombiths/Library/CloudStorage/OneDrive-UniversityofIowa/Offline Work/SSD Tx III - BHL/analysis/phon_data/new"
+    directory = r"R:\CLD Lab\projects\USC-UI BESA Bilingual Project\phone_data\REV"
+    # file = r"R:\CLD Lab\projects\USC-UI BESA Bilingual Project\phone_data\Compiled\merged_files\data_accuracy.csv"
     filepath = gen_csv(directory)
     filepath = merge_csv()
     filepath = calculate_accuracy(filepath)
