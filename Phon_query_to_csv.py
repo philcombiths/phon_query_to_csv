@@ -604,6 +604,8 @@ def phone_data_expander(file_location):
     if not isinstance(file_location, pd.DataFrame):
         # If not, assume it's a file location and load the data
         df = pd.read_csv(file_location)
+    else:
+        df = file_location
     # Generate ['ID-Target-Lang'] column
     df['ID-Target-Lang'] = df['Participant'] + df['IPA Target'] + df['Language']
     # Generate ['Type'] column
@@ -635,9 +637,9 @@ def phone_data_expander(file_location):
 
 
     output_filepath = os.path.join(
-        directory, "Compiled", "merged_files", f"{output_filename}.csv"
+        directory, "Compiled", "merged_files", "combined_dataset.csv"
     )
-    new_table.to_csv(
+    df.to_csv(
         output_filepath,
         encoding="utf-8",
         index=False,
@@ -660,11 +662,11 @@ def phone_data_expander(file_location):
 
 # Example use case:
 if __name__ == "__main__":
-    directory = "/Users/pcombiths/Library/CloudStorage/OneDrive-UniversityofIowa/Offline Work/SSD Tx III - BHL/analysis/phon_data/new"
+    directory = "/Users/pcombiths/Library/CloudStorage/OneDrive-UniversityofIowa/Offline Work/SSD Tx III - BHL/analysis/phon_data/s201_cluster_fix"
     # directory = r"C:\Users\Philip\OneDrive - University of Iowa\Offline Work\SSD Tx III - BHL\analysis"
     file = "/Users/pcombiths/Library/CloudStorage/OneDrive-UniversityofIowa/Offline Work/SSD Tx III - BHL/analysis/phon_data/new/Compiled/merged_files/data_accuracy.csv"
     filepath = gen_csv(directory)
     filepath = merge_csv()
     filepath = calculate_accuracy(filepath)
-    phone_data_expander(filepath)
+    result = phone_data_expander(filepath)
     pass
