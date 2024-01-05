@@ -190,7 +190,8 @@ def gen_csv(directory, query_type="accuracy"):
                         ###################################################
                         #### Extract keyword and column values
                         keyword = "Queries_v4_phone_listings.xml"  # Write keyword here
-                        record = df['Record #']
+                        df.rename(columns={"Record #": "Record"}, inplace=True)
+                        df.rename(columns={"Group #": "Group"}, inplace=True)
                         label = "Query Source"  # Write column label for keyword here
                         df[label] = keyword
                         analysis = re.findall(
