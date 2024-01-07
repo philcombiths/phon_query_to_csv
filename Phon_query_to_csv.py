@@ -256,20 +256,21 @@ def gen_csv(directory, query_type="accuracy"):
                             .strip()
                             .split("↔")[1]
                             .strip(),
-                            "Tiers": lambda x: x.split(";", 1)[1],
-                            "Notes": lambda x: x.split(";", 1)[1].split(",")[0].strip(),
+                            "Tiers": lambda x: x.split(";", 1)[1].strip(),
+                            "Notes": lambda x: x.split(";", 1)[1].split("↔")[-1][3:],
                             "Orthography": lambda x: x.split(";", 1)[1]
+                            .split(",")[0]
+                            .strip(),
+                            "IPA Target Words": lambda x: x.split(";", 1)[1]
                             .split(",")[1]
                             .strip(),
-                            "IPA Target Word": lambda x: x.split(";", 1)[1]
+                            "IPA Actual Words": lambda x: x.split(";", 1)[1]
                             .split(",")[2]
                             .strip(),
-                            "IPA Actual Word": lambda x: x.split(";", 1)[1]
-                            .split(",")[3]
-                            .strip(),
-                            "IPA Alignment Word": lambda x: x.split(";", 1)[1].split(
-                                ","
-                            )[4:],
+                            "IPA Alignment Words": lambda x: re.search(r' (\S+↔\S+,)+', x)
+                            [0]
+                            .strip()
+                            [:-1]
                         }
 
                         for key in derive_dict.keys():
@@ -662,9 +663,9 @@ def phone_data_expander(file_location):
 
 # Example use case:
 if __name__ == "__main__":
-    directory = "/Users/pcombiths/Library/CloudStorage/OneDrive-UniversityofIowa/Offline Work/SSD Tx III - BHL/analysis/phon_data/s201_cluster_fix"
+    directory = "/Users/pcombiths/Library/CloudStorage/OneDrive-UniversityofIowa/Offline Work/SSD Tx III - BHL/analysis/phon_data/v4"
     # directory = r"C:\Users\Philip\OneDrive - University of Iowa\Offline Work\SSD Tx III - BHL\analysis"
-    file = "/Users/pcombiths/Library/CloudStorage/OneDrive-UniversityofIowa/Offline Work/SSD Tx III - BHL/analysis/phon_data/new/Compiled/merged_files/data_accuracy.csv"
+    # file = "/Users/pcombiths/Library/CloudStorage/OneDrive-UniversityofIowa/Offline Work/SSD Tx III - BHL/analysis/phon_data/new/Compiled/merged_files/data_accuracy.csv"
     filepath = gen_csv(directory)
     filepath = merge_csv()
     filepath = calculate_accuracy(filepath)
