@@ -248,14 +248,14 @@ def gen_csv(directory, query_type="accuracy"):
                         # Apply transformation to 'Result' series to generate new columns
                         derive_dict = {
                             "IPA Alignment": lambda x: x.split(";", 1)[0].strip(),
-                            "IPA Target": lambda x: x.split(";", 1)[0]
-                            .strip()
-                            .split("↔")[0]
-                            .strip(),
-                            "IPA Actual": lambda x: x.split(";", 1)[0]
-                            .strip()
-                            .split("↔")[1]
-                            .strip(),
+                            # "IPA Target": lambda x: x.split(";", 1)[0] # Redundant with IPA Target column
+                            # .strip()
+                            # .split("↔")[0]
+                            # .strip(),
+                            # "IPA Actual": lambda x: x.split(";", 1)[0] # Redundant with IPA Actual column
+                            # .strip()
+                            # .split("↔")[1]
+                            # .strip(),
                             "Tiers": lambda x: x.split(";", 1)[1].strip(),
                             "Notes": lambda x: x.split(";", 1)[1].split("↔")[-1][3:],
                             "Orthography": lambda x: x.split(";", 1)[1]
@@ -267,7 +267,7 @@ def gen_csv(directory, query_type="accuracy"):
                             "IPA Actual Words": lambda x: x.split(";", 1)[1]
                             .split(",")[2]
                             .strip(),
-                            "IPA Alignment Words": lambda x: re.search(r' (\S+↔\S+,)+', x)
+                             "IPA Alignment Words": lambda x: re.search(r' (\S+↔\S+,)+', x)
                             [0]
                             .strip()
                             [:-1]
@@ -663,7 +663,7 @@ def phone_data_expander(file_location):
 
 # Example use case:
 if __name__ == "__main__":
-    directory = "/Users/pcombiths/Library/CloudStorage/OneDrive-UniversityofIowa/Offline Work/SSD Tx III - BHL/analysis/phon_data/v4"
+    directory = "/Users/pcombiths/Library/CloudStorage/OneDrive-UniversityofIowa/Offline Work/SSD Tx III - BHL/analysis/phon_data/v5"
     # directory = r"C:\Users\Philip\OneDrive - University of Iowa\Offline Work\SSD Tx III - BHL\analysis"
     # file = "/Users/pcombiths/Library/CloudStorage/OneDrive-UniversityofIowa/Offline Work/SSD Tx III - BHL/analysis/phon_data/new/Compiled/merged_files/data_accuracy.csv"
     filepath = gen_csv(directory)
