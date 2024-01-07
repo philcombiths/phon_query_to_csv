@@ -485,7 +485,7 @@ def calculate_accuracy(filepath):
     print("Generating CSV file...")
 
     output_filepath = os.path.join(os.path.dirname(filepath), "data_accuracy.csv")
-    df.to_csv(output_filepath, encoding="utf-8")
+    df.to_csv(output_filepath, encoding="utf-8", index=False)
 
     print("Process complete.")
 
