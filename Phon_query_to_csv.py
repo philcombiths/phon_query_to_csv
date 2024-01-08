@@ -167,21 +167,7 @@ def gen_csv(directory, query_type="listing"):
                     continue
                 # Include only CSV files
                 if cur_csv.endswith(".csv"):
-                    ## Removed code below to capture all csv files in directory
-                    # # Only works with "Accurate", "Deleted", and "Substitutions" files
-                    # substring_list = [
-                    #     "Accurate",
-                    #     "Deleted",
-                    #     "Deletions",
-                    #     "Substitutions",
-                    #     "Accuracy",  # Added for processed _Accuracy queries
-                    # ]
-                    # if any(substring in cur_csv for substring in substring_list):
-                    # open CSV file in read mode with UTF-8 encoding
-
                     file_count += 1
-                    # Unused line to extract a list of subdirectories in path
-                    # filepath_folder_list = os.path.normpath(dirName).split(os.sep)
                     with io.open(
                         os.path.join(dirName, cur_csv), mode="r", encoding="utf-8"
                     ) as current_csv:
@@ -275,6 +261,9 @@ def gen_csv(directory, query_type="listing"):
 
                         for key in derive_dict.keys():
                             df[key] = df["Result"].apply(derive_dict[key])
+
+                        df['IPA Target'] = df['IPA Target'].replace({'g': 'ɡ'}, regex=True)
+                        df['IPA Actual'] = df['IPA Actual'].replace({'g': 'ɡ'}, regex=True)
 
                         # Save REV_csv, UTF-8
                         log.info("Current working directory" + os.getcwd())
@@ -663,7 +652,7 @@ def phone_data_expander(file_location):
 
 # Example use case:
 if __name__ == "__main__":
-    directory = "/Users/pcombiths/Library/CloudStorage/OneDrive-UniversityofIowa/Offline Work/SSD Tx III - BHL/analysis/phon_data/v6"
+    directory = "/Users/pcombiths/Library/CloudStorage/OneDrive-UniversityofIowa/Offline Work/SSD Tx III - BHL/analysis/phon_data/v7"
     # directory = r"C:\Users\Philip\OneDrive - University of Iowa\Offline Work\SSD Tx III - BHL\analysis"
     # file = "/Users/pcombiths/Library/CloudStorage/OneDrive-UniversityofIowa/Offline Work/SSD Tx III - BHL/analysis/phon_data/new/Compiled/merged_files/data_accuracy.csv"
     filepath = gen_csv(directory)
