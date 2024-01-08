@@ -652,7 +652,7 @@ def phone_data_expander(file_location):
 
 # Example use case:
 if __name__ == "__main__":
-    directory = "/Users/pcombiths/Library/CloudStorage/OneDrive-UniversityofIowa/Offline Work/SSD Tx III - BHL/analysis/phon_data/v7"
+    directory = "/Users/pcombiths/Library/CloudStorage/OneDrive-UniversityofIowa/Offline Work/SSD Tx III - BHL/analysis/phon_data/v8"
     # directory = r"C:\Users\Philip\OneDrive - University of Iowa\Offline Work\SSD Tx III - BHL\analysis"
     # file = "/Users/pcombiths/Library/CloudStorage/OneDrive-UniversityofIowa/Offline Work/SSD Tx III - BHL/analysis/phon_data/new/Compiled/merged_files/data_accuracy.csv"
     filepath = gen_csv(directory)
