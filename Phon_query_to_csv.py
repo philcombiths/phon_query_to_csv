@@ -90,7 +90,7 @@ log.addHandler(ch)
 
 
 # Step 1: Transforms to uniform structure csv files
-def gen_csv(directory, query_type="accuracy"):
+def gen_csv(directory, query_type="listing"):
     """
     Formats a directory or subdirectories containing csv Phon query output files
     with unified column structure for input into merge_csv to generate a single
@@ -98,8 +98,8 @@ def gen_csv(directory, query_type="accuracy"):
 
     Args:
         directory : directory path for original Phon query output files
-        query_type : str in ['accuracy', 'PCC'] specifying Phon query type.
-            Default='accuracy' NOTE: PCC query not yet implemented.
+        query_type : str in ['accuracy', 'PCC', 'listing'] specifying Phon query type.
+            Default='listing' NOTE: different queries not yet implemented
 
     Note: participant, phase, language, analysis variables must be modified to
         specify or extract values from the current data structure. These values
@@ -189,7 +189,7 @@ def gen_csv(directory, query_type="accuracy"):
                         df = pd.read_csv(current_csv, encoding="utf-8")
                         ###################################################
                         #### Extract keyword and column values
-                        keyword = "Queries_v4_phone_listings.xml"  # Write keyword here
+                        keyword = "Queries_v5_phone_listings_phrase.xml"  # Write keyword here
                         df.rename(columns={"Record #": "Record"}, inplace=True)
                         df.rename(columns={"Group #": "Group"}, inplace=True)
                         label = "Query Source"  # Write column label for keyword here
@@ -663,7 +663,7 @@ def phone_data_expander(file_location):
 
 # Example use case:
 if __name__ == "__main__":
-    directory = "/Users/pcombiths/Library/CloudStorage/OneDrive-UniversityofIowa/Offline Work/SSD Tx III - BHL/analysis/phon_data/v5"
+    directory = "/Users/pcombiths/Library/CloudStorage/OneDrive-UniversityofIowa/Offline Work/SSD Tx III - BHL/analysis/phon_data/v6"
     # directory = r"C:\Users\Philip\OneDrive - University of Iowa\Offline Work\SSD Tx III - BHL\analysis"
     # file = "/Users/pcombiths/Library/CloudStorage/OneDrive-UniversityofIowa/Offline Work/SSD Tx III - BHL/analysis/phon_data/new/Compiled/merged_files/data_accuracy.csv"
     filepath = gen_csv(directory)
