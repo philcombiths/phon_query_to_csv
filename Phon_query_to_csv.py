@@ -3,7 +3,7 @@
 Three functions, intended to be used in sequence, to batch process Phon query
 output csv files in a directory or subdirectories.
 
-Note: participant, phase, language, analysis variables  in gen_csv() must be
+Note: participant, phase, language, analysis variables in gen_csv() must be
     modified to specify or extract values from the current data structure. 
     These values are usually extracted from the filename str or containing 
     directory name str (see lines 143-167).
@@ -180,27 +180,22 @@ def gen_csv(directory, query_type="listing"):
                         df.rename(columns={"Group #": "Group"}, inplace=True)
                         label = "Query Source"  # Write column label for keyword here
                         df[label] = keyword
-                        analysis = re.findall(
+                        analysis = re.findall( # Include all analysis folders here
                             r"Consonants|Onset Clusters|Coda Clusters|Final Singletons|Initial Singletons|Medial Singletons|Singletons|Vowels|Initial Clusters|Final Clusters",
                             dirName,
                         )[0].replace(r"/", "")
                         analysis_list.append(analysis)
                         df["Analysis"] = analysis
-
                         # Locate Phase in path
-                        phase = re.findall(
-                            r"BL-\d{1,2}|Post-\dmo|post|Pre|Post|Mid|Tx-\d{1,2}",
-                            cur_csv,
-                        )[0]
+                        phase = cur_csv.split("_")[1].split(".")[0]
                         phase_list.append(phase)
                         df["Phase"] = phase
                         # More complex language identification based on dictionary
                         lang_dict = {
                             "PEEP": "English",
-                            "En": "English",
+                            "eng": "English",
                             "EFE": "Spanish",
-                            "Sp": "Spanish",
-                            "else": "Spanish" # When Tx is in Spanish, otherwise set to Tx language
+                            "span": "Spanish"
                         }
                         language = "Spanish"  # Default language
                         for key, value in lang_dict.items():
@@ -211,10 +206,9 @@ def gen_csv(directory, query_type="listing"):
                         language_list.append(language)
                         df["Language"] = language
                         participant = re.findall(
-                            r"\w\d\d\d",
+                            r"\.(.+\d)(?:eng|span|)_",
                             dirName+cur_csv,
                         )[0]
-
                         participant_list.append(participant)
                         df["Participant"] = participant
                         # Add column of Speaker ID extracted from filename
@@ -224,7 +218,7 @@ def gen_csv(directory, query_type="listing"):
                             "***********************************************\n",
                             list(df),
                         )
-                        probe = cur_csv.split("_")[1]
+                        probe = cur_csv.split("_")[1].split(".")[0]
                         probe_list.append(probe)
                         df["Probe"] = probe
                         probe_type = phase
@@ -647,13 +641,12 @@ def phone_data_expander(file_location):
     #   sonority, manner, voice, place, class
     #   Use the IPA table project already started
     # Draw on other required tables, including baseline phones to create additional cols
-    return  df
+    # return df
     
 
 # Example use case:
 if __name__ == "__main__":
-    directory = "/Users/pcombiths/Library/CloudStorage/OneDrive-UniversityofIowa/Offline Work/SSD Tx III - BHL/analysis/phon_data/v8"
-    # directory = r"C:\Users\Philip\OneDrive - University of Iowa\Offline Work\SSD Tx III - BHL\analysis"
+    directory = "/Volumes/rdss_pcombiths/CLD Lab/projects/Typology/query_results/by_actual/typology"
     # file = "/Users/pcombiths/Library/CloudStorage/OneDrive-UniversityofIowa/Offline Work/SSD Tx III - BHL/analysis/phon_data/new/Compiled/merged_files/data_accuracy.csv"
     filepath = gen_csv(directory)
     filepath = merge_csv()
