@@ -17,7 +17,7 @@ result = column_match(file_path)
 ###
 
 Created on Thu Jul 30 18:18:01 2020
-@modified: 2024-01-03
+@modified: 2024-02-13
 @author: Philip Combiths
 
 """
@@ -175,7 +175,7 @@ def gen_csv(directory, query_type="listing"):
                         df = pd.read_csv(current_csv, encoding="utf-8")
                         ###################################################
                         #### Extract keyword and column values
-                        keyword = "Queries_v5_phone_listings_phrase.xml"  # Write keyword here
+                        keyword = "Queries_Actual_v1.xml"  # Write keyword here
                         df.rename(columns={"Record #": "Record"}, inplace=True)
                         df.rename(columns={"Group #": "Group"}, inplace=True)
                         label = "Query Source"  # Write column label for keyword here
@@ -247,10 +247,13 @@ def gen_csv(directory, query_type="listing"):
                             "IPA Actual Words": lambda x: x.split(";", 1)[1]
                             .split(",")[2]
                             .strip(),
-                             "IPA Alignment Words": lambda x: re.search(r' (\S+↔\S+,)+', x)
-                            [0]
+                            "IPA Alignment Words": lambda x: x.split(";", 1)[1]
+                            .split(",")[3]
                             .strip()
-                            [:-1]
+                            # "IPA Alignment Words": lambda x: re.search(r' (\S+↔\S+,)+', x)
+                            # [0]
+                            # .strip()
+                            # [:-1]
                         }
 
                         for key in derive_dict.keys():
@@ -593,11 +596,14 @@ def phone_data_expander(file_location):
     # Generate ['ID-Target-Lang'] column
     df['ID-Target-Lang'] = df['Participant'] + df['IPA Target'] + df['Language']
     # Generate ['Type'] column
-    df['Type'] = np.where(df['IPA Target'].str.len() == 1, 'C', np.where(df['IPA Target'].str.len() == 2, 'CC', 'CCC'))
+    df['Type'] = np.where(df['IPA Actual'].str.len() == 1, 'C', np.where(df['IPA Actual'].str.len() == 2, 'CC', 'CCC'))
     # Generate Target and Actual columns for each consonant in clusters
-    df['T1'] = df['IPA Target'].str[0]  # Get C1
-    df['T2'] = df['IPA Target'].str[1]  # Get C2
-    df['T3'] = df['IPA Target'].str[2]  # Get C3
+    df['T1'] = '' # Get C1
+    df['T2'] = '' # Get C2
+    df['T3'] = '' # Get C3
+    # df['T1'] = df['IPA Target'].str[0]  # Get C1
+    # df['T2'] = df['IPA Target'].str[1]  # Get C2
+    # df['T3'] = df['IPA Target'].str[2]  # Get C3
     # Actual segments not accurate because diacritics are treated as segments.
     df['A1'] = df['IPA Actual'].str[0]  # Get C1
     df['A2'] = df['IPA Actual'].str[1]  # Get C2
@@ -647,9 +653,9 @@ def phone_data_expander(file_location):
 # Example use case:
 if __name__ == "__main__":
     directory = "/Volumes/rdss_pcombiths/CLD Lab/projects/Typology/query_results/by_actual/typology"
-    # file = "/Users/pcombiths/Library/CloudStorage/OneDrive-UniversityofIowa/Offline Work/SSD Tx III - BHL/analysis/phon_data/new/Compiled/merged_files/data_accuracy.csv"
-    filepath = gen_csv(directory)
-    filepath = merge_csv()
-    filepath = calculate_accuracy(filepath)
-    result = phone_data_expander(filepath)
+    file = "/Volumes/rdss_pcombiths/CLD Lab/projects/Typology/query_results/by_actual/typology/Compiled/merged_files/data_accuracy.csv"
+    # filepath = gen_csv(directory)
+    # filepath = merge_csv()
+    # filepath = calculate_accuracy(filepath)
+    result = phone_data_expander(file)
     pass
