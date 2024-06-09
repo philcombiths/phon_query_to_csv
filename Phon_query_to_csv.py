@@ -192,11 +192,11 @@ def gen_csv(directory, query_type="listing"):
                         analysis_list.append(analysis)
                         df["Analysis"] = analysis
 
-                        # Locate Phase in path
-                        phase = re.findall(
-                            r"BL-\d{1,2}|Post-\dmo|post|Pre|Post|Mid|Tx-\d{1,2}",
+                        phase = "unknown" # Default if no phase identified
+                        phase = next((match for match in re.findall(
+                            r"BL-\d{1,2}|Post-\dmo|Pre|Post|Mid|Tx-\d{1,2}",
                             cur_csv,
-                        )[0]
+                        ) if match), "unknown")
                         phase_list.append(phase)
                         df["Phase"] = phase
                         # More complex language identification based on dictionary
@@ -661,7 +661,7 @@ def phone_data_expander(file_location):
 
 # Example use case:
 if __name__ == "__main__":
-    directory = r"R:\CLD_Lab\projects\spanish-tx_project\phase-IV\participant_data\S401\Preliminary\Pre"
+    directory = r"C:\Users\pcombiths\OneDrive - University of Iowa\CLD Lab (Director)\projects\SSD Tx IV\Phone_Listings"
     # directory = r"C:\Users\Philip\OneDrive - University of Iowa\Offline Work\SSD Tx III - BHL\analysis"
     # file = "/Users/pcombiths/Library/CloudStorage/OneDrive-UniversityofIowa/Offline Work/SSD Tx III - BHL/analysis/phon_data/new/Compiled/merged_files/data_accuracy.csv"
     filepath = gen_csv(directory)
