@@ -7,6 +7,11 @@ Note: participant, phase, language, analysis variables  in gen_csv() must be
     modified to specify or extract values from the current data structure. 
     These values are usually extracted from the filename str or containing 
     directory name str (see lines 143-167).
+
+Generates:
+- 'AllPart_AllLang_AllAnalyses_data.csv' : All data, extracted only from the Phon file input
+- 'data_accuracy.csv' : All data from above, with Accuracy, Deletion, Substitution data
+- 'combined_dataset.csv': All data from above, with phone characteristic data and data from 'phono_error_patterns.py'
     
 ###
 # Example use case:
@@ -253,10 +258,10 @@ def gen_csv(directory, query_type="listing"):
                             "IPA Actual Words": lambda x: x.split(";", 1)[1]
                             .split(",")[2]
                             .strip(),
-                             "IPA Alignment Words": lambda x: re.search(r' (\S+↔\S+,)+', x)
-                            [0]
+                            "IPA Alignment Words": lambda x: re.search(r' (\S+↔\S+,)+', x) # updated to allow for no data (when transcription empty)
+                            .group(0)
                             .strip()
-                            [:-1]
+                            [: -1] if re.search(r' (\S+↔\S+,)+', x) is not None else '',
                         }
 
                         for key in derive_dict.keys():
@@ -652,7 +657,7 @@ def phone_data_expander(file_location):
 
 # Example use case:
 if __name__ == "__main__":
-    directory = "/Users/pcombiths/Library/CloudStorage/OneDrive-UniversityofIowa/Offline Work/SSD Tx III - BHL/analysis/phon_data/v8"
+    directory = r"R:\CLD_Lab\projects\spanish-tx_project\phase-IV\participant_data\S401\Preliminary\Pre"
     # directory = r"C:\Users\Philip\OneDrive - University of Iowa\Offline Work\SSD Tx III - BHL\analysis"
     # file = "/Users/pcombiths/Library/CloudStorage/OneDrive-UniversityofIowa/Offline Work/SSD Tx III - BHL/analysis/phon_data/new/Compiled/merged_files/data_accuracy.csv"
     filepath = gen_csv(directory)
