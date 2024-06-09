@@ -461,10 +461,8 @@ def calculate_accuracy(filepath):
     # Create masks based to derive accurate, substituted, and deleted phones
     accurate_mask = df["IPA Target"] == df["IPA Actual"]
     inaccurate_mask = df["IPA Target"] != df["IPA Actual"]
-    deletion_mask = df["IPA Actual"] == "∅"
-    substitution_mask = (df["IPA Target"] != df["IPA Actual"]) & (
-        df["IPA Actual"] != "∅"
-    )
+    deletion_mask = df["IPA Actual"].isin([pd.NaT, "", " ", "∅"]) | df["IPA Actual"].isnull()
+    substitution_mask = ((df["IPA Target"] != df["IPA Actual"]) & (~deletion_mask))
 
     # Initialize columns with default values
     df["Accuracy"] = 0
@@ -661,9 +659,8 @@ def phone_data_expander(file_location):
 
 # Example use case:
 if __name__ == "__main__":
-    directory = r"C:\Users\pcombiths\OneDrive - University of Iowa\CLD Lab (Director)\projects\SSD Tx IV\Phone_Listings"
-    # directory = r"C:\Users\Philip\OneDrive - University of Iowa\Offline Work\SSD Tx III - BHL\analysis"
-    # file = "/Users/pcombiths/Library/CloudStorage/OneDrive-UniversityofIowa/Offline Work/SSD Tx III - BHL/analysis/phon_data/new/Compiled/merged_files/data_accuracy.csv"
+    #directory = r"C:\Users\pcombiths\OneDrive - University of Iowa\CLD Lab (Director)\projects\SSD Tx IV\Phone_Listings"
+    directory = "/Users/pcombiths/Library/CloudStorage/OneDrive-UniversityofIowa/CLD Lab (Director)/projects/SSD Tx IV/Phone_Listings"
     filepath = gen_csv(directory)
     filepath = merge_csv()
     filepath = calculate_accuracy(filepath)
