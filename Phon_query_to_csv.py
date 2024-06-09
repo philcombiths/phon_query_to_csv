@@ -22,7 +22,7 @@ result = column_match(file_path)
 ###
 
 Created on Thu Jul 30 18:18:01 2020
-@modified: 2024-01-03
+@modified: 2024-06-09
 @author: Philip Combiths
 
 """
@@ -202,8 +202,12 @@ def gen_csv(directory, query_type="listing"):
                         # More complex language identification based on dictionary
                         lang_dict = {
                             "PEEP": "English",
+                            "Peep": "English",
+                            "peep": "English",
                             "En": "English",
                             "EFE": "Spanish",
+                            "Efe": "Spanish",
+                            "efe": "Spanish",
                             "Sp": "Spanish",
                             "else": "Spanish" # When Tx is in Spanish, otherwise set to Tx language
                         }
