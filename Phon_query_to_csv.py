@@ -22,7 +22,7 @@ result = column_match(file_path)
 ###
 
 Created on Thu Jul 30 18:18:01 2020
-@modified: 2024-01-03
+@modified: 2024-06-09
 @author: Philip Combiths
 
 """
@@ -192,18 +192,22 @@ def gen_csv(directory, query_type="listing"):
                         analysis_list.append(analysis)
                         df["Analysis"] = analysis
 
-                        # Locate Phase in path
-                        phase = re.findall(
-                            r"BL-\d{1,2}|Post-\dmo|post|Pre|Post|Mid|Tx-\d{1,2}",
+                        phase = "unknown" # Default if no phase identified
+                        phase = next((match for match in re.findall(
+                            r"BL-\d{1,2}|Post-\dmo|Pre|Post|Mid|Tx-\d{1,2}",
                             cur_csv,
-                        )[0]
+                        ) if match), "unknown")
                         phase_list.append(phase)
                         df["Phase"] = phase
                         # More complex language identification based on dictionary
                         lang_dict = {
                             "PEEP": "English",
+                            "Peep": "English",
+                            "peep": "English",
                             "En": "English",
                             "EFE": "Spanish",
+                            "Efe": "Spanish",
+                            "efe": "Spanish",
                             "Sp": "Spanish",
                             "else": "Spanish" # When Tx is in Spanish, otherwise set to Tx language
                         }
@@ -457,10 +461,8 @@ def calculate_accuracy(filepath):
     # Create masks based to derive accurate, substituted, and deleted phones
     accurate_mask = df["IPA Target"] == df["IPA Actual"]
     inaccurate_mask = df["IPA Target"] != df["IPA Actual"]
-    deletion_mask = df["IPA Actual"] == "∅"
-    substitution_mask = (df["IPA Target"] != df["IPA Actual"]) & (
-        df["IPA Actual"] != "∅"
-    )
+    deletion_mask = df["IPA Actual"].isin([pd.NaT, "", " ", "∅"]) | df["IPA Actual"].isnull()
+    substitution_mask = ((df["IPA Target"] != df["IPA Actual"]) & (~deletion_mask))
 
     # Initialize columns with default values
     df["Accuracy"] = 0
@@ -657,9 +659,8 @@ def phone_data_expander(file_location):
 
 # Example use case:
 if __name__ == "__main__":
-    directory = r"R:\CLD_Lab\projects\spanish-tx_project\phase-IV\participant_data\S401\Preliminary\Pre"
-    # directory = r"C:\Users\Philip\OneDrive - University of Iowa\Offline Work\SSD Tx III - BHL\analysis"
-    # file = "/Users/pcombiths/Library/CloudStorage/OneDrive-UniversityofIowa/Offline Work/SSD Tx III - BHL/analysis/phon_data/new/Compiled/merged_files/data_accuracy.csv"
+    #directory = r"C:\Users\pcombiths\OneDrive - University of Iowa\CLD Lab (Director)\projects\SSD Tx IV\Phone_Listings"
+    directory = "/Users/pcombiths/Library/CloudStorage/OneDrive-UniversityofIowa/CLD Lab (Director)/projects/SSD Tx IV/Phone_Listings"
     filepath = gen_csv(directory)
     filepath = merge_csv()
     filepath = calculate_accuracy(filepath)
