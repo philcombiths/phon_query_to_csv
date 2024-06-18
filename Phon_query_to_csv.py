@@ -1,6 +1,12 @@
 # -*- coding: utf-8 -*-
+# TODO Remove created temporary files.
+# TODO Make ID of columns more of a generic function.
+    # Else make robust to different filenames
+# TODO Remove EML (doesn't seem to work)
+# TODO Add filename as a column
+
 """
-Three functions, intended to be used in sequence, to batch process Phon query
+Three functions used in sequence, to batch process Phon query
 output csv files in a directory or subdirectories.
 
 Note: participant, phase, language, analysis variables  in gen_csv() must be
@@ -86,6 +92,7 @@ def phon_query_to_csv(directory):
     filepath = merge_csv() # works with files created in previous step. No input needed.
     filepath = calculate_accuracy(filepath)
     result = phone_data_expander(filepath)
+    print("***** All processes complete. *****")
     return result
     
 # Step 1: Transforms to uniform structure csv files
@@ -174,11 +181,10 @@ def gen_csv(directory, query_type="listing"):
                         df = pd.read_csv(current_csv, encoding="utf-8")
                         ###################################################
                         #### Extract keyword and column values
-                        keyword = "Queries_v5_phone_listings_phrase.xml"  # Write keyword here
                         df.rename(columns={"Record #": "Record"}, inplace=True)
                         df.rename(columns={"Group #": "Group"}, inplace=True)
-                        label = "Query Source"  # Write column label for keyword here
-                        df[label] = keyword
+                        df['filename'] = cur_csv
+                        df['Query Source'] = query
                         analysis = re.findall(
                             r"Consonants|Onset Clusters|Coda Clusters|Final Singletons|Initial Singletons|Medial Singletons|Singletons|Vowels|Initial Clusters|Final Clusters",
                             dirName,
@@ -638,7 +644,7 @@ def phone_data_expander(file_location):
 
 
     output_filepath = os.path.join(
-        directory, "Compiled", "merged_files", "combined_dataset.csv"
+        directory, "Compiled", "merged_files", "full_annotated_dataset.csv"
     )
     df.to_csv(
         output_filepath,
@@ -664,20 +670,21 @@ def phone_data_expander(file_location):
 if __name__ == "__main__":
     # parameters
     directory = os.path.normpath(input("Enter directory: "))
+    query = "Queries_v5_phone_listings_phrase.xml"  # Write keyword here
     print("**********************************\n")
     print("Available flavors:\n")
     print("    - tx")
     print("    - typology")
     print("    - new typology\n")
     flavor = input("Specify flavor: ")
-    
+
     if flavor == "tx":
         participant_regex = r"\w\d\d\d"
         phase_regex = r"BL-\d{1,2}|Post-\dmo|Pre|Post|Mid|Tx-\d{1,2}"
 
     elif flavor == "typology":
         participant_regex = r"\d\d\d"
-        phase_regex = r"p\d"
+        phase_regex = r"p[IVX]+"
 
     elif flavor == "new typology":
         participant_regex = r"\w{3,4}\d\d"
