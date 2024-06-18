@@ -3,7 +3,8 @@
 # TODO Make ID of columns more of a generic function.
     # Else make robust to different filenames
 # TODO Remove EML (doesn't seem to work)
-# TODO Add filename as a column
+# TODO make IPA feature adding robust to the segment regardless of diacritic.
+    # Will need to refer to ipa_features.py
 
 """
 Three functions used in sequence, to batch process Phon query
@@ -632,16 +633,16 @@ def phone_data_expander(file_location):
     df[columns] = df[columns].fillna('')
     
     properties = ['voice', 'place', 'manner', 'sonority']
-    for col in tqdm(columns, desc='Processing columns'):
+    for col in tqdm(columns, desc='Processing by-segment columns'):
         for prop in properties:
             df[f'{col}_{prop}'] = df[col].apply(lambda x: getattr(ipa_map.ph_element(x), prop, '') if x else '')
 
     columns_more = ['IPA Target', 'IPA Actual']
     properties_more = ['voice', 'place', 'manner', 'sonority', 'EML']
-    for col in tqdm(columns_more, desc='Processing columns'):
+    for col in tqdm(columns_more, desc='Processing IPA Target/Actualcolumns'):
         for prop in properties_more:
             df[f'{col}_{prop}'] = df[col].apply(lambda x: getattr(ipa_map.ph_element(x), prop, '') if x else '')
-
+            # TODO Make this work for the main segment regardless of diacritics.
 
     output_filepath = os.path.join(
         directory, "Compiled", "merged_files", "full_annotated_dataset.csv"
