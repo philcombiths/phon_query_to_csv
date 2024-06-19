@@ -219,11 +219,13 @@ def gen_csv(directory, query_type="listing"):
                         # language = cur_csv.split(".")[0] # Look in filename for language
                         language_list.append(language)
                         df["Language"] = language
-                        participant = re.findall(
-                            r"\w\d\d\d",
-                            dirName+cur_csv,
-                        )[0]
-
+                        try:
+                            participant = re.findall(
+                                r"\w\d\d\d",
+                                dirName+cur_csv,
+                            )[0]
+                        except IndexError:
+                            raise IndexError("Participant not found in filename") from None
                         participant_list.append(participant)
                         df["Participant"] = participant
                         # Add column of Speaker ID extracted from filename
@@ -659,8 +661,7 @@ def phone_data_expander(file_location):
 
 # Example use case:
 if __name__ == "__main__":
-    #directory = r"C:\Users\pcombiths\OneDrive - University of Iowa\CLD Lab (Director)\projects\SSD Tx IV\Phone_Listings"
-    directory = "/Users/pcombiths/Library/CloudStorage/OneDrive-UniversityofIowa/CLD Lab (Director)/projects/SSD Tx IV/Phone_Listings"
+    directory = os.path.normpath(input("Enter CSV directory path: "))
     filepath = gen_csv(directory)
     filepath = merge_csv()
     filepath = calculate_accuracy(filepath)
