@@ -455,12 +455,11 @@ def calculate_accuracy(filepath):
     Returns:
         DataFrame: The updated DataFrame with accuracy metrics.
     """
+    output_filename = "data_accuracy.csv"
     # Read the CSV file into a DataFrame
     df = pd.read_csv(filepath, encoding="utf-8")
 
-    print("Processing...")
-
-    # Create masks based to derive accurate, substituted, and deleted phones
+    # Create masks to derive accurate, substituted, and deleted phones
     accurate_mask = df["IPA Target"] == df["IPA Actual"]
     inaccurate_mask = df["IPA Target"] != df["IPA Actual"]
     deletion_mask = df["IPA Actual"].isin([pd.NaT, "", " ", "∅"]) | df["IPA Actual"].isnull()
@@ -470,9 +469,8 @@ def calculate_accuracy(filepath):
     df["Accuracy"] = 0
     df["Deletion"] = 0
     df["Substitution"] = 0
-    df["Accuracy"] = 0
 
-    print("Processing...")
+    print("Processing Accuracy, Deletion, Substitution...")
 
     # Assign values to columns based on masks
     df.loc[accurate_mask, "Accuracy"] = 1
@@ -480,15 +478,14 @@ def calculate_accuracy(filepath):
     df.loc[substitution_mask, "Substitution"] = 1
 
     # Save the updated DataFrame to a new CSV file
-    print("Generating CSV file...")
+    print(f"Generating {output_filename}...")
 
-    output_filepath = os.path.join(os.path.dirname(filepath), "data_accuracy.csv")
+    output_filepath = os.path.join(os.path.dirname(filepath), output_filename)
     df.to_csv(output_filepath, encoding="utf-8", index=False)
 
-    print("Process complete.")
+    print(f"Saved {output_filename}")
 
     return output_filepath
-
 
 # Step 3: Organizes and renames columns according to column_alignment.csv
 def column_match(
@@ -600,6 +597,10 @@ def column_match(
     
 # phone_data_expander [in progress]
 def phone_data_expander(file_location):
+    output_filepath = os.path.join(
+        directory, "Compiled", "merged_files", "full_annotated_dataset.csv"
+    )
+    
     if not isinstance(file_location, pd.DataFrame):
         # If not, assume it's a file location and load the data
         df = pd.read_csv(file_location)
@@ -624,20 +625,17 @@ def phone_data_expander(file_location):
     df[columns] = df[columns].fillna('')
     
     properties = ['voice', 'place', 'manner', 'sonority']
-    for col in tqdm(columns, desc='Processing columns'):
+    for col in tqdm(columns, desc='Processing feature columns'):
         for prop in properties:
             df[f'{col}_{prop}'] = df[col].apply(lambda x: getattr(ipa_map.ph_element(x), prop, '') if x else '')
 
     columns_more = ['IPA Target', 'IPA Actual']
     properties_more = ['voice', 'place', 'manner', 'sonority', 'EML']
-    for col in tqdm(columns_more, desc='Processing columns'):
+    for col in tqdm(columns_more, desc='Processing more feature columns'):
         for prop in properties_more:
             df[f'{col}_{prop}'] = df[col].apply(lambda x: getattr(ipa_map.ph_element(x), prop, '') if x else '')
 
 
-    output_filepath = os.path.join(
-        directory, "Compiled", "merged_files", "combined_dataset.csv"
-    )
     df.to_csv(
         output_filepath,
         encoding="utf-8",
