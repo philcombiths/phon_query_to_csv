@@ -611,7 +611,7 @@ def phone_data_expander(file_location):
         df = file_location
     # Generate ['ID-Target-Lang'] column
     df['ID-Target-Lang'] = df['Participant'] + df['IPA Target'] + df['Language']
-    try: # Don't generate from Target columns it queries don't have Targets
+    try: # Don't generate from Target columns if queries don't have Targets
         # Generate ['Target Type'] column
         df['Target Type'] = np.where(df['IPA Target'].str.len() == 1, 'C', np.where(df['IPA Target'].str.len() == 2, 'CC', 'CCC'))
         # Generate Target and Actual columns for each consonant in clusters
