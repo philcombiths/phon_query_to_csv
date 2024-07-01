@@ -647,7 +647,7 @@ def phone_data_expander(file_location):
         for property_name in properties_more:
             column_property = f'{column}_{property_name}'
             df[column_property] = df[column].apply(
-                lambda x: getattr(ipa_map.PhoElement(x), property_name, '') if x else '')
+                lambda x: getattr(ipa_map.get_bases(x)[0], property_name, '') if x else '')
             # TODO Make this work for the main segment regardless of diacritics.
 
     output_filepath = os.path.join(
