@@ -634,15 +634,20 @@ def phone_data_expander(file_location):
     df[columns] = df[columns].fillna('')
     
     properties = ['voice', 'place', 'manner', 'sonority']
-    for col in tqdm(columns, desc='Processing by-segment feature columns'):
-        for prop in properties:
-            df[f'{col}_{prop}'] = df[col].apply(lambda x: getattr(ipa_map.ph_element(x), prop, '') if x else '')
+    for segment_column in tqdm(columns, desc='Processing by-segment feature columns'):
+        for feature in properties:
+            segment_feature = f'{segment_column}_{feature}'
+            df[segment_feature] = df[segment_column].apply(
+                lambda segment: getattr(ipa_map.PhoElement(segment), feature, '') if segment else '')
+
 
     columns_more = ['IPA Target', 'IPA Actual']
     properties_more = ['voice', 'place', 'manner', 'sonority', 'EML']
-    for col in tqdm(columns_more, desc='Processing features for IPA Target/Actualcolumns'):
-        for prop in properties_more:
-            df[f'{col}_{prop}'] = df[col].apply(lambda x: getattr(ipa_map.ph_element(x), prop, '') if x else '')
+    for column in tqdm(columns_more, desc='Processing features for IPA Target/Actual columns'):
+        for property_name in properties_more:
+            column_property = f'{column}_{property_name}'
+            df[column_property] = df[column].apply(
+                lambda x: getattr(ipa_map.PhoElement(x), property_name, '') if x else '')
             # TODO Make this work for the main segment regardless of diacritics.
 
     output_filepath = os.path.join(
@@ -671,7 +676,8 @@ def phone_data_expander(file_location):
 # Example use case:
 if __name__ == "__main__":
     # parameters
-    directory = os.path.normpath(input("Enter directory: "))
+    directory = "/Users/pcombiths/Documents/GitHub/Phon_query_to_csv/tests"
+    #directory = os.path.normpath(input("Enter directory: "))
     query = "Queries_v5_phone_listings_phrase.xml"  # Write keyword here
     print("**********************************\n")
     print("Available flavors:\n")
