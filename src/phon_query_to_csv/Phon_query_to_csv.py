@@ -48,10 +48,14 @@ import pandas as pd
 from ipa_features import ipa_map
 from tqdm import tqdm
 
-from ipa_features.logging_config import setup_logging
+from phon_query_to_csv.logging_config import setup_logging
 
-_logger = logging.getLogger(__name__)
-setup_logging(logging.DEBUG)
+__all__ = ['setup_logging']
+
+#_logger = logging.getLogger(__name__)
+log = setup_logging(logging.DEBUG)
+
+#log = logging.getLogger(__name__)
 
 @contextmanager
 def enter_dir(newdir):
@@ -69,7 +73,7 @@ def change_dir(newdir):
     finally:
         os.chdir(prevdir)
 
-log = logging.getLogger(__name__)
+
 
 def phon_query_to_csv(directory):
     """
@@ -658,14 +662,16 @@ def phone_data_expander(file_location):
 # Example use case:
 if __name__ == "__main__":
     # parameters
-    directory = os.path.normpath(input("Enter directory: "))
+    #directory = os.path.normpath(input("Enter directory: "))
+    directory = "/Users/pcombiths/Documents/GitHub/Phon_query_to_csv/tests/typology_actual_test" # For testing
     query = "Queries_v5_phone_listings_phrase.xml"  # Write keyword here
     print("**********************************\n")
     print("Available flavors:\n")
     print("    - tx")
     print("    - typology")
     print("    - new typology\n")
-    flavor = input("Specify flavor: ")
+    #flavor = input("Specify flavor: ")
+    flavor = "typology" # For testing
 
     if flavor == "tx":
         participant_regex = r"\w\d\d\d"

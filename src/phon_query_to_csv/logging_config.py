@@ -40,7 +40,7 @@ def setup_logging(loglevel, logfile='csv_compiler_errors.txt'):
     try:
         # Set up file handler
         fh = logging.FileHandler(logfile)
-        fh.setLevel(logging.CRITICAL)
+        fh.setLevel(logging.DEBUG)
         fh.setFormatter(formatter2)
 
         # Set up console handler
