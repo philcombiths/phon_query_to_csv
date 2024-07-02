@@ -1,5 +1,5 @@
 """
-    Setup file for Phon_query_to_csv.
+    Setup file for phon_query_to_csv.
     Use setup.cfg to configure your project.
 
     This file was generated with PyScaffold 4.5.

@@ -87,7 +87,7 @@ source_suffix = ".rst"
 master_doc = "index"
 
 # General information about the project.
-project = "Phon_query_to_csv"
+project = "phon_query_to_csv"
 copyright = "2024, Philip Combiths"
 
 # The version info for the project you're documenting, acts as replacement for
@@ -229,7 +229,7 @@ html_static_path = ["_static"]
 # html_file_suffix = None
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = "Phon_query_to_csv-doc"
+htmlhelp_basename = "phon_query_to_csv-doc"
 
 
 # -- Options for LaTeX output ------------------------------------------------
@@ -246,7 +246,7 @@ latex_elements = {
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-    ("index", "user_guide.tex", "Phon_query_to_csv Documentation", "Philip Combiths", "manual")
+    ("index", "user_guide.tex", "phon_query_to_csv Documentation", "Philip Combiths", "manual")
 ]
 
 # The name of an image file (relative to this directory) to place at the top of

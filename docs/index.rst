@@ -1,8 +1,8 @@
 =================
-Phon_query_to_csv
+phon_query_to_csv
 =================
 
-This is the documentation of **Phon_query_to_csv**.
+This is the documentation of **phon_query_to_csv**.
 
 .. note::
 

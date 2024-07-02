@@ -47,7 +47,7 @@ import numpy as np
 import pandas as pd
 from ipa_features import ipa_map
 from tqdm import tqdm
-
+    
 from phon_query_to_csv.logging_config import setup_logging
 
 __all__ = ['setup_logging']
@@ -663,7 +663,7 @@ def phone_data_expander(file_location):
 if __name__ == "__main__":
     # parameters
     #directory = os.path.normpath(input("Enter directory: "))
-    directory = "/Users/pcombiths/Documents/GitHub/Phon_query_to_csv/tests/typology_actual_test" # For testing
+    directory = "/Users/pcombiths/Documents/GitHub/phon_query_to_csv/tests/typology_actual_test" # For testing
     query = "Queries_v5_phone_listings_phrase.xml"  # Write keyword here
     print("**********************************\n")
     print("Available flavors:\n")
