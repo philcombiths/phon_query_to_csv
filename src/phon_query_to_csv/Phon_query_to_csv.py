@@ -48,6 +48,11 @@ import pandas as pd
 from ipa_features import ipa_map
 from tqdm import tqdm
 
+from ipa_features.logging_config import setup_logging
+
+_logger = logging.getLogger(__name__)
+setup_logging(logging.DEBUG)
+
 @contextmanager
 def enter_dir(newdir):
     prevdir = os.getcwd()
@@ -64,25 +69,7 @@ def change_dir(newdir):
     finally:
         os.chdir(prevdir)
 
-# Use log for debugging
 log = logging.getLogger(__name__)
-log.setLevel(logging.DEBUG)
-
-formatter = logging.Formatter("%(message)s - %(levelname)s - %(asctime)s")
-formatter2 = logging.Formatter("%(message)s")
-
-if log.hasHandlers(): # Prevent duplicate logs
-    log.handlers.clear()
-
-fh = logging.FileHandler("csv_compiler_errors.txt")
-fh.setLevel(logging.CRITICAL)
-fh.setFormatter(formatter2)
-log.addHandler(fh)
-
-ch = logging.StreamHandler()
-ch.setLevel(logging.DEBUG)
-ch.setFormatter(formatter)
-log.addHandler(ch)
 
 def phon_query_to_csv(directory):
     """
