@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 # TODO Remove created temporary files.
 # TODO Make ID of columns more of a generic function.
-    # Else make robust to different filenames
+# Else make robust to different filenames
 # TODO Remove EML (doesn't seem to work)
 # TODO make IPA feature adding robust to the segment regardless of diacritic.
-    # Will need to refer to ipa_features.py
+# Will need to refer to ipa_features.py
 
 """
 Three functions used in sequence, to batch process Phon query
@@ -47,15 +47,16 @@ import numpy as np
 import pandas as pd
 from ipa_features import ipa_map
 from tqdm import tqdm
-    
+
 from phon_query_to_csv.logging_config import setup_logging
 
-__all__ = ['setup_logging']
+__all__ = ["setup_logging"]
 
-#_logger = logging.getLogger(__name__)
+# _logger = logging.getLogger(__name__)
 log = setup_logging(logging.DEBUG)
 
-#log = logging.getLogger(__name__)
+# log = logging.getLogger(__name__)
+
 
 @contextmanager
 def enter_dir(newdir):
@@ -64,6 +65,7 @@ def enter_dir(newdir):
         yield os.chdir(newdir)
     finally:
         os.chdir(prevdir)
+
 
 @contextmanager
 def change_dir(newdir):
@@ -74,19 +76,21 @@ def change_dir(newdir):
         os.chdir(prevdir)
 
 
-
 def phon_query_to_csv(directory):
     """
     Wrapper for sequence of functions.
     """
     # Note: filepath variable required within functions
-    filepath = gen_csv(directory) 
-    filepath = merge_csv() # works with files created in previous step. No input needed.
+    filepath = gen_csv(directory)
+    filepath = (
+        merge_csv()
+    )  # works with files created in previous step. No input needed.
     filepath = calculate_accuracy(filepath)
     result = phone_data_expander(filepath)
     print("***** All processes complete. *****")
     return result
-    
+
+
 # Step 1: Transforms to uniform structure csv files
 def gen_csv(directory, query_type="listing"):
     """
@@ -119,12 +123,16 @@ def gen_csv(directory, query_type="listing"):
     probe_type_list = []
     file_count = 0
     try:
-        assert "Compiled" not in os.listdir(directory), "Compiled directory already exists. Must be moved or remove before executing script."
+        assert "Compiled" not in os.listdir(
+            directory
+        ), "Compiled directory already exists. Must be moved or remove before executing script."
     except AssertionError as e:
         print(e)
-        response = input("Compiled directory already exists. Do you want to delete the 'Compiled' directory? (Y/N): ")
+        response = input(
+            "Compiled directory already exists. Do you want to delete the 'Compiled' directory? (Y/N): "
+        )
         if response.lower() == "y":
-            shutil.rmtree(os.path.join(directory, 'Compiled'))
+            shutil.rmtree(os.path.join(directory, "Compiled"))
             print("Existing 'Compiled' directory has been deleted.")
         else:
             sys.exit("Exiting script.")
@@ -175,19 +183,26 @@ def gen_csv(directory, query_type="listing"):
                         #### Extract keyword and column values
                         df.rename(columns={"Record #": "Record"}, inplace=True)
                         df.rename(columns={"Group #": "Group"}, inplace=True)
-                        df['filename'] = cur_csv
-                        df['Query Source'] = query
+                        df["filename"] = cur_csv
+                        df["Query Source"] = query
                         analysis = re.findall(
                             r"Consonants|Onset Clusters|Coda Clusters|Final Singletons|Initial Singletons|Medial Singletons|Singletons|Vowels|Initial Clusters|Final Clusters",
                             dirName,
                         )[0].replace(r"/", "")
                         analysis_list.append(analysis)
                         df["Analysis"] = analysis
-                        phase = "unknown" # Default if no phase identified
-                        phase = next((match for match in re.findall(
-                            phase_regex,
-                            cur_csv,
-                        ) if match), "unknown")
+                        phase = "unknown"  # Default if no phase identified
+                        phase = next(
+                            (
+                                match
+                                for match in re.findall(
+                                    phase_regex,
+                                    cur_csv,
+                                )
+                                if match
+                            ),
+                            "unknown",
+                        )
                         phase_list.append(phase)
                         df["Phase"] = phase
                         # More complex language identification based on dictionary
@@ -202,7 +217,7 @@ def gen_csv(directory, query_type="listing"):
                             "efe": "Spanish",
                             "Sp": "Spanish",
                             "spa": "Spanish",
-                            "else": "Spanish" # When Tx is in Spanish, otherwise set to Tx language
+                            "else": "Spanish",  # When Tx is in Spanish, otherwise set to Tx language
                         }
                         language = "Spanish"  # Default language
                         for key, value in lang_dict.items():
@@ -218,7 +233,9 @@ def gen_csv(directory, query_type="listing"):
                                 cur_csv,
                             )[0]
                         except IndexError as exc:
-                            raise IndexError("No participant found in filename") from exc
+                            raise IndexError(
+                                "No participant found in filename"
+                            ) from exc
 
                         participant_list.append(participant)
                         df["Participant"] = participant
@@ -258,17 +275,26 @@ def gen_csv(directory, query_type="listing"):
                             "IPA Actual Words": lambda x: x.split(";", 1)[1]
                             .split(",")[2]
                             .strip(),
-                            "IPA Alignment Words": lambda x: re.search(r' (\S+↔\S+,)+', x) # updated to allow for no data (when transcription empty)
-                            .group(0)
-                            .strip()
-                            [: -1] if re.search(r' (\S+↔\S+,)+', x) is not None else '',
+                            "IPA Alignment Words": lambda x: (
+                                re.search(
+                                    r" (\S+↔\S+,)+", x
+                                )  # updated to allow for no data (when transcription empty)
+                                .group(0)
+                                .strip()[:-1]
+                                if re.search(r" (\S+↔\S+,)+", x) is not None
+                                else ""
+                            ),
                         }
 
                         for key in derive_dict.keys():
                             df[key] = df["Result"].apply(derive_dict[key])
 
-                        df['IPA Target'] = df['IPA Target'].replace({'g': 'ɡ'}, regex=True)
-                        df['IPA Actual'] = df['IPA Actual'].replace({'g': 'ɡ'}, regex=True)
+                        df["IPA Target"] = df["IPA Target"].replace(
+                            {"g": "ɡ"}, regex=True
+                        )
+                        df["IPA Actual"] = df["IPA Actual"].replace(
+                            {"g": "ɡ"}, regex=True
+                        )
 
                         # Save REV_csv, UTF-8
                         log.info("Current working directory" + os.getcwd())
@@ -456,8 +482,10 @@ def calculate_accuracy(filepath):
     # Create masks to derive accurate, substituted, and deleted phones
     accurate_mask = df["IPA Target"] == df["IPA Actual"]
     inaccurate_mask = df["IPA Target"] != df["IPA Actual"]
-    deletion_mask = df["IPA Actual"].isin([pd.NaT, "", " ", "∅"]) | df["IPA Actual"].isnull()
-    substitution_mask = ((df["IPA Target"] != df["IPA Actual"]) & (~deletion_mask))
+    deletion_mask = (
+        df["IPA Actual"].isin([pd.NaT, "", " ", "∅"]) | df["IPA Actual"].isnull()
+    )
+    substitution_mask = (df["IPA Target"] != df["IPA Actual"]) & (~deletion_mask)
 
     # Initialize columns with default values
     df["Accuracy"] = 0
@@ -480,6 +508,7 @@ def calculate_accuracy(filepath):
     print(f"Saved {output_filename}")
 
     return output_filepath
+
 
 # Step 3: Organizes and renames columns according to column_alignment.csv
 def column_match(
@@ -587,53 +616,63 @@ def column_match(
         print("CSV file Generated:", os.path.abspath(output_filepath))
         print("Process complete.")
         return (new_table, actual_cols_omitted_renamed, actual_cols_added)
-    
-    
+
+
 # phone_data_expander [in progress]
 def phone_data_expander(file_location):
     output_filepath = os.path.join(
         directory, "Compiled", "merged_files", "full_annotated_dataset.csv"
     )
-    
+
     if not isinstance(file_location, pd.DataFrame):
         # If not, assume it's a file location and load the data
         df = pd.read_csv(file_location)
     else:
         df = file_location
     # Generate ['ID-Target-Lang'] column
-    df['ID-Target-Lang'] = df['Participant'] + df['IPA Target'] + df['Language']
-    try: # Don't generate from Target columns if queries don't have Targets
+    df["ID-Target-Lang"] = df["Participant"] + df["IPA Target"] + df["Language"]
+    try:  # Don't generate from Target columns if queries don't have Targets
         # Generate ['Target Type'] column
-        df['Target Type'] = np.where(df['IPA Target'].str.len() == 1, 'C', np.where(df['IPA Target'].str.len() == 2, 'CC', 'CCC'))
+        df["Target Type"] = np.where(
+            df["IPA Target"].str.len() == 1,
+            "C",
+            np.where(df["IPA Target"].str.len() == 2, "CC", "CCC"),
+        )
         # Generate Target and Actual columns for each consonant in clusters
-        df['T1'] = df['IPA Target'].str[0]  # Get C1
-        df['T2'] = df['IPA Target'].str[1]  # Get C2
-        df['T3'] = df['IPA Target'].str[2]  # Get C3
+        df["T1"] = df["IPA Target"].str[0]  # Get C1
+        df["T2"] = df["IPA Target"].str[1]  # Get C2
+        df["T3"] = df["IPA Target"].str[2]  # Get C3
     except AttributeError:
-        df['Target Type'] = ''
-        df['T1'] = ''  # Get C1
-        df['T2'] = ''  # Get C2
-        df['T3'] = ''  # Get C3
+        df["Target Type"] = ""
+        df["T1"] = ""  # Get C1
+        df["T2"] = ""  # Get C2
+        df["T3"] = ""  # Get C3
     # Actual segments not accurate because diacritics are treated as segments.
-    df['A1'] = df['IPA Actual'].str[0]  # Get C1
-    df['A2'] = df['IPA Actual'].str[1]  # Get C2
-    df['A3'] = df['IPA Actual'].str[2]  # Get C3
-    df['A4'] = df['IPA Actual'].str[3]  # Get C4
-    df['A5'] = df['IPA Actual'].str[4]  # Get C5
+    df["A1"] = df["IPA Actual"].str[0]  # Get C1
+    df["A2"] = df["IPA Actual"].str[1]  # Get C2
+    df["A3"] = df["IPA Actual"].str[2]  # Get C3
+    df["A4"] = df["IPA Actual"].str[3]  # Get C4
+    df["A5"] = df["IPA Actual"].str[4]  # Get C5
     # Fill NaN with empty string ''
-    columns = ['T1', 'T2', 'T3', 'A1', 'A2', 'A3', 'A4', 'A5']
-    df[columns] = df[columns].fillna('')
-    
-    properties = ['voice', 'place', 'manner', 'sonority']
-    for col in tqdm(columns, desc='Processing by-segment feature columns'):
-        for prop in properties:
-            df[f'{col}_{prop}'] = df[col].apply(lambda x: getattr(ipa_map.ph_element(x), prop, '') if x else '')
+    columns = ["T1", "T2", "T3", "A1", "A2", "A3", "A4", "A5"]
+    df[columns] = df[columns].fillna("")
 
-    columns_more = ['IPA Target', 'IPA Actual']
-    properties_more = ['voice', 'place', 'manner', 'sonority', 'EML']
-    for col in tqdm(columns_more, desc='Processing features for IPA Target/Actualcolumns'):
+    properties = ["voice", "place", "manner", "sonority"]
+    for col in tqdm(columns, desc="Processing by-segment feature columns"):
+        for prop in properties:
+            df[f"{col}_{prop}"] = df[col].apply(
+                lambda x: getattr(ipa_map.ph_element(x), prop, "") if x else ""
+            )
+
+    columns_more = ["IPA Target", "IPA Actual"]
+    properties_more = ["voice", "place", "manner", "sonority", "EML"]
+    for col in tqdm(
+        columns_more, desc="Processing features for IPA Target/Actualcolumns"
+    ):
         for prop in properties_more:
-            df[f'{col}_{prop}'] = df[col].apply(lambda x: getattr(ipa_map.ph_element(x), prop, '') if x else '')
+            df[f"{col}_{prop}"] = df[col].apply(
+                lambda x: getattr(ipa_map.ph_element(x), prop, "") if x else ""
+            )
             # TODO Make this work for the main segment regardless of diacritics.
 
     output_filepath = os.path.join(
@@ -646,32 +685,32 @@ def phone_data_expander(file_location):
     )
 
     return df
-    
+
     # For all the 'T1', 'T2', 'T3','A1', 'A2', 'A3', 'A4', 'A5' columns that contain IPA:
-        # extract sonority, manner, voice, place as new columns in the df using ipa_map.py
+    # extract sonority, manner, voice, place as new columns in the df using ipa_map.py
     # When Type== "CC"
-        # Sonority distance
-        # For each component, 
+    # Sonority distance
+    # For each component,
     # For each component phoneme:
     #   Create df columns for each of the useful feature details:
     #   sonority, manner, voice, place, class
     #   Use the IPA table project already started
     # Draw on other required tables, including baseline phones to create additional cols
-    
+
 
 # Example use case:
 if __name__ == "__main__":
     # parameters
-    #directory = os.path.normpath(input("Enter directory: "))
-    directory = "/Users/pcombiths/Documents/GitHub/phon_query_to_csv/tests/typology_actual_test" # For testing
+    # directory = os.path.normpath(input("Enter directory: "))
+    directory = "/Users/pcombiths/Documents/GitHub/phon_query_to_csv/tests/typology_actual_test"  # For testing
     query = "Queries_v5_phone_listings_phrase.xml"  # Write keyword here
     print("**********************************\n")
     print("Available flavors:\n")
     print("    - tx")
     print("    - typology")
     print("    - new typology\n")
-    #flavor = input("Specify flavor: ")
-    flavor = "typology" # For testing
+    # flavor = input("Specify flavor: ")
+    flavor = "typology"  # For testing
 
     if flavor == "tx":
         participant_regex = r"\w\d\d\d"
@@ -683,7 +722,9 @@ if __name__ == "__main__":
 
     elif flavor == "new typology":
         participant_regex = r"\w{3,4}\d\d"
-        phase_regex = r"no phases" # No phases in this dataset. Trigger null regex result
+        phase_regex = (
+            r"no phases"  # No phases in this dataset. Trigger null regex result
+        )
 
     result = phon_query_to_csv(directory)
     pass
