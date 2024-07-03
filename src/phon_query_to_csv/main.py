@@ -29,7 +29,7 @@ result = column_match(file_path)
 ###
 
 Created on Thu Jul 30 18:18:01 2020
-@modified: 2024-07-02
+@modified: 2024-07-03
 @author: Philip Combiths
 
 """
@@ -55,7 +55,7 @@ def phon_query_to_csv(directory):
         merge_csv(directory)
     )  # works with files created in previous step. No input needed.
     filepath = calculate_accuracy(filepath)
-    result = phone_data_expander(filepath, directory)
+    result = phone_data_expander(filepath, directory, target=False, actual=True)
     print("***** All processes complete. *****")
     return result
 
@@ -64,6 +64,7 @@ if __name__ == "__main__":
     # parameters
     # directory = os.path.normpath(input("Enter directory: "))
     directory = "/Users/pcombiths/Documents/GitHub/phon_query_to_csv/tests/typology_actual_test"  # For testing
+    directory = r"C:\Users\pcombiths\Documents\GitHub\Phon_query_to_csv\tests\typology_actual_test" # For testing
     query = "Queries_v5_phone_listings_phrase.xml"  # Write keyword here
     print("**********************************\n")
     print("Available flavors:\n")
