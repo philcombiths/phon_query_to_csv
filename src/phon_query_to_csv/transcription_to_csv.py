@@ -10,7 +10,7 @@ Example use case:
     trans_source = r"G:\My Drive\Instruction\SLHS 607\607 Fall 2020\Datasets\Joseph_Pre_Table.csv"
     trans_df, char_trans = convert_transcriptions(trans_source)
 """
-from Phon_ipa_parse import get_Phon_char_list
+from phon_ipa_parse import get_Phon_char_list
 import pandas as pd
 
 def convert_transcriptions(trans_source, transform=False, in_place=False):
