@@ -4,6 +4,9 @@ Created on Thu Aug 6 2020
 Updated on Wed Jul 2 2024
 
 @author: Philip Combiths
+
+NOTE: See also regex_find_generator from file_ops module for 
+      a related function pulling from clipboard or csv column.
 """
 import re
 
@@ -22,7 +25,7 @@ def re_pattern(search_elements, split_on=None, prefix=None, suffix=None, groups=
             'capture' : creates capturing groups around each entry
             'noncapture' : creates noncapturing groups around each entry
 
-    Requires regex as re.
+    Requires re module
 
     Returns compiled regex pattern and prints as string
     """
