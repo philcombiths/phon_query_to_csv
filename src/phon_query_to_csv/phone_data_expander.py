@@ -44,16 +44,7 @@ def phone_data_expander(file_location, directory, target=True, actual=True):
     if actual is True:
         df["ID-Actual-Lang"] = df["Participant"].astype(str) + df["IPA Actual"] + df["Language"]
         
-        # Multi-segment rows to be processed separtely from single-segment rows  
-        # single_segment_analyses = ['Initial Singletons', 'Consonants', 'Final Singletons', 'Singletons', 'Vowels']
-        # multi_seg_rows = ~df['Analysis'].isin(single_segment_analyses) # not in single-segment rows assumed multi-segment
-        
         # Use ipa_map from ipa_features to get segments with components and features
-        ## Single-segment extraction?
-        
-        #df.loc[multi_seg_rows, 'A1'] = df.loc[multi_seg_rows, 'IPA Actual'].apply(lambda x: ipa_map.get_bases(x)[0])
-        
-        ## Multi-segment extraction
         def get_each_segment_str(cell_string):
             """
             Wrapper function to get each segment of an IPA string.
@@ -69,10 +60,6 @@ def phone_data_expander(file_location, directory, target=True, actual=True):
                     seg_cols.append(np.nan)
             return seg_cols
         
-# result = df.apply(get_each_segment_str, axis=1, result_type='expand')
-# if len(result.columns) != len(['A1', 'A2', 'A3']):
-#     raise ValueError("Columns must be same length as key")
-# df[['A1', 'A2', 'A3']] = result
         df[['A1', 'A2', 'A3']] = df['IPA Actual'].apply(get_each_segment_str).apply(pd.Series)
 
         component_cols += ["A1", "A2", "A3"]
