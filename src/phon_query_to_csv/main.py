@@ -45,12 +45,12 @@ from phon_query_to_csv.phone_data_expander import phone_data_expander
 
 log = setup_logging(logging.INFO, __name__)
 
-def phon_query_to_csv(directory):
+def phon_query_to_csv(directory, query, phase_re, participant_re,overwrite=False):
     """
     Wrapper for sequence of functions.
     """
     # Note: filepath variable required within functions
-    filepath = gen_csv(directory, query, phase_re, participant_re)
+    filepath = gen_csv(directory, query, phase_re, participant_re, overwrite=overwrite)
     filepath = (
         merge_csv(directory)
     )  # works with files created in previous step. No input needed.
@@ -66,6 +66,7 @@ if __name__ == "__main__":
     directory = "/Users/pcombiths/Documents/GitHub/phon_query_to_csv/tests/typology_actual_test"  # For testing
     #directory = r"C:\Users\pcombiths\Documents\GitHub\Phon_query_to_csv\tests\typology_actual_test" # For testing
     query = "Queries_v5_phone_listings_phrase.xml"  # Write keyword here
+    overwrite=True
     print("**********************************\n")
     print("Available flavors:\n")
     print("    - tx")
@@ -88,5 +89,5 @@ if __name__ == "__main__":
             r"no phases"  # No phases in this dataset. Trigger null regex result
         )
 
-    result = phon_query_to_csv(directory)
+    result = phon_query_to_csv(directory, query, phase_re, participant_re, overwrite=overwrite)
     pass

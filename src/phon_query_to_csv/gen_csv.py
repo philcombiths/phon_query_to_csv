@@ -13,7 +13,7 @@ from phon_query_to_csv.context_manager import enter_dir, change_dir
 log = setup_logging(logging.INFO, __name__)
 
 # Step 1: Transforms to uniform structure csv files
-def gen_csv(directory, query, phase_re, participant_re):
+def gen_csv(directory, query, phase_re, participant_re, overwrite=False):
     """
     Formats a directory or subdirectories containing csv Phon query output files
     with unified column structure for input into merge_csv to generate a single
@@ -42,20 +42,24 @@ def gen_csv(directory, query, phase_re, participant_re):
     probe_list = []
     probe_type_list = []
     file_count = 0
-    try:
-        assert "Compiled" not in os.listdir(
-            directory
-        ), "Compiled directory already exists. Must be moved or remove before executing script."
-    except AssertionError as e:
-        print(e)
-        response = input(
-            "Compiled directory already exists. Do you want to delete the 'Compiled' directory? (Y/N): "
-        )
-        if response.lower() == "y":
-            shutil.rmtree(os.path.join(directory, "Compiled"))
-            print("Existing 'Compiled' directory has been deleted.")
-        else:
-            sys.exit("Exiting script.")
+    if not overwrite: 
+        try:
+            assert "Compiled" not in os.listdir(
+                directory
+            ), "Compiled directory already exists. Must be moved or remove before executing script."
+        except AssertionError as e:
+            print(e)
+            response = input(
+                "Compiled directory already exists. Do you want to delete the 'Compiled' directory? (Y/N): "
+            )
+            if response.lower() == "y":
+                shutil.rmtree(os.path.join(directory, "Compiled"))
+                print("Existing 'Compiled' directory has been deleted.")
+            else:
+                sys.exit("Exiting script.")
+    else:
+        shutil.rmtree(os.path.join(directory, "Compiled"))
+        print("Existing 'Compiled' directory has been deleted.")    
     with change_dir(os.path.normpath(directory)):
         for dirName, subdirList, fileList in os.walk(os.getcwd()):
             ## Check for Excel files in directory
