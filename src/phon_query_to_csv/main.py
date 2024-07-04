@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
-# TODO: Clean up logging
+# TODO: Clean up logging.
 # TODO Remove created temporary files.
 # TODO Make ID of columns more of a generic function.
 #   Else make robust to different filenames
-# TODO make IPA feature adding robust to the segment regardless of diacritic.
-# Will need to refer to ipa_features.py
 
 """
 Three functions used in sequence, to batch process Phon query
@@ -45,7 +43,7 @@ from phon_query_to_csv.phone_data_expander import phone_data_expander
 
 log = setup_logging(logging.INFO, __name__)
 
-def phon_query_to_csv(directory, query, phase_re, participant_re,overwrite=False):
+def phon_query_to_csv(directory, query, phase_re, participant_re,overwrite=False, target=True, actual=True):
     """
     Wrapper for sequence of functions.
     """
@@ -54,7 +52,8 @@ def phon_query_to_csv(directory, query, phase_re, participant_re,overwrite=False
     filepath = (
         merge_csv(directory)
     )  # works with files created in previous step. No input needed.
-    filepath = calculate_accuracy(filepath)
+    if target:
+        filepath = calculate_accuracy(filepath)
     result = phone_data_expander(filepath, directory, target=False, actual=True)
     print("***** All processes complete. *****")
     return result
@@ -89,5 +88,5 @@ if __name__ == "__main__":
             r"no phases"  # No phases in this dataset. Trigger null regex result
         )
 
-    result = phon_query_to_csv(directory, query, phase_re, participant_re, overwrite=overwrite)
+    output = phon_query_to_csv(directory, query, phase_re, participant_re, overwrite=overwrite, target=False)
     pass

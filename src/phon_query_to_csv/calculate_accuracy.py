@@ -18,6 +18,7 @@ def calculate_accuracy(filepath):
     Returns:
         DataFrame: The updated DataFrame with accuracy metrics.
     """
+    
     output_filename = "data_accuracy.csv"
     # Read the CSV file into a DataFrame
     df = pd.read_csv(filepath, encoding="utf-8")

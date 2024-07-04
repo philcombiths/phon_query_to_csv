@@ -96,24 +96,6 @@ def phone_data_expander(file_location, directory, target=True, actual=True):
 
     df[actual_seg_cols_list] = df[actual_seg_cols_list].fillna("")
 
-    properties_seg = ["voice", "place", "manner", "sonority", "EML"]
-    for col in tqdm(actual_seg_cols, desc="Processing by-segment feature columns"):
-        for prop in properties_seg:
-            df[f"{col}_{prop}"] = df[col].apply(
-                lambda x: getattr(ipa_map.PhoElement(x), prop, "") if x else ""
-            )
-
-    columns_full = ["IPA Target", "IPA Actual"]
-    properties_full = ["voice", "place", "manner", "sonority", "EML"]
-    for col in tqdm(
-        columns_full, desc="Processing features for IPA Target/Actualcolumns"
-    ):
-        for prop in properties_full:
-            df[f"{col}_{prop}"] = df[col].apply(
-                lambda x: getattr(ipa_map.PhoElement(x), prop, "") if x else ""
-            )
-            # TODO Make this work for the main segment regardless of diacritics.
-
     output_filepath = os.path.join(
         directory, "Compiled", "merged_files", "full_annotated_dataset.csv"
     )
