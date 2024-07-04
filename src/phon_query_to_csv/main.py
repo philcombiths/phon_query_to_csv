@@ -64,7 +64,7 @@ if __name__ == "__main__":
     # parameters
     # directory = os.path.normpath(input("Enter directory: "))
     directory = "/Users/pcombiths/Documents/GitHub/phon_query_to_csv/tests/typology_actual_test"  # For testing
-    directory = r"C:\Users\pcombiths\Documents\GitHub\Phon_query_to_csv\tests\typology_actual_test" # For testing
+    #directory = r"C:\Users\pcombiths\Documents\GitHub\Phon_query_to_csv\tests\typology_actual_test" # For testing
     query = "Queries_v5_phone_listings_phrase.xml"  # Write keyword here
     print("**********************************\n")
     print("Available flavors:\n")
