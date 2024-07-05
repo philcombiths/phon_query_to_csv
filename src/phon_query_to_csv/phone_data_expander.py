@@ -47,7 +47,6 @@ def phone_data_expander(file_location, directory, target=True, actual=True):
         actual_feature_cols = OrderedDict()
         for col in actual_seg_cols:
             actual_feature_cols.update({col: [f"{col}_{prop}" for prop in properties_seg]})
-        #seg_feature_cols = [f"{col}_{prop}" for col in component_cols for prop in properties_seg]
         
         # Use ipa_map from ipa_features to get segments with components and features
         def get_cols_each_segment(cell_string):
@@ -62,7 +61,8 @@ def phone_data_expander(file_location, directory, target=True, actual=True):
             for key in actual_feature_cols:
                 try:
                     seg = next(seg_gen)
-                    seg_cols.append(seg.string) # A_ column
+                    seg_cols.append(seg.base[0].string)
+                    # seg_cols.append(seg.string) # A_ column
                     for seg_feature in actual_feature_cols[key]: # A_ feature columns
                         feature = seg_feature.split('_')[1]
                         seg_cols.append(seg.get_feature(feature))
@@ -78,12 +78,12 @@ def phone_data_expander(file_location, directory, target=True, actual=True):
             actual_seg_cols_list.append(key)
             actual_seg_cols_list.extend(actual_feature_cols[key])
         
-        for col in tqdm(actual_seg_cols, desc="Processing by-segment feature columns"):
-            for prop in properties_seg:
-                try:
-                    df[actual_seg_cols_list] = df['IPA Actual'].apply(get_cols_each_segment).apply(pd.Series)
-                except IndexError as exc:
-                    raise ValueError(f"({col}, {prop} had issue.") from exc
+        # for col in tqdm(actual_seg_cols, desc="Processing by-segment feature columns"):
+            # for prop in properties_seg:
+        try:
+            df[actual_seg_cols_list] = df['IPA Actual'].apply(get_cols_each_segment).apply(pd.Series)
+        except IndexError as exc:
+            raise ValueError(f"({col}, {prop} had issue.") from exc
 
         #df[['A1', 'A2', 'A3']] = df['IPA Actual'].apply(get_cols_each_segment).apply(pd.Series)
         

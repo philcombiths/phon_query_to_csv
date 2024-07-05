@@ -63,7 +63,7 @@ def phon_query_to_csv(directory, query, phase_re, participant_re,overwrite=False
 if __name__ == "__main__":
     # parameters
     # directory = os.path.normpath(input("Enter directory: "))
-    directory = "/Users/pcombiths/Library/CloudStorage/OneDrive-UniversityofIowa/CLD Lab (Director)/projects/Typology/data_prep/phones_export/Typology"
+    directory = "/Users/pcombiths/Library/CloudStorage/OneDrive-UniversityofIowa/CLD Lab (Director)/projects/Typology/data_prep/phones_export/export_01/Typology"
     # directory = "/Users/pcombiths/Documents/GitHub/phon_query_to_csv/tests/typology_actual_test" # For testing
     # directory = r"C:\Users\pcombiths\Documents\GitHub\Phon_query_to_csv\tests\typology_actual_test" # For testing
     query = "Queries_v5_phone_listings_phrase.xml"  # Write keyword here
