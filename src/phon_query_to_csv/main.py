@@ -35,7 +35,7 @@ from phon_query_to_csv.phone_data_expander import phone_data_expander
 
 log = setup_logging(logging.INFO, __name__)
 
-def phon_query_to_csv(directory, query, phase_re, participant_re,overwrite=False, target=True, actual=True):
+def phon_query_to_csv(directory, query, phase_re, participant_re, overwrite=False, target=True, actual=True):
     """
     Wrapper for sequence of functions.
     """
@@ -46,17 +46,18 @@ def phon_query_to_csv(directory, query, phase_re, participant_re,overwrite=False
     )  # works with files created in previous step. No input needed.
     if target:
         filepath = calculate_accuracy(filepath)
-    result = phone_data_expander(filepath, directory, target=False, actual=True)
+    result = phone_data_expander(filepath, directory, target=target, actual=actual)
     print("***** All processes complete. *****")
     return result
 
 # Example use case:
 if __name__ == "__main__":
     # parameters
-    directory = os.path.normpath(input("Enter directory: "))
+    # directory = os.path.normpath(input("Enter directory: "))
     # directory = "/Users/pcombiths/Library/CloudStorage/OneDrive-UniversityofIowa/CLD Lab (Director)/projects/Typology/data_prep/phones_export/Typology"
     # directory = "/Users/pcombiths/Documents/GitHub/phon_query_to_csv/tests/typology_actual_test" # For testing
     # directory = r"C:\Users\pcombiths\Documents\GitHub\Phon_query_to_csv\tests\typology_actual_test" # For testing
+    directory = "/Users/pcombiths/Library/CloudStorage/OneDrive-UniversityofIowa/CLD Lab/Adult Language DLD/Pilot (IASCL 2023)/data/2024-07-04"
     query = "Queries_v5_phone_listings_phrase.xml"  # Write keyword here
     print("**********************************\n")
     print("Available flavors:\n")
@@ -64,8 +65,8 @@ if __name__ == "__main__":
     print("    - typology")
     print("    - new typology")
     print("    - itold\n")
-    flavor = input("Specify flavor: ")
-    # flavor = "typology"  # For testing
+    # flavor = input("Specify flavor: ")
+    flavor = "itold"  # For testing
 
     if flavor == "tx":
         participant_re = r"\w\d\d\d"
