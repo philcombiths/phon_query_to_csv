@@ -31,6 +31,7 @@ Created on Thu Jul 30 18:18:01 2020
 @author: Philip Combiths
 
 """
+import os
 import logging
 
 from phon_query_to_csv.logging_config import setup_logging
@@ -62,17 +63,17 @@ def phon_query_to_csv(directory, query, phase_re, participant_re,overwrite=False
 if __name__ == "__main__":
     # parameters
     # directory = os.path.normpath(input("Enter directory: "))
-    directory = "/Users/pcombiths/Documents/GitHub/phon_query_to_csv/tests/typology_actual_test"  # For testing
-    #directory = r"C:\Users\pcombiths\Documents\GitHub\Phon_query_to_csv\tests\typology_actual_test" # For testing
+    directory = "/Users/pcombiths/Library/CloudStorage/OneDrive-UniversityofIowa/CLD Lab (Director)/projects/Typology/data_prep/phones_export/Typology"
+    # directory = "/Users/pcombiths/Documents/GitHub/phon_query_to_csv/tests/typology_actual_test" # For testing
+    # directory = r"C:\Users\pcombiths\Documents\GitHub\Phon_query_to_csv\tests\typology_actual_test" # For testing
     query = "Queries_v5_phone_listings_phrase.xml"  # Write keyword here
-    overwrite=True
     print("**********************************\n")
     print("Available flavors:\n")
     print("    - tx")
     print("    - typology")
     print("    - new typology\n")
-    # flavor = input("Specify flavor: ")
-    flavor = "typology"  # For testing
+    flavor = input("Specify flavor: ")
+    # flavor = "typology"  # For testing
 
     if flavor == "tx":
         participant_re = r"\w\d\d\d"
@@ -88,5 +89,5 @@ if __name__ == "__main__":
             r"no phases"  # No phases in this dataset. Trigger null regex result
         )
 
-    output = phon_query_to_csv(directory, query, phase_re, participant_re, overwrite=overwrite, target=False)
+    output = phon_query_to_csv(directory, query, phase_re, participant_re, overwrite=False, target=False, actual = True)
     pass
