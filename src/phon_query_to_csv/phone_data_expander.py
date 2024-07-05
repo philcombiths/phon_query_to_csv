@@ -67,6 +67,7 @@ def phone_data_expander(file_location, directory, target=True, actual=True):
                 try:
                     seg = next(seg_gen)
                     seg_cols.append(seg.string) # A_ column
+                    seg_cols.append(seg.get_base()) # A__Base column
                     for seg_feature in actual_feature_cols[key]: # A_ feature columns
                         feature = seg_feature.split('_')[1]
                         seg_cols.append(seg.get_feature(feature))
@@ -80,6 +81,7 @@ def phone_data_expander(file_location, directory, target=True, actual=True):
         actual_seg_cols_list = []
         for key in actual_feature_cols:
             actual_seg_cols_list.append(key)
+            actual_seg_cols_list.append(f"{key}_Base")
             actual_seg_cols_list.extend(actual_feature_cols[key])
         
         try:
