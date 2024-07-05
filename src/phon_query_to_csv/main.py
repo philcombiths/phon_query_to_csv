@@ -63,7 +63,8 @@ if __name__ == "__main__":
     print("Available flavors:\n")
     print("    - tx")
     print("    - typology")
-    print("    - new typology\n")
+    print("    - new typology")
+    print("    - itold\n")
     flavor = input("Specify flavor: ")
     # flavor = "typology"  # For testing
 
@@ -86,5 +87,5 @@ if __name__ == "__main__":
         phase_re = (
             r"no phases"  # No phases in this dataset. Trigger null regex result
         )
-    output = phon_query_to_csv(directory, query, phase_re, participant_re, overwrite=False, target=False, actual = True)
+    output = phon_query_to_csv(directory, query, phase_re, participant_re, overwrite=False, target=True, actual=True)
     pass
