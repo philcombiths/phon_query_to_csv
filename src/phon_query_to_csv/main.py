@@ -31,7 +31,6 @@ from phon_query_to_csv.gen_csv import gen_csv
 from phon_query_to_csv.merge_csv import merge_csv
 from phon_query_to_csv.calculate_accuracy import calculate_accuracy
 from phon_query_to_csv.phone_data_expander import phone_data_expander
-# from phon_query_to_csv.context_manager import enter_dir, change_dir
 # from phon_query_to_csv.column_match import column_match # Optional
 
 log = setup_logging(logging.INFO, __name__)

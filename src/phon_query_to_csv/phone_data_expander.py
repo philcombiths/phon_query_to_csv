@@ -1,11 +1,15 @@
 
+
+# TODO: Draw on other required tables, including baseline phones to create additional cols
 import logging
 import os
+from collections import OrderedDict
+
 import numpy as np
 import pandas as pd
-from collections import OrderedDict
 from ipa_features import ipa_map
-from tqdm import tqdm
+# from tqdm import tqdm # For progress bar
+
 from phon_query_to_csv.logging_config import setup_logging
 
 log = setup_logging(logging.INFO, __name__)
@@ -63,6 +67,7 @@ def phone_data_expander(file_location, directory, target=True, actual=True):
                 try:
                     seg = next(seg_gen)
                     seg_cols.append(seg.string) # A_ column
+                    seg_cols.append(seg.get_base()) # A__Base column
                     for seg_feature in actual_feature_cols[key]: # A_ feature columns
                         feature = seg_feature.split('_')[1]
                         seg_cols.append(seg.get_feature(feature))
@@ -76,14 +81,13 @@ def phone_data_expander(file_location, directory, target=True, actual=True):
         actual_seg_cols_list = []
         for key in actual_feature_cols:
             actual_seg_cols_list.append(key)
+            actual_seg_cols_list.append(f"{key}_Base")
             actual_seg_cols_list.extend(actual_feature_cols[key])
         
-        for col in tqdm(actual_seg_cols, desc="Processing by-segment feature columns"):
-            for prop in properties_seg:
-                try:
-                    df[actual_seg_cols_list] = df['IPA Actual'].apply(get_cols_each_segment).apply(pd.Series)
-                except IndexError as exc:
-                    raise ValueError(f"({col}, {prop} had issue.") from exc
+        try:
+            df[actual_seg_cols_list] = df['IPA Actual'].apply(get_cols_each_segment).apply(pd.Series)
+        except IndexError as exc:
+            raise ValueError(f"({col} had issue.") from exc
 
         #df[['A1', 'A2', 'A3']] = df['IPA Actual'].apply(get_cols_each_segment).apply(pd.Series)
         
@@ -94,7 +98,7 @@ def phone_data_expander(file_location, directory, target=True, actual=True):
         #     except IndexError: # Handles 
         #         return np.nan
 
-    df[actual_seg_cols_list] = df[actual_seg_cols_list].fillna("")
+        df[actual_seg_cols_list] = df[actual_seg_cols_list].fillna("")
 
     output_filepath = os.path.join(
         directory, "Compiled", "merged_files", "full_annotated_dataset.csv"
@@ -106,14 +110,3 @@ def phone_data_expander(file_location, directory, target=True, actual=True):
     )
 
     return df
-
-    # For all the 'T1', 'T2', 'T3','A1', 'A2', 'A3', 'A4', 'A5' columns that contain IPA:
-    # extract sonority, manner, voice, place as new columns in the df using ipa_map.py
-    # When Type== "CC"
-    # Sonority distance
-    # For each component,
-    # For each component phoneme:
-    #   Create df columns for each of the useful feature details:
-    #   sonority, manner, voice, place, class
-    #   Use the IPA table project already started
-    # Draw on other required tables, including baseline phones to create additional cols
