@@ -110,7 +110,7 @@ def gen_csv(directory, query, phase_re, participant_re, overwrite=False):
                         df["filename"] = cur_csv
                         df["Query Source"] = query
                         analysis = re.findall(
-                            r"Consonants|Onset Clusters|Coda Clusters|Final Singletons|Initial Singletons|Medial Singletons|Singletons|Vowels|Initial Clusters|Final Clusters",
+                            r"Consonants|Onset Clusters|Coda Clusters|Final Singletons|Initial Singletons|Medial Singletons|Singletons|Vowels|Initial Clusters|Final Clusters|Onset and Adjunct|Nucleus|Coda and Appendix",
                             dirName,
                         )[0].replace(r"/", "")
                         analysis_list.append(analysis)
