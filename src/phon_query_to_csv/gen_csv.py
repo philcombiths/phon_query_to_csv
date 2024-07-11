@@ -158,7 +158,7 @@ def gen_csv(directory, query, phase_re, participant_re, overwrite=False):
                             )[0]
                         except IndexError as exc:
                             raise IndexError(
-                                "No participant found in filename"
+                                "No participant found in filename. Is flavor set correctly?"
                             ) from exc
 
                         participant_list.append(participant)

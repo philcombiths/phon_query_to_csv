@@ -53,39 +53,57 @@ def phon_query_to_csv(directory, query, phase_re, participant_re, overwrite=Fals
 # Example use case:
 if __name__ == "__main__":
     # parameters
+    directory = None
+    query = None
+    flavor = None
+    overwrite = None
+    target = None
+    actual = None
     # directory = os.path.normpath(input("Enter directory: "))
-    # directory = "/Users/pcombiths/Library/CloudStorage/OneDrive-UniversityofIowa/CLD Lab (Director)/projects/Typology/data_prep/phones_export/Typology"
+    directory = "/Users/pcombiths/Library/CloudStorage/OneDrive-UniversityofIowa/CLD Lab (Director)/projects/Typology/data_prep/phones_export/export_02"
     # directory = "/Users/pcombiths/Documents/GitHub/phon_query_to_csv/tests/typology_actual_test" # For testing
     # directory = r"C:\Users\pcombiths\Documents\GitHub\Phon_query_to_csv\tests\typology_actual_test" # For testing
-    directory = "/Users/pcombiths/Library/CloudStorage/OneDrive-UniversityofIowa/CLD Lab/Adult Language DLD/Pilot (IASCL 2023)/data/2024-07-04"
-    query = "Queries_v5_phone_listings_phrase.xml"  # Write keyword here
-    print("**********************************\n")
-    print("Available flavors:\n")
-    print("    - tx")
-    print("    - typology")
-    print("    - new typology")
-    print("    - itold\n")
-    # flavor = input("Specify flavor: ")
-    flavor = "itold"  # For testing
-
+    # directory = "/Users/pcombiths/Library/CloudStorage/OneDrive-UniversityofIowa/CLD Lab/Adult Language DLD/Pilot (IASCL 2023)/data/2024-07-04"
+    query = "Queries_Actual_v2"  # Write keyword here
+    flavor = "typology"  # For testing
+    if 'flavor' not in locals():
+        print("Available flavors:\n\ttx\n\ttypology\n\tnew typology\n\titold\n")
+        print("**********************************\n")
+        flavor = input("Specify flavor: ")
+    elif flavor is None:
+        print("Available flavors:\n\ttx\n\ttypology\n\tnew typology\n\titold\n")
+        print("**********************************\n")
+        flavor = input("Specify flavor: ")
+    
     if flavor == "tx":
         participant_re = r"\w\d\d\d"
         phase_re = r"BL-\d{1,2}|Post-\dmo|Pre|Post|Mid|Tx-\d{1,2}"
+        target = True
+        actual = True
 
     elif flavor == "typology":
         participant_re = r"\d\d\d"
         phase_re = r"p[IVX]+"
+        target = False
+        actual = True
 
     elif flavor == "new typology":
         participant_re = r"\w{3,4}\d\d"
         phase_re = (
             r"no phases"  # No phases in this dataset. Trigger null regex result
         )
-    
+        target = False
+        actual = True
     elif flavor == "itold":
         participant_re = r"\w{4}\d{2}"
         phase_re = (
             r"no phases"  # No phases in this dataset. Trigger null regex result
         )
-    output = phon_query_to_csv(directory, query, phase_re, participant_re, overwrite=False, target=True, actual=True)
+        target = True
+        actual = True
+    print("\n**********************************\n")
+    print(f"Current parameters are:\ndirectory: {directory}\nquery: {query}\nflavor: {flavor}\ntarget: {target}\nactual: {actual}\noverwrite:{overwrite}")
+    print("\n**********************************\n")
+    input(f"Proceed? (y/n): ")
+    output = phon_query_to_csv(directory, query, phase_re, participant_re, overwrite=False, target=False, actual=True)
     pass
