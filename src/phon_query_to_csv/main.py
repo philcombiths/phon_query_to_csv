@@ -60,12 +60,14 @@ if __name__ == "__main__":
     target = None
     actual = None
     # directory = os.path.normpath(input("Enter directory: "))
-    directory = "/Users/pcombiths/Library/CloudStorage/OneDrive-UniversityofIowa/CLD Lab (Director)/projects/Typology/data_prep/phones_export/export_02"
+    # directory = "/Users/pcombiths/Library/CloudStorage/OneDrive-UniversityofIowa/CLD Lab (Director)/projects/Typology/data_prep/phones_export/export_02"
+    # directory = "/Users/pcombiths/Library/CloudStorage/OneDrive-UniversityofIowa/CLD Lab (Director)/projects/New Typology/export_01"
+    directory = "/Users/pcombiths/Library/CloudStorage/OneDrive-UniversityofIowa/CLD Lab (Director)/projects/ssd_sample/export_01"
     # directory = "/Users/pcombiths/Documents/GitHub/phon_query_to_csv/tests/typology_actual_test" # For testing
     # directory = r"C:\Users\pcombiths\Documents\GitHub\Phon_query_to_csv\tests\typology_actual_test" # For testing
     # directory = "/Users/pcombiths/Library/CloudStorage/OneDrive-UniversityofIowa/CLD Lab/Adult Language DLD/Pilot (IASCL 2023)/data/2024-07-04"
     query = "Queries_Actual_v2"  # Write keyword here
-    flavor = "typology"  # For testing
+    flavor = "new typology"  # For testing
     if 'flavor' not in locals():
         print("Available flavors:\n\ttx\n\ttypology\n\tnew typology\n\titold\n")
         print("**********************************\n")
