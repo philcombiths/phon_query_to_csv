@@ -62,12 +62,13 @@ if __name__ == "__main__":
     # directory = os.path.normpath(input("Enter directory: "))
     # directory = "/Users/pcombiths/Library/CloudStorage/OneDrive-UniversityofIowa/CLD Lab (Director)/projects/Typology/data_prep/phones_export/export_02"
     # directory = "/Users/pcombiths/Library/CloudStorage/OneDrive-UniversityofIowa/CLD Lab (Director)/projects/New Typology/export_01"
-    directory = "/Users/pcombiths/Library/CloudStorage/OneDrive-UniversityofIowa/CLD Lab (Director)/projects/ssd_sample/export_01"
+    # directory = "/Users/pcombiths/Library/CloudStorage/OneDrive-UniversityofIowa/CLD Lab (Director)/projects/ssd_sample/export_01"
+    directory = "/Users/pcombiths/Library/CloudStorage/OneDrive-UniversityofIowa/CLD Lab (Director)/projects/ssd_sample/export_01a"
     # directory = "/Users/pcombiths/Documents/GitHub/phon_query_to_csv/tests/typology_actual_test" # For testing
     # directory = r"C:\Users\pcombiths\Documents\GitHub\Phon_query_to_csv\tests\typology_actual_test" # For testing
     # directory = "/Users/pcombiths/Library/CloudStorage/OneDrive-UniversityofIowa/CLD Lab/Adult Language DLD/Pilot (IASCL 2023)/data/2024-07-04"
     query = "Queries_Actual_v2"  # Write keyword here
-    flavor = "new typology"  # For testing
+    flavor = "tx"  # For testing
     if 'flavor' not in locals():
         print("Available flavors:\n\ttx\n\ttypology\n\tnew typology\n\titold\n")
         print("**********************************\n")
@@ -107,5 +108,5 @@ if __name__ == "__main__":
     print(f"Current parameters are:\ndirectory: {directory}\nquery: {query}\nflavor: {flavor}\ntarget: {target}\nactual: {actual}\noverwrite:{overwrite}")
     print("\n**********************************\n")
     input(f"Proceed? (y/n): ")
-    output = phon_query_to_csv(directory, query, phase_re, participant_re, overwrite=False, target=False, actual=True)
+    output = phon_query_to_csv(directory, query, phase_re, participant_re, overwrite=False, target=target, actual=actual)
     pass
