@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 # TODO: Incorporate an Error Score column
 # TODO: Clean up logging.
-# TODO Remove created temporary files.
-# TODO Make ID of columns more of a generic function.
-#   Else make robust to different filenames
+# TODO: Remove created temporary files.
+# TODO: Make ID of columns more of a generic function.
+#           Else make robust to different filenames
+# TODO: Potentially fix Probe Type and Probe columns. 
 
 """
 Series of functions to batch process Phon analysis 
