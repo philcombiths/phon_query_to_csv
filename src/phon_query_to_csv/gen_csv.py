@@ -42,6 +42,10 @@ def gen_csv(directory, query, phase_re, participant_re, overwrite=False):
     probe_list = []
     probe_type_list = []
     file_count = 0
+    
+    # If directory is None, request input for directory path
+    while directory is None or not os.path.isdir(directory):
+        directory = input("Please enter a valid directory path: ")
     if not overwrite: 
         try:
             assert "Compiled" not in os.listdir(
@@ -244,6 +248,7 @@ def gen_csv(directory, query, phase_re, participant_re, overwrite=False):
                             log.error(sys.exc_info()[1])
                             log.error("Compiled Data folder not yet created")
         return (
+            directory,
             set(participant_list),
             set(phase_list),
             set(language_list),
