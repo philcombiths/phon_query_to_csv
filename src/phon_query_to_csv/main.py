@@ -47,7 +47,7 @@ def phon_query_to_csv(directory, query, phase_re, participant_re, overwrite=Fals
     if target:
         filepath = calculate_accuracy(filepath)
     result = phone_data_expander(filepath, directory, target=target, actual=actual)
-    print("***** All processes complete. *****")
+    print("***** full_annotated_dataset.csv generated successfully. *****\n")
     return result
 
 # Example use case:
@@ -56,15 +56,15 @@ if __name__ == "__main__":
     directory = None
     query = None
     flavor = None
-    overwrite = None
-    target = None
-    actual = None
+    overwrite = False
+    target = True
+    actual = True
     
     # Set Parameters Here:
-    directory = "/Users/pcombiths/Library/CloudStorage/OneDrive-UniversityofIowa/CLD Lab/NCJC/data_analysis/prelim_IES_grant_2024/NWR Phon"
-    directory = "/Users/pcombiths/Library/CloudStorage/OneDrive-UniversityofIowa/CLD Lab (Director)/projects/SSD Tx III - BHL/analysis/phon_data/v7"
-    query = "Queries_Target_v2"  # Write keyword here
-    flavor = None  # For testing
+    directory = None
+    query = None  # Write query name here: e.g., "Queries_Target_v2", "Queries_Actual_v2"
+    flavor = None  # Specify flavor (see options below)
+    
     if 'flavor' not in locals() or flavor is None:
         print("\n**********************************\n")
         print("Available flavors:\n\ttx\n\ttypology\n\tnew typology\n\titold\n\tncjc\n")
@@ -95,14 +95,14 @@ if __name__ == "__main__":
         actual = True
         
     elif flavor == "ncjc":
-        participant_re = r"\w{1}\d{3}"
-        phase_re = r"Timepoint\d"
+        participant_re = r"\w{1}\d{4}"
+        phase_re = r"Timepoint\d|Pre|Post|Fall|Spring|Winter|Summer"
         target = True
         actual = True
         
     print("\n**********************************\n")
-    print(f"\nCurrent parameters are:\ndirectory: {directory}\nquery: {query}\nflavor: {flavor}\ntarget: {target}\nactual: {actual}\noverwrite:{overwrite}")
+    print("Current parameters are:\n-----------------------")
+    print(f"directory: {directory}\nquery: {query}\nflavor: {flavor}\ntarget: {target}\nactual: {actual}\noverwrite:{overwrite}")
     print("\n**********************************\n")
     input(f"Proceed? (y/n): ")
     output = phon_query_to_csv(directory, query, phase_re, participant_re, overwrite=False, target=target, actual=actual)
-    pass

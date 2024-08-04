@@ -50,7 +50,7 @@ def gen_csv(directory, query, phase_re, participant_re, overwrite=False):
         except AssertionError as e:
             print(e)
             response = input(
-                "Compiled directory already exists. Do you want to delete the 'Compiled' directory? (Y/N): "
+                "Do you want to delete the existing 'Compiled' directory? (y/n): "
             )
             if response.lower() == "y":
                 shutil.rmtree(os.path.join(directory, "Compiled"))
@@ -62,7 +62,7 @@ def gen_csv(directory, query, phase_re, participant_re, overwrite=False):
         print("Existing 'Compiled' directory has been deleted.")    
     with change_dir(os.path.normpath(directory)):
         for dirName, subdirList, fileList in os.walk(os.getcwd()):
-            # Skip if directory name contains "Compiled" or ".bak"
+            # Skip 'Compiled' or '.bak' directories if already present"
             if any(x in dirName for x in ["Compiled", ".bak"]):
                 continue
             ## Check for Excel files in directory
@@ -86,13 +86,9 @@ def gen_csv(directory, query, phase_re, participant_re, overwrite=False):
                 log.warning("Compiled Data directory already created.")
             for cur_csv in os.listdir(dirName):
                 # Skip other files (listed below) if they occurr
-                if cur_csv == "desktop.ini":
-                    print(cur_csv, " skipped")
-                    continue
-                if cur_csv == "Report Template.txt":
-                    print(cur_csv, " skipped")
-                    continue
-                if cur_csv == "Report.html":
+                if cur_csv in ["full_annotated_dataset.csv", 
+                               "data_accuracy.csv", 
+                               "AllPart_AllLang_AllAnalyses_data.csv"]:
                     print(cur_csv, " skipped")
                     continue
                 if "Summary" in cur_csv:
