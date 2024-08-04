@@ -62,6 +62,9 @@ def gen_csv(directory, query, phase_re, participant_re, overwrite=False):
         print("Existing 'Compiled' directory has been deleted.")    
     with change_dir(os.path.normpath(directory)):
         for dirName, subdirList, fileList in os.walk(os.getcwd()):
+            # Skip if directory name contains "Compiled" or ".bak"
+            if any(x in dirName for x in ["Compiled", ".bak"]):
+                continue
             ## Check for Excel files in directory
             if any(fname.endswith(".xls") for fname in os.listdir(dirName)):
                 log.warning("**Excel files located in this directory:")
@@ -141,12 +144,12 @@ def gen_csv(directory, query, phase_re, participant_re, overwrite=False):
                             "efe": "Spanish",
                             "Sp": "Spanish",
                             "spa": "Spanish",
-                            "else": "Spanish",  # When Tx is in Spanish, otherwise set to Tx language
+                            "else": "Unspecified",  # When Tx is in Spanish, otherwise set to Tx language
                         }
-                        language = "Spanish"  # Default language
+                        language = "Unspecified"  # Default language
                         for key, value in lang_dict.items():
-                            if key in cur_csv and value == "English":
-                                language = "English"
+                            if key in cur_csv:
+                                language = value
                                 break
                         # language = cur_csv.split(".")[0] # Look in filename for language
                         language_list.append(language)

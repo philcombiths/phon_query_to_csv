@@ -62,6 +62,7 @@ if __name__ == "__main__":
     
     # Set Parameters Here:
     directory = "/Users/pcombiths/Library/CloudStorage/OneDrive-UniversityofIowa/CLD Lab/NCJC/data_analysis/prelim_IES_grant_2024/NWR Phon"
+    directory = "/Users/pcombiths/Library/CloudStorage/OneDrive-UniversityofIowa/CLD Lab (Director)/projects/SSD Tx III - BHL/analysis/phon_data/v7"
     query = "Queries_Target_v2"  # Write keyword here
     flavor = None  # For testing
     if 'flavor' not in locals() or flavor is None:
@@ -100,7 +101,7 @@ if __name__ == "__main__":
         actual = True
         
     print("\n**********************************\n")
-    print(f"Current parameters are:\ndirectory: {directory}\nquery: {query}\nflavor: {flavor}\ntarget: {target}\nactual: {actual}\noverwrite:{overwrite}")
+    print(f"\nCurrent parameters are:\ndirectory: {directory}\nquery: {query}\nflavor: {flavor}\ntarget: {target}\nactual: {actual}\noverwrite:{overwrite}")
     print("\n**********************************\n")
     input(f"Proceed? (y/n): ")
     output = phon_query_to_csv(directory, query, phase_re, participant_re, overwrite=False, target=target, actual=actual)
