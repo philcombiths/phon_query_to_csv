@@ -52,30 +52,21 @@ def phon_query_to_csv(directory, query, phase_re, participant_re, overwrite=Fals
 
 # Example use case:
 if __name__ == "__main__":
-    # parameters
+    # Default parameters
     directory = None
     query = None
     flavor = None
     overwrite = None
     target = None
     actual = None
-    # directory = os.path.normpath(input("Enter directory: "))
-    # directory = "/Users/pcombiths/Library/CloudStorage/OneDrive-UniversityofIowa/CLD Lab (Director)/projects/Typology/data_prep/phones_export/export_02"
-    # directory = "/Users/pcombiths/Library/CloudStorage/OneDrive-UniversityofIowa/CLD Lab (Director)/projects/New Typology/export_01"
-    # directory = "/Users/pcombiths/Library/CloudStorage/OneDrive-UniversityofIowa/CLD Lab (Director)/projects/ssd_sample/export_01"
-    directory = "/Users/pcombiths/Library/CloudStorage/OneDrive-UniversityofIowa/CLD Lab (Director)/projects/ssd_sample/export_01a"
-    # directory = "/Users/pcombiths/Documents/GitHub/phon_query_to_csv/tests/typology_actual_test" # For testing
-    # directory = r"C:\Users\pcombiths\Documents\GitHub\Phon_query_to_csv\tests\typology_actual_test" # For testing
-    # directory = "/Users/pcombiths/Library/CloudStorage/OneDrive-UniversityofIowa/CLD Lab/Adult Language DLD/Pilot (IASCL 2023)/data/2024-07-04"
-    query = "Queries_Actual_v2"  # Write keyword here
-    flavor = "tx"  # For testing
-    if 'flavor' not in locals():
-        print("Available flavors:\n\ttx\n\ttypology\n\tnew typology\n\titold\n")
-        print("**********************************\n")
-        flavor = input("Specify flavor: ")
-    elif flavor is None:
-        print("Available flavors:\n\ttx\n\ttypology\n\tnew typology\n\titold\n")
-        print("**********************************\n")
+    
+    # Set Parameters Here:
+    directory = "/Users/pcombiths/Library/CloudStorage/OneDrive-UniversityofIowa/CLD Lab/NCJC/data_analysis/prelim_IES_grant_2024/NWR Phon"
+    query = "Queries_Target_v2"  # Write keyword here
+    flavor = None  # For testing
+    if 'flavor' not in locals() or flavor is None:
+        print("\n**********************************\n")
+        print("Available flavors:\n\ttx\n\ttypology\n\tnew typology\n\titold\n\tncjc\n")
         flavor = input("Specify flavor: ")
     
     if flavor == "tx":
@@ -92,18 +83,22 @@ if __name__ == "__main__":
 
     elif flavor == "new typology":
         participant_re = r"\w{3,4}\d\d"
-        phase_re = (
-            r"no phases"  # No phases in this dataset. Trigger null regex result
-        )
+        phase_re = r"no phases"  # No phases in this dataset. Trigger null regex result
         target = False
         actual = True
+        
     elif flavor == "itold":
         participant_re = r"\w{4}\d{2}"
-        phase_re = (
-            r"no phases"  # No phases in this dataset. Trigger null regex result
-        )
+        phase_re = r"no phases"  # No phases in this dataset. Trigger null regex result
         target = True
         actual = True
+        
+    elif flavor == "ncjc":
+        participant_re = r"\w{1}\d{3}"
+        phase_re = r"Timepoint\d"
+        target = True
+        actual = True
+        
     print("\n**********************************\n")
     print(f"Current parameters are:\ndirectory: {directory}\nquery: {query}\nflavor: {flavor}\ntarget: {target}\nactual: {actual}\noverwrite:{overwrite}")
     print("\n**********************************\n")
