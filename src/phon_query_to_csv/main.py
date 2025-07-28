@@ -102,6 +102,7 @@ if __name__ == "__main__":
     print(f"directory: {directory}\nquery: {query}\nflavor: {flavor}\ntarget: {target}\nactual: {actual}\noverwrite:{overwrite}")
     print("\n**********************************\n")
     input("Proceed? (y/n): ")
+    
     # Execute function
     output = phon_query_to_csv(
         directory=directory, 
