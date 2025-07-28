@@ -16,9 +16,10 @@ Generates:
 - 'full_accuracy_dataset.csv': All data from above, plus phone characteristics from ipa_features.py
 
 Created on Thu Jul 30 18:18:01 2020
-@modified: 2024-08-04
+@modified: 2025-07-25
 @author: Philip Combiths
 """
+
 import logging
 
 from phon_query_to_csv.logging_config import setup_logging
@@ -26,6 +27,7 @@ from phon_query_to_csv.gen_csv import gen_csv
 from phon_query_to_csv.merge_csv import merge_csv
 from phon_query_to_csv.calculate_accuracy import calculate_accuracy
 from phon_query_to_csv.phone_data_expander import phone_data_expander
+from phon_query_to_csv.create_pivot_table import create_pivot_table
 # from phon_query_to_csv.column_match import column_match # Optional
 
 log = setup_logging(logging.INFO, __name__)
@@ -41,6 +43,8 @@ def phon_query_to_csv(directory, query, phase_re, participant_re, overwrite=Fals
         filepath = calculate_accuracy(filepath)
     result = phone_data_expander(filepath, gen_csv_result[0], target=target, actual=actual)
     print("***** full_annotated_dataset.csv generated successfully. *****\n")
+    result = create_pivot_table(gen_csv_result[0])
+    print("***** pivot_table_dataset.csv generated successfully. *****\n")
     return result
 
 # Interactive Module Execution
@@ -98,6 +102,7 @@ if __name__ == "__main__":
     print(f"directory: {directory}\nquery: {query}\nflavor: {flavor}\ntarget: {target}\nactual: {actual}\noverwrite:{overwrite}")
     print("\n**********************************\n")
     input("Proceed? (y/n): ")
+    
     # Execute function
     output = phon_query_to_csv(
         directory=directory, 
