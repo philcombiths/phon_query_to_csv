@@ -18,6 +18,7 @@ Generates:
 Created on Thu Jul 30 18:18:01 2020
 @modified: 2025-07-25
 @author: Philip Combiths
+@contributors: Francesco Vial
 """
 
 import logging
@@ -64,7 +65,7 @@ if __name__ == "__main__":
 
     if 'flavor' not in locals() or flavor is None:
         print("\n**********************************\n")
-        print("Available flavors:\n\ttx\n\ttypology\n\tnew typology\n\titold\n\tncjc\n")
+        print("Available flavors:\n\ttx\n\ttypology\n\tnew typology\n\titold\n\tncjc\n\tcustom\n")
         flavor = input("Specify flavor: ")
 
     if flavor == "tx":
@@ -96,6 +97,12 @@ if __name__ == "__main__":
         phase_re = r"Timepoint\d|Pre|Post|Fall|Spring|Winter|Summer"
         target = True
         actual = True
+
+    elif flavor == "custom":
+        participant_re = input("Enter participant regex: ")
+        phase_re = input("Enter phase regex: ")
+        target = input("Target? (y/n): ").lower() == 'y'
+        actual = input("Actual? (y/n): ").lower() == 'y'
 
     print("\n**********************************\n")
     print("Current parameters are:\n-----------------------")
