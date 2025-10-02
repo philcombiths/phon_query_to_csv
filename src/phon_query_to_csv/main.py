@@ -33,7 +33,7 @@ from phon_query_to_csv.create_pivot_table import create_pivot_table
 
 log = setup_logging(logging.INFO, __name__)
 
-def phon_query_to_csv(directory, query, phase_re, participant_re, overwrite=False, target=True, actual=True):
+def phon_query_to_csv(directory, query, phase_re, participant_re, overwrite=False, target=True, actual=True, blank_repeated_labels=True):
     """
     Wrapper for sequence of functions.
     """
@@ -44,7 +44,7 @@ def phon_query_to_csv(directory, query, phase_re, participant_re, overwrite=Fals
         filepath = calculate_accuracy(filepath)
     result = phone_data_expander(filepath, gen_csv_result[0], target=target, actual=actual)
     print("***** full_annotated_dataset.csv generated successfully. *****\n")
-    result = create_pivot_table(gen_csv_result[0])
+    result = create_pivot_table(gen_csv_result[0], blank_repeated_labels=blank_repeated_labels)
     print("***** pivot_table_dataset.csv generated successfully. *****\n")
     return result
 
@@ -55,13 +55,16 @@ if __name__ == "__main__":
     query = None
     flavor = None
     overwrite = False
+    blank_repeated_labels = True
     target = True
     actual = True
+
 
     # Set Parameters Here:
     directory = None
     query = "Queries_Target_v2"  # Write query name here: e.g., "Queries_Target_v2", "Queries_Actual_v2"
     flavor = None  # Specify flavor (see options below)
+    # blank_repeated_labels = False  # Uncomment and set to False to preserve repeated labels in pivot table
 
     if 'flavor' not in locals() or flavor is None:
         print("\n**********************************\n")
@@ -75,8 +78,8 @@ if __name__ == "__main__":
         actual = True
 
     if flavor == "tx blind":
-        participant_re = r"^\w"
-        phase_re = r"\w\d\d\d\d"
+        participant_re = r"\w(?=\d{4})"
+        phase_re = r"\w{1}\d{4}"
         target = True
         actual = True
     
@@ -110,9 +113,17 @@ if __name__ == "__main__":
         target = input("Target? (y/n): ").lower() == 'y'
         actual = input("Actual? (y/n): ").lower() == 'y'
 
+    # Ask about pivot table label blanking
+    print("\n**********************************\n")
+    blank_labels_input = input("Blank repeated labels in pivot table? (y/n, default=y): ").lower()
+    if blank_labels_input == 'n':
+        blank_repeated_labels = False
+    else:
+        blank_repeated_labels = True
+
     print("\n**********************************\n")
     print("Current parameters are:\n-----------------------")
-    print(f"directory: {directory}\nquery: {query}\nflavor: {flavor}\ntarget: {target}\nactual: {actual}\noverwrite:{overwrite}")
+    print(f"directory: {directory}\nquery: {query}\nflavor: {flavor}\ntarget: {target}\nactual: {actual}\noverwrite:{overwrite}\nblank_repeated_labels: {blank_repeated_labels}")
     print("\n**********************************\n")
     input("Proceed? (y/n): ")
     
@@ -124,5 +135,6 @@ if __name__ == "__main__":
         participant_re=participant_re,
         overwrite=overwrite, 
         target=target, 
-        actual=actual
+        actual=actual,
+        blank_repeated_labels=blank_repeated_labels
     )

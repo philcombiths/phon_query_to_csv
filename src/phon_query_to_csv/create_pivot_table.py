@@ -22,8 +22,33 @@ def create_pivot_table(
     aggfunc=None,
     subrow_filters=None,
     output_filename='pivot_table_dataset.csv',
-    show_preview=True
+    show_preview=True,
+    blank_repeated_labels=True
 ):
+    """
+    Create a pivot table from the full annotated dataset.
+    
+    Parameters:
+    -----------
+    directory : str
+        Directory path containing the data files
+    rows : list, optional
+        List of column names to use as rows in the pivot table
+    value_column : str, optional
+        Column name to use for values in the pivot table
+    aggfunc : str, optional
+        Aggregation function to apply ('mean', 'sum', 'count', etc.)
+    subrow_filters : dict, optional
+        Dictionary of filters to apply to specific row columns
+    output_filename : str, default 'pivot_table_dataset.csv'
+        Name of the output CSV file
+    show_preview : bool, default True
+        Whether to display a preview of the pivot table
+    blank_repeated_labels : bool, default True
+        Whether to blank repeated labels in the output for readability.
+        If True, repeated values in row columns are replaced with empty strings.
+        If False, all values are preserved as-is.
+    """
     in_fp = os.path.join(directory, 'Compiled', 'merged_files', 'full_annotated_dataset.csv')
     out_fp = os.path.join(directory, 'Compiled', 'merged_files', output_filename)
 
@@ -117,15 +142,16 @@ def create_pivot_table(
     # Prepare for output
     out_df = out_df.round(2).reset_index()
 
-    # Blank repeated labels
-    for col in rows:
-        last = None
-        for i in range(len(out_df)):
-            curr = out_df.at[i, col]
-            if curr == last:
-                out_df.at[i, col] = ''
-            else:
-                last = curr
+    # Blank repeated labels (optional)
+    if blank_repeated_labels:
+        for col in rows:
+            last = None
+            for i in range(len(out_df)):
+                curr = out_df.at[i, col]
+                if curr == last:
+                    out_df.at[i, col] = ''
+                else:
+                    last = curr
 
     # Save to CSV
     os.makedirs(os.path.dirname(out_fp), exist_ok=True)
@@ -144,7 +170,10 @@ def create_pivot_table(
     print(f"Value column: {value_column}")
     print(f"Aggregation function: {aggfunc}")
     print("Values rounded to 2 decimal places.")
-    print("Repeated row labels are blanked in the final CSV for readability.")
+    if blank_repeated_labels:
+        print("Repeated row labels are blanked in the final CSV for readability.")
+    else:
+        print("Repeated row labels are preserved in the final CSV.")
 
     if show_preview:
         print("\nPreview of pivot table:")
@@ -153,4 +182,8 @@ def create_pivot_table(
 # Example usage for testing
 if __name__ == "__main__":
     directory = ''
+    # Default behavior (blanks repeated labels)
     create_pivot_table(directory)
+    
+    # To preserve repeated labels, set blank_repeated_labels=False
+    # create_pivot_table(directory, blank_repeated_labels=False)
