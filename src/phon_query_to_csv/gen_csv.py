@@ -173,7 +173,10 @@ def gen_csv(directory, query, phase_re, participant_re, overwrite=False):
                             "***********************************************\n",
                             list(df),
                         )
-                        probe = cur_csv.split("_")[1]
+                        try:
+                            probe = cur_csv.split("_")[1]
+                        except IndexError:
+                            probe = "Unknown"
                         probe_list.append(probe)
                         df["Probe"] = probe
                         probe_type = phase

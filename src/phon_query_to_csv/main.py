@@ -65,7 +65,7 @@ if __name__ == "__main__":
 
     if 'flavor' not in locals() or flavor is None:
         print("\n**********************************\n")
-        print("Available flavors:\n\ttx\n\ttypology\n\tnew typology\n\titold\n\tncjc\n\tcustom\n")
+        print("Available flavors:\n\ttx\n\ttx blind\n\ttypology\n\tnew typology\n\titold\n\tncjc\n\tcustom\n")
         flavor = input("Specify flavor: ")
 
     if flavor == "tx":
@@ -74,6 +74,12 @@ if __name__ == "__main__":
         target = True
         actual = True
 
+    if flavor == "tx blind":
+        participant_re = r"^\w"
+        phase_re = r"\w\d\d\d\d"
+        target = True
+        actual = True
+    
     elif flavor == "typology":
         participant_re = r"\d\d\d"
         phase_re = r"p[IVX]+"
