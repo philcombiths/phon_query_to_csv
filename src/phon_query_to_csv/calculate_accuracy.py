@@ -4,6 +4,7 @@ import logging
 import os
 import pandas as pd
 from phon_query_to_csv.logging_config import setup_logging
+from phon_query_to_csv.calculate_accuracy_helper import get_score
 
 log = setup_logging(logging.INFO, __name__)
 
@@ -23,25 +24,21 @@ def calculate_accuracy(filepath):
     # Read the CSV file into a DataFrame
     df = pd.read_csv(filepath, encoding="utf-8")
 
-    # Create masks to derive accurate, substituted, and deleted phones
-    accurate_mask = df["IPA Target"] == df["IPA Actual"]
-    inaccurate_mask = df["IPA Target"] != df["IPA Actual"]
-    deletion_mask = (
-        df["IPA Actual"].isin([pd.NaT, "", " ", "∅"]) | df["IPA Actual"].isnull()
-    )
-    substitution_mask = (df["IPA Target"] != df["IPA Actual"]) & (~deletion_mask)
+    # Create mask to derive accurate and inaccurate phones
+    accuracy_mask = df["IPA Target"] == df["IPA Actual"]
 
     # Initialize columns with default values
     df["Accuracy"] = 0
-    df["Deletion"] = 0
-    df["Substitution"] = 0
 
-    print("Processing Accuracy, Deletion, Substitution...")
+    print("Processing Accuracy...")
 
     # Assign values to columns based on masks
-    df.loc[accurate_mask, "Accuracy"] = 1
-    df.loc[deletion_mask, "Deletion"] = 1
-    df.loc[substitution_mask, "Substitution"] = 1
+    df.loc[accuracy_mask, "Accuracy"] = 1
+
+    acc_check = (idx for idx in df.index if df.at[idx, "Accuracy"])
+
+    for idx in acc_check :
+       df.at[idx, "Accuracy"] = get_score(df.at[idx, "IPA Target"], df.at[idx, "IPA Actual"])
 
     # Save the updated DataFrame to a new CSV file
     print(f"Generating {output_filename}...")
