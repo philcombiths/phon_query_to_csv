@@ -24,7 +24,7 @@ def get_score(target, actual):
 
     return 1;
 
-def get_place_distance(t_seg, a_seg):
+def get_place_distance(t_fts, a_fts):
     """
     Helper function of get_score to calculate distance rating for place of articulation.
 
@@ -36,6 +36,24 @@ def get_place_distance(t_seg, a_seg):
         (int): The distance rating, from 0 to 2.
     """
 
+    # Labials
+    # Coronals
+    # Dorsals
+    # Radical
+    # Glottal
+
+    # Bilabial
+    # Labiodental
+    # Dental
+    # Alveolar
+    # Postalveolar
+    # Retroflex
+    # Palatal
+    # Velar
+    # Uvular
+    # Pharyngeal
+    # Epiglottal
+    # Glottal
 
 def get_manner_distance(t_seg, a_seg):
     """
@@ -49,3 +67,28 @@ def get_manner_distance(t_seg, a_seg):
         (int): The distance rating, from 0 to 2.
     """
 
+    # Obstruent             [-son]
+    # Sonorant              [+son]
+
+    # Nasal                 [+son][+cons][-cont][+nas][-delrel][-lat]
+    # Plosive               [-son][+cons][-cont][-nas][-delrel][-lat]
+    # Affricate             [-son][+cons][-cont][-nas][+delrel][-lat]
+    # Fricative             [-son][+cons][+cont][-nas][-delrel][-lat]
+    # L. Fricative          [-son][+cons][+cont][-nas][-delrel][+lat]
+    # Approximant           [+son][-cons][+cont][-nas][-delrel][-lat]
+    # L. Approximant        [+son][-cons][+cont][-nas][-delrel][+lat]
+    # Trill                 [+son][+cons][+cont][-nas][-delrel][-lat]
+    # Tap / Flap            [+son][+cons][-cont][-nas][-delrel][-lat]
+
+    fts_to_check = ['son', 'cons', 'cont', 'nas', 'delrel', 'lat']
+
+    for ft in fts_to_check:
+        if t_seg[ft] == a_seg[ft]:
+            next
+
+        if ft == 'son':
+            return 0;
+
+        return 1;
+
+    return 2;
