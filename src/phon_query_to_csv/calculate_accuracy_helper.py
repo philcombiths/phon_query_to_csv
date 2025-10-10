@@ -9,25 +9,43 @@ def get_score(target, actual):
         actual (str): The IPA Actual.
         
     Returns:
-        score (float): The detailed score of accuracy.
+        (float): The detailed score of accuracy.
     """
 
     ft = pp.FeatureTable()
-    score = 1
 
-    t_segment = pp.word_fts(target)[0]
-    a_segment = pp.word_fts(actual)[0]
+    t_seg = pp.word_fts(target)[0]
+    a_seg = pp.word_fts(actual)[0]
 
-    distances = [0, 0, 0]
-    
-    # if target-voice
+    if t_seg['voi'] == a_seg['voi']:
+        score = get_place_distance(t_seg, a_seg) + get_manner_distance(t_seg, a_seg) + 2
 
-    score -= 1
+        return score / 7
 
-    # if
-    #   near-place AND near-manner or
-    #   target-place AND distal-manner or
-    #   distal-place AND target-manner
+    return 1;
 
-    score += 1
+def get_place_distance(t_seg, a_seg):
+    """
+    Helper function of get_score to calculate distance rating for place of articulation.
+
+    Args:
+        t_seg (Segment): The distinctive features of the IPA Target.
+        a_seg (Segment): The distinctive features of the IPA Actual.
+
+    Returns:
+        (int): The distance rating, from 0 to 2.
+    """
+
+
+def get_manner_distance(t_seg, a_seg):
+    """
+    Helper function of get_score to calculate distance rating for manner of articulation.
+
+    Args:
+        t_seg (Segment): The distinctive features of the IPA Target.
+        a_seg (Segment): The distinctive features of the IPA Actual.
+
+    Returns:
+        (int): The distance rating, from 0 to 2.
+    """
 
