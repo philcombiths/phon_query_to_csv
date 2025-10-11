@@ -24,7 +24,7 @@ def get_score(target, actual):
 
     return 1;
 
-def get_place_distance(t_fts, a_fts):
+def get_place_distance(t_seg, a_seg):
     """
     Helper function of get_score to calculate distance rating for place of articulation.
 
@@ -36,24 +36,38 @@ def get_place_distance(t_fts, a_fts):
         (int): The distance rating, from 0 to 2.
     """
 
-    # Labials
-    # Coronals
-    # Dorsals
-    # Radical
-    # Glottal
+    # cg, ant, cor, distr, lab
 
-    # Bilabial
-    # Labiodental
-    # Dental
-    # Alveolar
-    # Postalveolar
-    # Retroflex
-    # Palatal
-    # Velar
-    # Uvular
-    # Pharyngeal
-    # Epiglottal
-    # Glottal
+    # Labials               [+ant][-cor][+lab]
+    # Coronals              [+/-ant][+cor]
+    # Dorsals               [-ant][-cor][-lo][+hi/back]
+    # Radical               [-ant][-cor][-hi][+lo][+back]
+    # Glottal               [-ant][-cor][-hi][-lo][-back]
+
+    # Bilabial              [+ant][-cor]    [+lab][?]
+    # Labiodental           [+ant][-cor]    [+lab][?]
+    # Dental                [+ant][+cor]    [+distr]
+    # Alveolar              [+ant][+cor]    [-distr]
+    # Postalveolar          [-ant][+cor]    [+distr]
+    # Retroflex             [-ant][+cor]    [-/0distr]
+    # Palatal               [-ant][-cor]    [+hi][-lo][-back]
+    # Velar                 [-ant][-cor]    [+hi][-lo][+/0back]
+    # Uvular                [-ant][-cor]    [-hi][-lo][+back]
+    # Pharyngeal            [-ant][-cor]    [-hi][+lo][+back]
+    # Glottal               [-ant][-cor]    [-hi][-lo][-back]
+
+    fts_to_check = ['cor', 'ant', 'distr', 'lab', 'hi', 'lo', 'back']
+
+    for ft in fts_to_check:
+        if t_seg[ft] == a_seg[ft]:
+            next
+
+        if ft == 'son':
+            return 0;
+
+        return 1;
+
+    return 2;
 
 def get_manner_distance(t_seg, a_seg):
     """
@@ -70,15 +84,15 @@ def get_manner_distance(t_seg, a_seg):
     # Obstruent             [-son]
     # Sonorant              [+son]
 
-    # Nasal                 [+son][+cons][-cont][+nas][-delrel][-lat]
-    # Plosive               [-son][+cons][-cont][-nas][-delrel][-lat]
-    # Affricate             [-son][+cons][-cont][-nas][+delrel][-lat]
-    # Fricative             [-son][+cons][+cont][-nas][-delrel][-lat]
-    # L. Fricative          [-son][+cons][+cont][-nas][-delrel][+lat]
-    # Approximant           [+son][-cons][+cont][-nas][-delrel][-lat]
-    # L. Approximant        [+son][-cons][+cont][-nas][-delrel][+lat]
-    # Trill                 [+son][+cons][+cont][-nas][-delrel][-lat]
-    # Tap / Flap            [+son][+cons][-cont][-nas][-delrel][-lat]
+    # Nasal                 [+son][+cons][-cont][+nas]
+    # Plosive               [-son][+cons][-cont][-nas]  [-delrel]
+    # Affricate             [-son][+cons][-cont][-nas]  [+delrel]
+    # Fricative             [-son][+cons][+cont][-nas]  [-lat]
+    # L. Fricative          [-son][+cons][+cont][-nas]  [+lat]
+    # Approximant           [+son][-cons][+cont][-nas]  [-lat]
+    # L. Approximant        [+son][-cons][+cont][-nas]  [+lat]
+    # Trill                 [+son][+cons][+cont][-nas]
+    # Tap / Flap            [+son][+cons][-cont][-nas]
 
     fts_to_check = ['son', 'cons', 'cont', 'nas', 'delrel', 'lat']
 
