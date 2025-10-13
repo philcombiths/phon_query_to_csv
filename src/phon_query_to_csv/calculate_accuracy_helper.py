@@ -12,37 +12,64 @@ def get_score(target, actual):
         (float): The detailed score of accuracy.
     """
 
-    ft = pp.FeatureTable()
+    f_table = pp.FeatureTable()
 
-    t_seg = pp.word_fts(target)[0]
-    a_seg = pp.word_fts(actual)[0]
+    t_seg = f_table.word_fts(target)[0]
+    a_seg = f_table.word_fts(actual)[0]
+
+    ctgs = [['blb', 'lbd', 'dnt', 'alv', 'plv', 'rtf', 'plt', 'vlr', 'uvl', 'phr', 'glt'],
+            ['nas', 'plo', 'aff', 'fri', 'lfr', 'app', 'lap', 'tri', 'tfp']]
+    dists = {
+        'plcs' : {
+            'blb': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+            'lbd': [1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+            'dnt': [2, 1, 0, 1, 2, 3, 4, 5, 6, 7, 8],
+            'alv': [3, 2, 1, 0, 1, 2, 3, 4, 5, 6, 7],
+            'plv': [4, 3, 2, 1, 0, 1, 2, 3, 4, 5, 6],
+            'rtf': [5, 4, 3, 2, 1, 0, 1, 2, 3, 4, 5],
+            'plt': [6, 5, 4, 3, 2, 1, 0, 1, 2, 3, 4],
+            'vlr': [7, 6, 5, 4, 3, 2, 1, 0, 1, 2, 3],
+            'uvl': [8, 7, 6, 5, 4, 3, 2, 1, 0, 1, 2],
+            'phr': [9, 8, 7, 6, 5, 4, 3, 2, 1, 0, 1],
+            'glt': [10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
+        },
+        'mans' : {
+            'nas': [0, 1, 2, 3, 3, 3, 3, 2, 1],
+            'plo': [1, 0, 1, 2, 2, 3, 3, 3, 2],
+            'aff': [2, 1, 0, 1, 1, 2, 2, 3, 3],
+            'fri': [3, 2, 1, 0, 1, 1, 2, 2, 3],
+            'lfr': [3, 2, 1, 1, 0, 2, 1, 2, 3],
+            'app': [3, 3, 2, 1, 2, 0, 1, 1, 2],
+            'lap': [3, 3, 2, 2, 1, 1, 0, 1, 2],
+            'tri': [2, 3, 3, 2, 2, 1, 1, 0, 1],
+            'tfp': [1, 2, 3, 3, 3, 2, 2, 1, 0]
+        }
+    }
 
     if t_seg['voi'] == a_seg['voi']:
-        score = get_place_distance(t_seg, a_seg) + get_manner_distance(t_seg, a_seg) + 2
+        plc_dist = get_distance(ctgs, dists['plcs'], get_place, t_seg, a_seg)
+        man_dist = get_distance(ctgs, dists['mans'], get_manner, t_seg, a_seg)
 
-        return score / 7
+        return;
 
-    return 1;
+    return;
 
-def get_place_distance(t_seg, a_seg):
+def get_distance(ctgs, dists, get_art, t_seg, a_seg):
+    t_ctg = get_art(t_seg)
+    a_ctg = get_art(a_seg)
+        
+    return dists[t_ctg][ctgs.index(a_ctg)]
+    
+def get_place(seg):
     """
-    Helper function of get_score to calculate distance rating for place of articulation.
+    Helper function of get_place_distance to determine place of articulation.
 
     Args:
-        t_seg (Segment): The distinctive features of the IPA Target.
-        a_seg (Segment): The distinctive features of the IPA Actual.
+        seg (Segment): The distinctive features of a given phone.
 
     Returns:
-        (int): The distance rating, from 0 to 2.
+        (str): The place of articulation.
     """
-
-    # cg, ant, cor, distr, lab
-
-    # Labials               [+ant][-cor][+lab]
-    # Coronals              [+/-ant][+cor]
-    # Dorsals               [-ant][-cor][-lo][+hi/back]
-    # Radical               [-ant][-cor][-hi][+lo][+back]
-    # Glottal               [-ant][-cor][-hi][-lo][-back]
 
     # Bilabial              [+ant][-cor]    [+lab][?]
     # Labiodental           [+ant][-cor]    [+lab][?]
@@ -56,53 +83,51 @@ def get_place_distance(t_seg, a_seg):
     # Pharyngeal            [-ant][-cor]    [-hi][+lo][+back]
     # Glottal               [-ant][-cor]    [-hi][-lo][-back]
 
-    fts_to_check = ['cor', 'ant', 'distr', 'lab', 'hi', 'lo', 'back']
+    return;
 
-    for ft in fts_to_check:
-        if t_seg[ft] == a_seg[ft]:
-            next
-
-        if ft == 'son':
-            return 0;
-
-        return 1;
-
-    return 2;
-
-def get_manner_distance(t_seg, a_seg):
+def get_manner(seg):
     """
-    Helper function of get_score to calculate distance rating for manner of articulation.
+    Helper function of get_manner_distance to determine manner of articulation.
 
     Args:
-        t_seg (Segment): The distinctive features of the IPA Target.
-        a_seg (Segment): The distinctive features of the IPA Actual.
+        seg (Segment): The distinctive features of a given phone.
 
     Returns:
-        (int): The distance rating, from 0 to 2.
+        (str): The manner of articulation.
     """
 
-    # Obstruent             [-son]
-    # Sonorant              [+son]
-
     # Nasal                 [+son][+cons][-cont][+nas]
-    # Plosive               [-son][+cons][-cont][-nas]  [-delrel]
-    # Affricate             [-son][+cons][-cont][-nas]  [+delrel]
-    # Fricative             [-son][+cons][+cont][-nas]  [-lat]
-    # L. Fricative          [-son][+cons][+cont][-nas]  [+lat]
-    # Approximant           [+son][-cons][+cont][-nas]  [-lat]
-    # L. Approximant        [+son][-cons][+cont][-nas]  [+lat]
+    # Plosive               [-son][+cons][-cont][-nas][-delrel]
+    # Affricate             [-son][+cons][-cont][-nas][+delrel]
+    # Fricative             [-son][+cons][+cont][-nas][-lat]
+    # L. Fricative          [-son][+cons][+cont][-nas][+lat]
+    # Approximant           [+son][-cons][+cont][-nas][-lat]
+    # L. Approximant        [+son][-cons][+cont][-nas][+lat]
     # Trill                 [+son][+cons][+cont][-nas]
     # Tap / Flap            [+son][+cons][-cont][-nas]
 
-    fts_to_check = ['son', 'cons', 'cont', 'nas', 'delrel', 'lat']
-
-    for ft in fts_to_check:
-        if t_seg[ft] == a_seg[ft]:
-            next
-
-        if ft == 'son':
-            return 0;
-
-        return 1;
-
-    return 2;
+    if seg['son'] == 1:
+        if seg['cons'] == 1:
+            if seg['cont'] == 1:
+                return 'tri'
+            
+            if seg['nas'] == 1:
+                return 'nas'
+            
+            return 'tfp'
+        
+        if seg['lat'] == 1:
+            return 'lap'
+        
+        return 'app'
+    
+    if seg['cont'] == 1:
+        if seg['lat'] == 1:
+            return 'lfr'
+        
+        return 'fri'
+    
+    if seg['delrel'] == 1:
+        return 'aff'
+    
+    return 'plo'
