@@ -71,19 +71,34 @@ def get_place(seg):
         (str): The place of articulation.
     """
 
-    # Bilabial              [+ant][-cor]    [+lab][?]
-    # Labiodental           [+ant][-cor]    [+lab][?]
-    # Dental                [+ant][+cor]    [+distr]
-    # Alveolar              [+ant][+cor]    [-distr]
-    # Postalveolar          [-ant][+cor]    [+distr]
-    # Retroflex             [-ant][+cor]    [-/0distr]
-    # Palatal               [-ant][-cor]    [+hi][-lo][-back]
-    # Velar                 [-ant][-cor]    [+hi][-lo][+/0back]
-    # Uvular                [-ant][-cor]    [-hi][-lo][+back]
-    # Pharyngeal            [-ant][-cor]    [-hi][+lo][+back]
-    # Glottal               [-ant][-cor]    [-hi][-lo][-back]
+    # Bilabial              [+ant][-cor][?]
+    # Labiodental           [+ant][-cor][?]
+    # Dental                [+ant][+cor][+distr]
+    # Alveolar              [+ant][+cor][-distr]
+    # Postalveolar          [-ant][+cor][+distr]
+    # Retroflex             [-ant][+cor][-/0distr]
+    # Palatal               [-ant][-cor][+hi][-lo][-back]
+    # Velar                 [-ant][-cor][+hi][-lo][+/0back]
+    # Uvular                [-ant][-cor][-hi][-lo][+back]
+    # Pharyngeal            [-ant][-cor][-hi][+lo][+back]
+    # Glottal               [-ant][-cor][-hi][-lo][-back]
+    
+    if seg.match({'ant': 1, 'cor': -1}):
+        return 'lbd' if seg.match({'strid': 1}) or seg.match({'delrel': 0}) else 'blb'
 
-    return;
+    if seg.match({'ant': 1, 'cor': 1}):
+        return 'dnt' if seg.match({'distr': 1}) else 'alv'
+    
+    if seg.match({'ant': -1, 'cor': 1}):
+        return 'plv' if seg.match({'distr': 1}) else 'rtf'
+    
+    if seg.match({'hi': 1}):
+        return 'plt' if seg.match({'back': -1}) else 'vlr'
+    
+    if seg.match({'back': 1}):
+        return 'phr' if seg.match({'lo': 1}) else 'uvl'
+    
+    return 'glt'
 
 def get_manner(seg):
     """
@@ -97,37 +112,25 @@ def get_manner(seg):
     """
 
     # Nasal                 [+son][+cons][-cont][+nas]
-    # Plosive               [-son][+cons][-cont][-nas][-delrel]
-    # Affricate             [-son][+cons][-cont][-nas][+delrel]
-    # Fricative             [-son][+cons][+cont][-nas][-lat]
-    # L. Fricative          [-son][+cons][+cont][-nas][+lat]
-    # Approximant           [+son][-cons][+cont][-nas][-lat]
-    # L. Approximant        [+son][-cons][+cont][-nas][+lat]
-    # Trill                 [+son][+cons][+cont][-nas]
+    # Plosive               [-son][+cons][-cont][-delrel]
+    # Affricate             [-son][+cons][-cont][+delrel]
+    # Fricative             [-son][+cons][+cont][-lat]
+    # L. Fricative          [-son][+cons][+cont][+lat]
+    # Approximant           [+son][-cons][+cont][-lat]
+    # L. Approximant        [+son][-cons][+cont][+lat]
+    # Trill                 [+son][+cons][+cont]
     # Tap / Flap            [+son][+cons][-cont][-nas]
 
-    if seg['son'] == 1:
-        if seg['cons'] == 1:
-            if seg['cont'] == 1:
-                return 'tri'
-            
-            if seg['nas'] == 1:
-                return 'nas'
-            
-            return 'tfp'
-        
-        if seg['lat'] == 1:
-            return 'lap'
-        
-        return 'app'
+    if seg.match({'son': -1, 'cons': 1, 'cont': -1}):
+        return 'aff' if seg.match({'delrel': 1}) else 'plo'
+
+    if seg.match({'son': -1, 'cons': 1, 'cont': 1}):
+        return 'lfr' if seg.match({'lat': 1}) else 'fri'
     
-    if seg['cont'] == 1:
-        if seg['lat'] == 1:
-            return 'lfr'
-        
-        return 'fri'
+    if seg.match({'son': 1, 'cons': -1, 'cont': 1}):
+        return 'lap' if seg.match({'lat': 1}) else 'app'
     
-    if seg['delrel'] == 1:
-        return 'aff'
+    if seg.match({'son': 1, 'cons': 1, 'cont': -1}):
+        return 'nas' if seg.match({'nas': 1}) else 'tfp'
     
-    return 'plo'
+    return 'tri'
