@@ -9,10 +9,11 @@ def get_score(target, actual):
         actual (str): The IPA Actual.
         
     Returns:
-        (float): The detailed score of accuracy.
+        score (float): The detailed score of accuracy.
     """
 
     f_table = pp.FeatureTable()
+    score = 1
 
     t_seg = f_table.word_fts(target)[0]
     a_seg = f_table.word_fts(actual)[0]
@@ -21,38 +22,52 @@ def get_score(target, actual):
             ['nas', 'plo', 'aff', 'fri', 'lfr', 'app', 'lap', 'tri', 'tfp']]
     dists = {
         'plcs' : {
-            'blb': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-            'lbd': [1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-            'dnt': [2, 1, 0, 1, 2, 3, 4, 5, 6, 7, 8],
-            'alv': [3, 2, 1, 0, 1, 2, 3, 4, 5, 6, 7],
-            'plv': [4, 3, 2, 1, 0, 1, 2, 3, 4, 5, 6],
-            'rtf': [5, 4, 3, 2, 1, 0, 1, 2, 3, 4, 5],
-            'plt': [6, 5, 4, 3, 2, 1, 0, 1, 2, 3, 4],
-            'vlr': [7, 6, 5, 4, 3, 2, 1, 0, 1, 2, 3],
-            'uvl': [8, 7, 6, 5, 4, 3, 2, 1, 0, 1, 2],
-            'phr': [9, 8, 7, 6, 5, 4, 3, 2, 1, 0, 1],
-            'glt': [10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
+            'blb': [10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0],
+            'lbd': [9, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1],
+            'dnt': [8, 9, 10, 9, 8, 7, 6, 5, 4, 3, 2],
+            'alv': [7, 8, 9, 10, 9, 8, 7, 6, 5, 4, 3],
+            'plv': [6, 7, 8, 9, 10, 9, 8, 7, 6, 5, 4],
+            'rtf': [5, 6, 7, 8, 9, 10, 9, 8, 7, 6, 5],
+            'plt': [4, 5, 6, 7, 8, 9, 10, 9, 8, 7, 6],
+            'vlr': [3, 4, 5, 6, 7, 8, 9, 10, 9, 8, 7],
+            'uvl': [2, 3, 4, 5, 6, 7, 8, 9, 10, 9, 8],
+            'phr': [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 9],
+            'glt': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
         },
         'mans' : {
-            'nas': [0, 1, 2, 3, 3, 3, 3, 2, 1],
-            'plo': [1, 0, 1, 2, 2, 3, 3, 3, 2],
-            'aff': [2, 1, 0, 1, 1, 2, 2, 3, 3],
-            'fri': [3, 2, 1, 0, 1, 1, 2, 2, 3],
-            'lfr': [3, 2, 1, 1, 0, 2, 1, 2, 3],
-            'app': [3, 3, 2, 1, 2, 0, 1, 1, 2],
-            'lap': [3, 3, 2, 2, 1, 1, 0, 1, 2],
-            'tri': [2, 3, 3, 2, 2, 1, 1, 0, 1],
-            'tfp': [1, 2, 3, 3, 3, 2, 2, 1, 0]
+            'nas': [3, 2, 1, 0, 0, 0, 0, 1, 2],
+            'plo': [2, 3, 2, 1, 1, 0, 0, 0, 1],
+            'aff': [1, 2, 3, 2, 2, 1, 1, 0, 0],
+            'fri': [0, 1, 2, 3, 2, 2, 1, 1, 0],
+            'lfr': [0, 1, 2, 2, 3, 1, 2, 1, 0],
+            'app': [0, 0, 1, 2, 1, 3, 2, 2, 1],
+            'lap': [0, 0, 1, 1, 2, 2, 3, 2, 1],
+            'tri': [1, 0, 0, 1, 1, 2, 2, 3, 2],
+            'tfp': [2, 1, 0, 0, 0, 1, 1, 2, 3]
         }
     }
 
+    # Check for secondary articulations
+    s_arts = ["sg", "cg", "round", "long"]
+
+    for s_art in s_arts:
+        if t_seg[s_art] == a_seg[s_art]:
+            score -= 1
+
+            break
+
+    # Check for voicing
     if t_seg['voi'] == a_seg['voi']:
-        plc_dist = get_distance(ctgs, dists['plcs'], get_place, t_seg, a_seg)
-        man_dist = get_distance(ctgs, dists['mans'], get_manner, t_seg, a_seg)
+        score += 1
 
-        return;
+    # Check for place and manner of articulation
+    score += get_distance(ctgs[0], dists['plcs'], get_place, t_seg, a_seg)
+    score += get_distance(ctgs[1], dists['mans'], get_manner, t_seg, a_seg)
 
-    return;
+    if score == 15:
+        score -= 1
+
+    return score / 15;
 
 def get_distance(ctgs, dists, get_art, t_seg, a_seg):
     t_ctg = get_art(t_seg)
@@ -71,8 +86,8 @@ def get_place(seg):
         (str): The place of articulation.
     """
 
-    # Bilabial              [+ant][-cor][?]
-    # Labiodental           [+ant][-cor][?]
+    # Bilabial              [+ant][-cor] & [-/0strid] or [-/+delrel]
+    # Labiodental           [+ant][-cor] & [+strid] or [0delrel]
     # Dental                [+ant][+cor][+distr]
     # Alveolar              [+ant][+cor][-distr]
     # Postalveolar          [-ant][+cor][+distr]
@@ -134,3 +149,8 @@ def get_manner(seg):
         return 'nas' if seg.match({'nas': 1}) else 'tfp'
     
     return 'tri'
+
+# Example usage for testing
+if __name__ == "__main__":
+    directory = ''
+    print(get_score("t", "tʲ"))
