@@ -4,7 +4,7 @@ import logging
 import os
 import pandas as pd
 from phon_query_to_csv.logging_config import setup_logging
-from phon_query_to_csv.calculate_accuracy_helper import get_score
+from phon_query_to_csv.calculate_accuracy_helper import get_accuracy
 
 log = setup_logging(logging.INFO, __name__)
 
