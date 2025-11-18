@@ -1,4 +1,37 @@
+import re
 import panphon as pp
+
+def get_accuracy(alignment, analysis):
+    score = 0
+    t_len = 0
+
+    f_table = pp.FeatureTable()
+
+    target = []
+    actual = []
+
+    idx = 0
+
+    for phone in re.split(r'[:↔,]', alignment)[0::2]:
+        seg = None
+        
+        if phone != '∅':
+            seg = f_table.word_fts(phone)[0]
+            t_len += 1
+
+        if idx % 2:
+            target.append(seg)
+        else:
+            actual.append(seg)
+
+        idx += 1
+
+    score = 0
+
+    for phone in range(len(target)):
+        score += get_score(target[phone], actual[phone])
+    
+    return score / (t_len * 15)
 
 def get_score(target, actual):
     """
@@ -12,8 +45,10 @@ def get_score(target, actual):
         score (float): The detailed score of accuracy.
     """
 
+
+
     f_table = pp.FeatureTable()
-    score = 1
+    score = 0
 
     t_seg = f_table.word_fts(target)[0]
     a_seg = f_table.word_fts(actual)[0]
@@ -153,4 +188,4 @@ def get_manner(seg):
 # Example usage for testing
 if __name__ == "__main__":
     directory = ''
-    print(get_score("t", "tʲ"))
+    print(get_score("s:L↔s:L,p:O↔p:O,ɹ:O↔∅:O"))

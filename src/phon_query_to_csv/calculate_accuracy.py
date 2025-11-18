@@ -38,7 +38,7 @@ def calculate_accuracy(filepath):
     acc_check = (idx for idx in df.index if df.at[idx, "Accuracy"])
 
     for idx in acc_check :
-       df.at[idx, "Accuracy"] = get_score(df.at[idx, "IPA Target"], df.at[idx, "IPA Actual"])
+       df.at[idx, "Accuracy"] = get_accuracy(df.at[idx, "Alignment"], df.at[idx, "Analysis"])
 
     # Save the updated DataFrame to a new CSV file
     print(f"Generating {output_filename}...")
