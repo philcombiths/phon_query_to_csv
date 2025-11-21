@@ -2,6 +2,16 @@ import re
 import panphon as pp
 
 def get_accuracy(alignment, analysis):
+    """
+    Determines a more detailed scoring of accuracy of IPA Actual with respect to IPA Target
+
+    Args:
+        alignment (str): Each phone of target paired with their respective realization
+        analysis (str): Syllable category of the phones being analyzed
+
+    Returns:
+        (float): The detailed score of accuracy, to be interpreted as a percentage
+    """
     score = 0
     t_len = 0
 
@@ -29,33 +39,26 @@ def get_accuracy(alignment, analysis):
     score = 0
 
     for phone in range(len(target)):
-        score += get_score(target[phone], actual[phone])
+        if analysis == "Nucleus":
+            score += score_vowels(target[phone], actual[phone])
+        else:
+            score += score_consonants(target[phone], actual[phone])
     
     return score / (t_len * 15)
 
-def get_score(target, actual):
+def score_consonants(target, actual):
     """
-    Determine a more detailed scoring of accuracy of IPA Actual with resepct to IPA Target.
+    Calculates the accuracy of a single actual phone with resepct to its paired target phone
     
     Args:
-        target (str): The IPA Target.
-        actual (str): The IPA Actual.
+        target (<Segment>): Phon segment of the target phone
+        actual (<Segment>): Phon segment of the actual phone
         
     Returns:
-        score (float): The detailed score of accuracy.
+        score (float): The detailed score of accuracy
     """
 
-
-
-    f_table = pp.FeatureTable()
-    score = 0
-
-    t_seg = f_table.word_fts(target)[0]
-    a_seg = f_table.word_fts(actual)[0]
-
-    ctgs = [['blb', 'lbd', 'dnt', 'alv', 'plv', 'rtf', 'plt', 'vlr', 'uvl', 'phr', 'glt'],
-            ['nas', 'plo', 'aff', 'fri', 'lfr', 'app', 'lap', 'tri', 'tfp']]
-    dists = {
+    ctgs = {
         'plcs' : {
             'blb': [10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0],
             'lbd': [9, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1],
@@ -70,39 +73,39 @@ def get_score(target, actual):
             'glt': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
         },
         'mans' : {
-            'nas': [3, 2, 1, 0, 0, 0, 0, 1, 2],
-            'plo': [2, 3, 2, 1, 1, 0, 0, 0, 1],
-            'aff': [1, 2, 3, 2, 2, 1, 1, 0, 0],
-            'fri': [0, 1, 2, 3, 2, 2, 1, 1, 0],
-            'lfr': [0, 1, 2, 2, 3, 1, 2, 1, 0],
-            'app': [0, 0, 1, 2, 1, 3, 2, 2, 1],
-            'lap': [0, 0, 1, 1, 2, 2, 3, 2, 1],
-            'tri': [1, 0, 0, 1, 1, 2, 2, 3, 2],
-            'tfp': [2, 1, 0, 0, 0, 1, 1, 2, 3]
+            'nas': [3, 2, 1, 0, 0, 1, 2],
+            'plo': [2, 3, 2, 1, 0, 0, 1],
+            'aff': [1, 2, 3, 2, 1, 0, 0],
+            'fri': [0, 1, 2, 3, 2, 1, 0],
+            'app': [0, 0, 1, 2, 3, 2, 1],
+            'tri': [1, 0, 0, 1, 2, 3, 2],
+            'tfp': [2, 1, 0, 0, 1, 2, 3]
         }
     }
+
+    score = 1
+
+    # Check for voicing
+    if target['voi'] == actual['voi']:
+        score += 1
+
+    # Check for place and manner of articulation
+    score += get_distance(ctgs[0], dists['plcs'], get_place, target, actual)
+    score += get_distance(ctgs[1], dists['mans'], get_manner, target, actual)
 
     # Check for secondary articulations
     s_arts = ["sg", "cg", "round", "long"]
 
     for s_art in s_arts:
-        if t_seg[s_art] == a_seg[s_art]:
+        if target[s_art] != actual[s_art]:
             score -= 1
 
             break
 
-    # Check for voicing
-    if t_seg['voi'] == a_seg['voi']:
-        score += 1
-
-    # Check for place and manner of articulation
-    score += get_distance(ctgs[0], dists['plcs'], get_place, t_seg, a_seg)
-    score += get_distance(ctgs[1], dists['mans'], get_manner, t_seg, a_seg)
-
-    if score == 15:
-        score -= 1
-
     return score / 15;
+
+def score_vowels(target, actual):
+    return
 
 def get_distance(ctgs, dists, get_art, t_seg, a_seg):
     t_ctg = get_art(t_seg)
@@ -188,4 +191,4 @@ def get_manner(seg):
 # Example usage for testing
 if __name__ == "__main__":
     directory = ''
-    print(get_score("s:L↔s:L,p:O↔p:O,ɹ:O↔∅:O"))
+    print(get_accuracy("s:L↔s:L,p:O↔p:O,ɹ:O↔∅:O", "Onset and Adjunct"))
