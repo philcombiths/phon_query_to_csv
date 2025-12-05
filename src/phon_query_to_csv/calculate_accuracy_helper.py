@@ -41,6 +41,9 @@ def get_accuracy(alignment, analysis):
     for p in range(len(target)):
         score += score_pair(target[p], actual[p], analysis, phones[p * 2], phones[(p * 2) + 1])
 
+    if analysis == 'Nucleus':
+        return score / (t_len * 5)
+
     return score / (t_len * 15)
 
 def score_pair(target, actual, analysis, t_phone, a_phone):
@@ -66,13 +69,14 @@ def score_pair(target, actual, analysis, t_phone, a_phone):
     if target != None and actual != None:
         if analysis == 'Nucleus':
             p_score = score_vowels(target, actual)
+
+            if p_score == 5 and t_phone != a_phone:
+                p_score -= 1
         else:
             p_score = score_consonants(target, actual)
         
-        if p_score == 15 and t_phone != a_phone:
-            p_score -= 1
-    
-    print(p_score)
+            if p_score == 15 and t_phone != a_phone:
+                p_score -= 1
 
     return p_score
 
@@ -104,7 +108,33 @@ def score_consonants(target, actual):
     return score;
 
 def score_vowels(target, actual):
-    return
+    """
+    Calculates the accuracy of a single actual phone with resepct to its paired target phone
+    
+    Args:
+        target (<Segment>): Phon segment of the target phone
+        actual (<Segment>): Phon segment of the actual phone
+        
+    Returns:
+        score (float): The detailed score of accuracy
+    """
+
+    hts = ['cls', 'mid', 'opn']
+
+    score = 5
+
+    # Check for backness
+    if target['back'] != actual['back']:
+        score -= 1
+
+    # Check for roundedness
+    if target['round'] != actual['round']:
+        score -= 1
+
+    # Check for height
+    score -= get_distance(hts, get_height, target, actual)
+
+    return score
 
 def get_distance(arts, get_art, t_seg, a_seg):
     """
@@ -127,9 +157,32 @@ def get_distance(arts, get_art, t_seg, a_seg):
         
     return dist
     
+def get_height(seg):
+    """
+    Helper function of get_distance to determine height.
+
+    Args:
+        seg (Segment): The distinctive features of a given phone.
+
+    Returns:
+        (str): The height
+    """
+
+    # Close                 [+hi][-lo]
+    # Mid                   [-hi][-lo]
+    # Open                  [-hi][+lo]
+    
+    if seg.match({'hi': 1, 'lo': -1}):
+        return 'cls'
+    
+    if seg.match({'hi': -1, 'lo': 1}):
+        return 'opn'
+    
+    return 'mid'
+
 def get_place(seg):
     """
-    Helper function of get_place_distance to determine place of articulation.
+    Helper function of get_distance to determine place of articulation.
 
     Args:
         seg (Segment): The distinctive features of a given phone.
@@ -169,7 +222,7 @@ def get_place(seg):
 
 def get_manner(seg):
     """
-    Helper function of get_manner_distance to determine manner of articulation.
+    Helper function of get_distance to determine manner of articulation.
 
     Args:
         seg (Segment): The distinctive features of a given phone.
@@ -205,4 +258,4 @@ def get_manner(seg):
 # Example usage for testing
 if __name__ == "__main__":
     directory = ''
-    print(get_accuracy("∅:L↔s:L,p:O↔p:O,r:O↔∅:O", "Onset and Adjunct"))
+    print(get_accuracy("a:N↔a:N,ʊ:N↔ʊ:N", "Nucleus"))
