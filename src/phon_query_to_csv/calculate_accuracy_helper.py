@@ -20,31 +20,61 @@ def get_accuracy(alignment, analysis):
     target = []
     actual = []
 
-    idx = 0
+    phones = re.split(r'[:↔,]', alignment)[0::2]
 
-    for phone in re.split(r'[:↔,]', alignment)[0::2]:
+    for p in range(len(phones)):
         seg = None
         
-        if phone != '∅':
-            seg = f_table.word_fts(phone)[0]
-            t_len += 1
+        if phones[p] != '∅':
+            seg = f_table.word_fts(phones[p])[0]
 
-        if idx % 2:
-            target.append(seg)
-        else:
+        if p % 2:
             actual.append(seg)
+        else:
+            target.append(seg)
 
-        idx += 1
+            if seg != None:
+                t_len += 1
 
     score = 0
 
-    for phone in range(len(target)):
-        if analysis == "Nucleus":
-            score += score_vowels(target[phone], actual[phone])
-        else:
-            score += score_consonants(target[phone], actual[phone])
-    
+    for p in range(len(target)):
+        score += score_pair(target[p], actual[p], analysis, phones[p * 2], phones[(p * 2) + 1])
+
     return score / (t_len * 15)
+
+def score_pair(target, actual, analysis, t_phone, a_phone):
+    """
+    Gets the distance between two different primary articulations
+    
+    Args:
+        target (<Segment>): Phon segment of the target phone
+        actual (<Segment>): Phon segment of the actual phone
+        analysis (string): Type of analysis being examined
+        t_phone (string): Target phone in pair
+        a_phone (string): Actual phone in pair
+        
+    Returns:
+        (float): The distance between the two primary articulations
+    """
+
+    p_score = 0
+
+    if target == None:
+        p_score -= 1
+
+    if target != None and actual != None:
+        if analysis == 'Nucleus':
+            p_score = score_vowels(target, actual)
+        else:
+            p_score = score_consonants(target, actual)
+        
+        if p_score == 15 and t_phone != a_phone:
+            p_score -= 1
+    
+    print(p_score)
+
+    return p_score
 
 def score_consonants(target, actual):
     """
@@ -58,60 +88,44 @@ def score_consonants(target, actual):
         score (float): The detailed score of accuracy
     """
 
-    ctgs = {
-        'plcs' : {
-            'blb': [10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0],
-            'lbd': [9, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1],
-            'dnt': [8, 9, 10, 9, 8, 7, 6, 5, 4, 3, 2],
-            'alv': [7, 8, 9, 10, 9, 8, 7, 6, 5, 4, 3],
-            'plv': [6, 7, 8, 9, 10, 9, 8, 7, 6, 5, 4],
-            'rtf': [5, 6, 7, 8, 9, 10, 9, 8, 7, 6, 5],
-            'plt': [4, 5, 6, 7, 8, 9, 10, 9, 8, 7, 6],
-            'vlr': [3, 4, 5, 6, 7, 8, 9, 10, 9, 8, 7],
-            'uvl': [2, 3, 4, 5, 6, 7, 8, 9, 10, 9, 8],
-            'phr': [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 9],
-            'glt': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-        },
-        'mans' : {
-            'nas': [3, 2, 1, 0, 0, 1, 2],
-            'plo': [2, 3, 2, 1, 0, 0, 1],
-            'aff': [1, 2, 3, 2, 1, 0, 0],
-            'fri': [0, 1, 2, 3, 2, 1, 0],
-            'app': [0, 0, 1, 2, 3, 2, 1],
-            'tri': [1, 0, 0, 1, 2, 3, 2],
-            'tfp': [2, 1, 0, 0, 1, 2, 3]
-        }
-    }
+    plcs = ['blb', 'lbd', 'dnt', 'alv', 'plv', 'rtf', 'plt', 'vlr', 'uvl', 'phr', 'glt']
+    mans = ['fri', 'lfr', 'aff', 'plo', 'nas', 'ttf', 'lap', 'app']
 
-    score = 1
+    score = 15
 
     # Check for voicing
-    if target['voi'] == actual['voi']:
-        score += 1
+    if target['voi'] != actual['voi']:
+        score -= 1
 
     # Check for place and manner of articulation
-    score += get_distance(ctgs[0], dists['plcs'], get_place, target, actual)
-    score += get_distance(ctgs[1], dists['mans'], get_manner, target, actual)
+    score -= get_distance(plcs, get_place, target, actual)
+    score -= get_distance(mans, get_manner, target, actual)
 
-    # Check for secondary articulations
-    s_arts = ["sg", "cg", "round", "long"]
-
-    for s_art in s_arts:
-        if target[s_art] != actual[s_art]:
-            score -= 1
-
-            break
-
-    return score / 15;
+    return score;
 
 def score_vowels(target, actual):
     return
 
-def get_distance(ctgs, dists, get_art, t_seg, a_seg):
-    t_ctg = get_art(t_seg)
-    a_ctg = get_art(a_seg)
+def get_distance(arts, get_art, t_seg, a_seg):
+    """
+    Gets the distance between two different primary articulations
+    
+    Args:
+        arts (list): Primary articulations to be examined
+        get_art (method): Helper method used for getting the primary articulation
+        t_seg (<Segment>): Phon segment of the target phone
+        a_seg (<Segment>): Phon segment of the actual phone
         
-    return dists[t_ctg][ctgs.index(a_ctg)]
+    Returns:
+        dist (float): The distance between the two primary articulations
+    """
+
+    t_art = get_art(t_seg)
+    a_art = get_art(a_seg)
+
+    dist = abs(arts.index(t_art) - arts.index(a_art))
+        
+    return dist
     
 def get_place(seg):
     """
@@ -163,32 +177,32 @@ def get_manner(seg):
     Returns:
         (str): The manner of articulation.
     """
-
-    # Nasal                 [+son][+cons][-cont][+nas]
-    # Plosive               [-son][+cons][-cont][-delrel]
+        
+    # Fricative             [-son][+cons][+cont][-delrel]
+    # L. Fricative          [-son][+cons][+cont][+delrel]
     # Affricate             [-son][+cons][-cont][+delrel]
-    # Fricative             [-son][+cons][+cont][-lat]
-    # L. Fricative          [-son][+cons][+cont][+lat]
-    # Approximant           [+son][-cons][+cont][-lat]
-    # L. Approximant        [+son][-cons][+cont][+lat]
-    # Trill                 [+son][+cons][+cont]
-    # Tap / Flap            [+son][+cons][-cont][-nas]
-
-    if seg.match({'son': -1, 'cons': 1, 'cont': -1}):
-        return 'aff' if seg.match({'delrel': 1}) else 'plo'
+    # Plosive               [-son][+cons][-cont][-delrel]
+    # Nasal                 [+son][+cons][-cont][-delrel]
+    # Tap / Flap            [+son][+cons][+cont][0delrel][?]
+    # Trill                 [+son][+cons][+cont][0delrel][?]
+    # L. Approximant        [+son][+cons][+cont][-delrel]
+    # Approximant           [+son][-cons][+cont][-delrel]
 
     if seg.match({'son': -1, 'cons': 1, 'cont': 1}):
-        return 'lfr' if seg.match({'lat': 1}) else 'fri'
+        return 'lfr' if seg.match({'delrel': 1}) else 'fri'
     
-    if seg.match({'son': 1, 'cons': -1, 'cont': 1}):
-        return 'lap' if seg.match({'lat': 1}) else 'app'
+    if seg.match({'son': -1, 'cons': 1, 'cont': -1}):
+        return 'aff' if seg.match({'delrel': 1}) else 'plo'
     
-    if seg.match({'son': 1, 'cons': 1, 'cont': -1}):
-        return 'nas' if seg.match({'nas': 1}) else 'tfp'
+    if seg.match({'son': 1, 'cons': -1, 'delrel': -1}):
+        return 'lap' if seg.match({'cons': 1}) else 'app'
     
-    return 'tri'
+    if seg.match({'son': 1, 'cons': -1, 'delrel': 0}):
+        return 'ttf'
+    
+    return 'nas'
 
 # Example usage for testing
 if __name__ == "__main__":
     directory = ''
-    print(get_accuracy("s:L↔s:L,p:O↔p:O,ɹ:O↔∅:O", "Onset and Adjunct"))
+    print(get_accuracy("∅:L↔s:L,p:O↔p:O,r:O↔∅:O", "Onset and Adjunct"))
