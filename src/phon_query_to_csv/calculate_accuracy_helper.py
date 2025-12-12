@@ -1,5 +1,6 @@
 import re
 import panphon as pp
+import pandas as pd
 
 def get_accuracy(alignment, analysis):
     """
@@ -20,7 +21,9 @@ def get_accuracy(alignment, analysis):
     target = []
     actual = []
 
-    phones = re.split(r'[:↔,]', alignment)[0::2]
+    # Retrieve phones from alignment, convert to panphon segments, and place in parallel lists
+    phones = get_phones(alignment)
+    print(phones)
 
     for p in range(len(phones)):
         seg = None
@@ -36,6 +39,7 @@ def get_accuracy(alignment, analysis):
             if seg != None:
                 t_len += 1
 
+    # Score pair by pair, sum the scores, and divide it according to summed max possible scores
     score = 0
 
     for p in range(len(target)):
@@ -45,6 +49,25 @@ def get_accuracy(alignment, analysis):
         return score / (t_len * 5)
 
     return score / (t_len * 15)
+
+def get_phones(alignment):
+    phones = []
+
+    for pair in alignment.split(','):
+        for phone in pair.split('↔'):
+            phones.append(filter_special_chars(phone.split(':')[0]))
+
+    return phones
+
+def filter_special_chars(phone):
+    phone = phone.replace('ʦ', 't͡s')
+    phone = phone.replace('ʣ', 'd͡z')
+    phone = phone.replace('ʧ', 't͡ʃ')
+    phone = phone.replace('ʤ', 'd͡ʒ')
+    phone = phone.replace('ʪ', 'ɬ')
+    phone = phone.replace('ʫ', 'ɮ')
+
+    return phone
 
 def score_pair(target, actual, analysis, t_phone, a_phone):
     """
@@ -63,9 +86,11 @@ def score_pair(target, actual, analysis, t_phone, a_phone):
 
     p_score = 0
 
+    # Subtract a point if there is no target (inserted sound in actual)
     if target == None:
         p_score -= 1
 
+    # Score according to analysis type and remove point for secondary articulations
     if target != None and actual != None:
         if analysis == 'Nucleus':
             p_score = score_vowels(target, actual)
@@ -258,4 +283,31 @@ def get_manner(seg):
 # Example usage for testing
 if __name__ == "__main__":
     directory = ''
-    print(get_accuracy("a:N↔a:N,ʊ:N↔ʊ:N", "Nucleus"))
+    
+    # print(get_accuracy("a:N↔a:N,ʊ:N↔ʊ:N", "Nucleus"))
+
+    data = {
+        'IPA Target' : ['n', 'ŋk', 'ɹʧ'],
+        'IPA Actual' : ['n', 'n', 'ʦ'],
+        'Alignment' : ['n:C↔n:C', 'ŋ:C↔n:C,k:C↔∅', 'ɹ:C↔∅,ʧ:C↔ʦ:C'],
+        'Analysis' : ['Coda and Appendix', 'Coda and Appendix', 'Coda and Appendix']
+    }
+
+    df = pd.DataFrame(data)
+
+    print(df)
+
+    accuracy_mask = df["IPA Target"] == df["IPA Actual"]
+
+    print(accuracy_mask)
+
+    df.loc[accuracy_mask, "Accuracy"] = 1
+
+    print(df)
+
+    acc_check = (idx for idx in df.index if df.at[idx, "Accuracy"])
+
+    for idx in acc_check :
+       df.at[idx, "Accuracy"] = get_accuracy(df.at[idx, "Alignment"], df.at[idx, "Analysis"])
+
+    print(df)
