@@ -1,6 +1,6 @@
-import re
 import panphon as pp
 import pandas as pd
+import os
 
 def get_accuracy(alignment, analysis):
     """
@@ -23,7 +23,6 @@ def get_accuracy(alignment, analysis):
 
     # Retrieve phones from alignment, convert to panphon segments, and place in parallel lists
     phones = get_phones(alignment)
-    print(phones)
 
     for p in range(len(phones)):
         seg = None
@@ -48,7 +47,7 @@ def get_accuracy(alignment, analysis):
     if analysis == 'Nucleus':
         return score / (t_len * 5)
 
-    return score / (t_len * 15)
+    return score / (t_len * 17)
 
 def get_phones(alignment):
     phones = []
@@ -100,7 +99,7 @@ def score_pair(target, actual, analysis, t_phone, a_phone):
         else:
             p_score = score_consonants(target, actual)
         
-            if p_score == 15 and t_phone != a_phone:
+            if p_score == 17 and t_phone != a_phone:
                 p_score -= 1
 
     return p_score
@@ -120,7 +119,7 @@ def score_consonants(target, actual):
     plcs = ['blb', 'lbd', 'dnt', 'alv', 'plv', 'rtf', 'plt', 'vlr', 'uvl', 'phr', 'glt']
     mans = ['fri', 'lfr', 'aff', 'plo', 'nas', 'ttf', 'lap', 'app']
 
-    score = 15
+    score = 17
 
     # Check for voicing
     if target['voi'] != actual['voi']:
@@ -196,14 +195,16 @@ def get_height(seg):
     # Close                 [+hi][-lo]
     # Mid                   [-hi][-lo]
     # Open                  [-hi][+lo]
-    
-    if seg.match({'hi': 1, 'lo': -1}):
-        return 'cls'
-    
-    if seg.match({'hi': -1, 'lo': 1}):
-        return 'opn'
-    
-    return 'mid'
+
+    matches = [
+        ('cls', seg.match({'hi': 1, 'lo': -1})),
+        ('mid', seg.match({'hi': -1, 'lo': -1})),
+        ('opn', seg.match({'hi': -1, 'lo': 1}))
+    ]
+
+    for m in matches:
+        if m[1]:
+            return m[0]
 
 def get_place(seg):
     """
@@ -227,23 +228,30 @@ def get_place(seg):
     # Uvular                [-ant][-cor][-hi][-lo][+back]
     # Pharyngeal            [-ant][-cor][-hi][+lo][+back]
     # Glottal               [-ant][-cor][-hi][-lo][-back]
-    
-    if seg.match({'ant': 1, 'cor': -1}):
-        return 'lbd' if seg.match({'strid': 1}) or seg.match({'delrel': 0}) else 'blb'
 
-    if seg.match({'ant': 1, 'cor': 1}):
-        return 'dnt' if seg.match({'distr': 1}) else 'alv'
-    
-    if seg.match({'ant': -1, 'cor': 1}):
-        return 'plv' if seg.match({'distr': 1}) else 'rtf'
-    
-    if seg.match({'hi': 1}):
-        return 'plt' if seg.match({'back': -1}) else 'vlr'
-    
-    if seg.match({'back': 1}):
-        return 'phr' if seg.match({'lo': 1}) else 'uvl'
-    
-    return 'glt'
+    matches = [
+        ('blb', seg.match({'ant': 1, 'cor': -1, 'strid': -1})),
+        ('blb', seg.match({'ant': 1, 'cor': -1, 'strid': 0})),
+        ('blb', seg.match({'ant': 1, 'cor': -1, 'delrel': -1})),
+        ('blb', seg.match({'ant': 1, 'cor': -1, 'delrel': 1})),
+        ('lbd', seg.match({'ant': 1, 'cor': -1, 'strid': 1})),
+        ('lbd', seg.match({'ant': 1, 'cor': -1, 'delrel': 0})),
+        ('dnt', seg.match({'ant': 1, 'cor': 1, 'distr': 1})),
+        ('alv', seg.match({'ant': 1, 'cor': 1, 'distr': -1})),
+        ('plv', seg.match({'ant': -1, 'cor': 1, 'distr': 1})),
+        ('rtf', seg.match({'ant': -1, 'cor': 1, 'distr': -1})),
+        ('rtf', seg.match({'ant': -1, 'cor': 1, 'distr': 0})),
+        ('plt', seg.match({'ant': -1, 'cor': -1, 'hi': 1, 'lo': -1, 'back': -1})),
+        ('vlr', seg.match({'ant': -1, 'cor': -1, 'hi': 1, 'lo': -1, 'back': 0})),
+        ('vlr', seg.match({'ant': -1, 'cor': -1, 'hi': 1, 'lo': -1, 'back': 1})),
+        ('uvl', seg.match({'ant': -1, 'cor': -1, 'hi': -1, 'lo': -1, 'back': 1})),
+        ('phr', seg.match({'ant': -1, 'cor': -1, 'hi': -1, 'lo': 1, 'back': 1})),
+        ('glt', seg.match({'ant': -1, 'cor': -1, 'hi': -1, 'lo': -1, 'back': -1}))
+    ]
+
+    for m in matches:
+        if m[1]:
+            return m[0]
 
 def get_manner(seg):
     """
@@ -261,53 +269,55 @@ def get_manner(seg):
     # Affricate             [-son][+cons][-cont][+delrel]
     # Plosive               [-son][+cons][-cont][-delrel]
     # Nasal                 [+son][+cons][-cont][-delrel]
-    # Tap / Flap            [+son][+cons][+cont][0delrel][?]
-    # Trill                 [+son][+cons][+cont][0delrel][?]
+    # Tap / Flap / Trill    [+son][+cons][+cont][0delrel]
     # L. Approximant        [+son][+cons][+cont][-delrel]
     # Approximant           [+son][-cons][+cont][-delrel]
 
-    if seg.match({'son': -1, 'cons': 1, 'cont': 1}):
-        return 'lfr' if seg.match({'delrel': 1}) else 'fri'
-    
-    if seg.match({'son': -1, 'cons': 1, 'cont': -1}):
-        return 'aff' if seg.match({'delrel': 1}) else 'plo'
-    
-    if seg.match({'son': 1, 'cons': -1, 'delrel': -1}):
-        return 'lap' if seg.match({'cons': 1}) else 'app'
-    
-    if seg.match({'son': 1, 'cons': -1, 'delrel': 0}):
-        return 'ttf'
-    
-    return 'nas'
+    matches = [
+        ('fri', seg.match({'son': -1, 'cons': 1, 'cont': 1, 'delrel': -1})),
+        ('lfr', seg.match({'son': -1, 'cons': 1, 'cont': 1, 'delrel': 1})),
+        ('aff', seg.match({'son': -1, 'cons': 1, 'cont': -1, 'delrel': 1})),
+        ('plo', seg.match({'son': -1, 'cons': 1, 'cont': -1, 'delrel': -1})),
+        ('nas', seg.match({'son': 1, 'cons': 1, 'cont': -1, 'delrel': -1})),
+        ('ttf', seg.match({'son': 1, 'cons': 1, 'cont': 1, 'delrel': 0})),
+        ('lap', seg.match({'son': 1, 'cons': 1, 'cont': 1, 'delrel': -1})),
+        ('app', seg.match({'son': 1, 'cons': -1, 'cont': 1, 'delrel': -1}))
+    ]
+
+    for m in matches:
+        if m[1]:
+            return m[0]
 
 # Example usage for testing
 if __name__ == "__main__":
-    directory = ''
-    
-    # print(get_accuracy("a:N↔a:N,ʊ:N↔ʊ:N", "Nucleus"))
+    directory = '/home/fzvial/Documents/Work/CLD Lab/Phon Query Testing/Testing/input_sample.csv'
 
-    data = {
-        'IPA Target' : ['n', 'ŋk', 'ɹʧ'],
-        'IPA Actual' : ['n', 'n', 'ʦ'],
-        'Alignment' : ['n:C↔n:C', 'ŋ:C↔n:C,k:C↔∅', 'ɹ:C↔∅,ʧ:C↔ʦ:C'],
-        'Analysis' : ['Coda and Appendix', 'Coda and Appendix', 'Coda and Appendix']
-    }
+    output_filename = "data_accuracy.csv"
+    # Read the CSV file into a DataFrame
+    df = pd.read_csv(directory, encoding="utf-8")
 
-    df = pd.DataFrame(data)
-
-    print(df)
-
+    # Create mask to derive accurate and inaccurate phones
     accuracy_mask = df["IPA Target"] == df["IPA Actual"]
 
-    print(accuracy_mask)
+    # Initialize columns with default values
+    df["Accuracy"] = 0
 
+    print("Processing Accuracy...")
+
+    # Assign values to columns based on masks
     df.loc[accuracy_mask, "Accuracy"] = 1
-
     print(df)
 
-    acc_check = (idx for idx in df.index if df.at[idx, "Accuracy"])
+    acc_check = (idx for idx in df.index if not df.at[idx, "Accuracy"])
 
     for idx in acc_check :
-       df.at[idx, "Accuracy"] = get_accuracy(df.at[idx, "Alignment"], df.at[idx, "Analysis"])
+       score = get_accuracy(df.at[idx, "Alignment"], df.at[idx, "Analysis"])
+       df.at[idx, "Accuracy"] = score
 
-    print(df)
+    # Save the updated DataFrame to a new CSV file
+    print(f"Generating {output_filename}...")
+
+    output_filepath = os.path.join(os.path.dirname(directory), output_filename)
+    df.to_csv(output_filepath, encoding="utf-8", index=False)
+
+    print(f"Saved {output_filename}")
