@@ -54,16 +54,16 @@ if __name__ == "__main__":
     directory = None
     query = None
     flavor = None
-    overwrite = False
+    overwrite = True
     blank_repeated_labels = True
     target = True
     actual = True
 
 
     # Set Parameters Here:
-    directory = None
-    query = "Queries_Target_v2"  # Write query name here: e.g., "Queries_Target_v2", "Queries_Actual_v2"
-    flavor = None  # Specify flavor (see options below)
+    directory = r"R:\CLD_Lab\member_folders\Adrian\raw phon analysis output"
+    query = "Queries_Actual_v2"  # Write query name here: e.g., "Queries_Target_v2", "Queries_Actual_v2"
+    flavor = "tx"  # Specify flavor (see options below)
     # blank_repeated_labels = False  # Uncomment and set to False to preserve repeated labels in pivot table
 
     if 'flavor' not in locals() or flavor is None:
