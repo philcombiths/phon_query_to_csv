@@ -50,6 +50,7 @@ def get_accuracy(alignment, analysis):
     return score / (t_len * 17)
 
 def get_phones(alignment):
+    print(alignment)
     phones = []
 
     for pair in alignment.split(','):
@@ -59,6 +60,7 @@ def get_phones(alignment):
     return phones
 
 def filter_special_chars(phone):
+    phone = phone.replace('g', 'ɡ')
     phone = phone.replace('ʦ', 't͡s')
     phone = phone.replace('ʣ', 'd͡z')
     phone = phone.replace('ʧ', 't͡ʃ')
@@ -300,19 +302,17 @@ if __name__ == "__main__":
     accuracy_mask = df["IPA Target"] == df["IPA Actual"]
 
     # Initialize columns with default values
-    df["Accuracy"] = 0
+    df["Accuracy"] = float(0)
 
     print("Processing Accuracy...")
 
     # Assign values to columns based on masks
-    df.loc[accuracy_mask, "Accuracy"] = 1
-    print(df)
+    df.loc[accuracy_mask, "Accuracy"] = float(1)
 
     acc_check = (idx for idx in df.index if not df.at[idx, "Accuracy"])
 
     for idx in acc_check :
-       score = get_accuracy(df.at[idx, "Alignment"], df.at[idx, "Analysis"])
-       df.at[idx, "Accuracy"] = score
+       df.at[idx, "Accuracy"] = get_accuracy(df.at[idx, "Alignment"], df.at[idx, "Analysis"])
 
     # Save the updated DataFrame to a new CSV file
     print(f"Generating {output_filename}...")

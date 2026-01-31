@@ -28,17 +28,19 @@ def calculate_accuracy(filepath):
     accuracy_mask = df["IPA Target"] == df["IPA Actual"]
 
     # Initialize columns with default values
-    df["Accuracy"] = 0
+    df["Accuracy"] = float(0)
 
     print("Processing Accuracy...")
 
     # Assign values to columns based on masks
-    df.loc[accuracy_mask, "Accuracy"] = 1
+    df.loc[accuracy_mask, "Accuracy"] = float(1)
 
-    acc_check = (idx for idx in df.index if df.at[idx, "Accuracy"])
+    acc_check = (idx for idx in df.index if not df.at[idx, "Accuracy"])
 
     for idx in acc_check :
-       df.at[idx, "Accuracy"] = get_accuracy(df.at[idx, "Alignment"], df.at[idx, "Analysis"])
+       print(idx)
+       accuracy = get_accuracy(df.at[idx, "Alignment"], df.at[idx, "Analysis"])
+       df.at[idx, "Accuracy"] = accuracy
 
     # Save the updated DataFrame to a new CSV file
     print(f"Generating {output_filename}...")
