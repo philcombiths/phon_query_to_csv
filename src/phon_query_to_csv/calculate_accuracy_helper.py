@@ -16,7 +16,7 @@ def get_accuracy(alignment, analysis):
     """
 
     if not isinstance(alignment, str):
-        return 0, "No alignment!"
+        return -1, "No alignment!"
 
     score = 0
     t_len = 0
@@ -33,7 +33,6 @@ def get_accuracy(alignment, analysis):
         seg = None
         
         if phones[p] != '∅':
-            print(phones[p])
             seg = f_table.word_fts(phones[p])[0]
 
         if p % 2:
@@ -51,7 +50,7 @@ def get_accuracy(alignment, analysis):
         score += score_pair(target[p], actual[p], analysis, phones[p * 2], phones[(p * 2) + 1])
 
     if score < 0:
-        return 0, "Invalid alignment!"
+        return -1, "Invalid alignment!"
 
     if analysis == 'Nucleus':
         return score / (t_len * 5), ""
@@ -83,6 +82,7 @@ def filter_special_chars(phone):
 
     return phone
 
+# If needed for special character accomidation failure
 def filter_base_helper(phone, old_base, new_base):
     result = []
 
@@ -211,9 +211,6 @@ def get_distance(arts, get_art, t_seg, a_seg):
     a_art = get_art(a_seg)
 
     if t_art == 'nan' or a_art == 'nan':
-        print(t_seg, ":", t_art)
-        print(a_seg, ":", a_art)
-        
         return 100
 
     dist = abs(arts.index(t_art) - arts.index(a_art))
@@ -333,35 +330,3 @@ def get_manner(seg):
             return m[0]
         
     return 'nan'
-
-# Example usage for testing
-if __name__ == "__main__":
-    directory = '/home/fzvial/Documents/Work/CLD Lab/Phon Query Testing/Testing/input_sample.csv'
-
-    output_filename = "data_accuracy.csv"
-    # Read the CSV file into a DataFrame
-    df = pd.read_csv(directory, encoding="utf-8")
-
-    # Create mask to derive accurate and inaccurate phones
-    accuracy_mask = df["IPA Target"] == df["IPA Actual"]
-
-    # Initialize columns with default values
-    df["Accuracy"] = float(0)
-
-    print("Processing Accuracy...")
-
-    # Assign values to columns based on masks
-    df.loc[accuracy_mask, "Accuracy"] = float(1)
-
-    acc_check = (idx for idx in df.index if not df.at[idx, "Accuracy"])
-
-    for idx in acc_check :
-       df.at[idx, "Accuracy"] = get_accuracy(df.at[idx, "Alignment"], df.at[idx, "Analysis"])
-
-    # Save the updated DataFrame to a new CSV file
-    print(f"Generating {output_filename}...")
-
-    output_filepath = os.path.join(os.path.dirname(directory), output_filename)
-    df.to_csv(output_filepath, encoding="utf-8", index=False)
-
-    print(f"Saved {output_filename}")

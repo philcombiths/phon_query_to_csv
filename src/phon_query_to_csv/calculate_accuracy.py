@@ -19,6 +19,9 @@ def calculate_accuracy(filepath):
     Returns:
         DataFrame: The updated DataFrame with accuracy metrics.
     """
+
+    error_log_entries = ["Accuracy Error Log\n"]
+    error_count = 0
     
     output_filename = "data_accuracy.csv"
     # Read the CSV file into a DataFrame
@@ -38,10 +41,17 @@ def calculate_accuracy(filepath):
     acc_check = (idx for idx in df.index if not df.at[idx, "Accuracy"])
 
     for idx in acc_check :
-       df.at[idx, "Accuracy"], msg = get_accuracy(df.at[idx, "Alignment"], df.at[idx, "Analysis"])
+        print(idx, "/", len(df.index))
+        df.at[idx, "Accuracy"], msg = get_accuracy(df.at[idx, "Alignment"], df.at[idx, "Analysis"])
 
-       if msg:
-           print(idx, ":", msg, "(" + str(df.at[idx, "Alignment"]) + ")")
+        if msg:
+            error_log_entries.append("\nError at entry " + str(idx) + " : " + msg + "\n")
+            error_log_entries.append("\tAlignment ~ " + str(df.at[idx, "Alignment"]) + "\n")
+
+            error_count += 1
+
+    error_log_entries.append("\nTotal Error Count - " + error_count + "\n")
+    error_log_entries.append("\n\nSpecifications\n")
 
     # Save the updated DataFrame to a new CSV file
     print(f"Generating {output_filename}...")
@@ -50,6 +60,14 @@ def calculate_accuracy(filepath):
     df.to_csv(output_filepath, encoding="utf-8", index=False)
 
     print(f"Saved {output_filename}")
+
+    errlog_filepath = "accuracy_error_log.txt"
+
+    with open(errlog_filepath, mode = 'w') as file:
+        for error in error_log_entries:
+            file.write(error)
+
+    print(f"Saved {errlog_filepath}")
 
     return output_filepath
 
