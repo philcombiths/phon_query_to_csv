@@ -1,6 +1,7 @@
 import panphon as pp
 import pandas as pd
 import os
+import unicodedata
 
 def get_accuracy(alignment, analysis):
     """
@@ -13,6 +14,10 @@ def get_accuracy(alignment, analysis):
     Returns:
         (float): The detailed score of accuracy, to be interpreted as a percentage
     """
+
+    if not isinstance(alignment, str):
+        return 0, "No alignment!"
+
     score = 0
     t_len = 0
 
@@ -28,6 +33,7 @@ def get_accuracy(alignment, analysis):
         seg = None
         
         if phones[p] != '∅':
+            print(phones[p])
             seg = f_table.word_fts(phones[p])[0]
 
         if p % 2:
@@ -44,13 +50,15 @@ def get_accuracy(alignment, analysis):
     for p in range(len(target)):
         score += score_pair(target[p], actual[p], analysis, phones[p * 2], phones[(p * 2) + 1])
 
-    if analysis == 'Nucleus':
-        return score / (t_len * 5)
+    if score < 0:
+        return 0, "Invalid alignment!"
 
-    return score / (t_len * 17)
+    if analysis == 'Nucleus':
+        return score / (t_len * 5), ""
+
+    return score / (t_len * 17), ""
 
 def get_phones(alignment):
-    print(alignment)
     phones = []
 
     for pair in alignment.split(','):
@@ -61,6 +69,7 @@ def get_phones(alignment):
 
 def filter_special_chars(phone):
     phone = phone.replace('g', 'ɡ')
+
     phone = phone.replace('ʦ', 't͡s')
     phone = phone.replace('ʣ', 'd͡z')
     phone = phone.replace('ʧ', 't͡ʃ')
@@ -68,7 +77,29 @@ def filter_special_chars(phone):
     phone = phone.replace('ʪ', 'ɬ')
     phone = phone.replace('ʫ', 'ɮ')
 
+    phone = phone.replace('ʡ', 'ʔ̟')
+    phone = phone.replace('ʜ', 'ʁ̠̥')
+    phone = phone.replace('ʢ', 'ʀ̠')
+
     return phone
+
+def filter_base_helper(phone, old_base, new_base):
+    result = []
+
+    for c in phone:
+        # Decompose character
+        decomposed = unicodedata.normalize("NFD", c)
+
+        base = decomposed[0]
+        combining = decomposed[1:]
+
+        if base == old_base:
+            base = new_base
+
+        # Recompose
+        result.append(unicodedata.normalize("NFC", base + combining))
+
+    return "".join(result)
 
 def score_pair(target, actual, analysis, t_phone, a_phone):
     """
@@ -179,6 +210,12 @@ def get_distance(arts, get_art, t_seg, a_seg):
     t_art = get_art(t_seg)
     a_art = get_art(a_seg)
 
+    if t_art == 'nan' or a_art == 'nan':
+        print(t_seg, ":", t_art)
+        print(a_seg, ":", a_art)
+        
+        return 100
+
     dist = abs(arts.index(t_art) - arts.index(a_art))
         
     return dist
@@ -207,6 +244,8 @@ def get_height(seg):
     for m in matches:
         if m[1]:
             return m[0]
+        
+    return 'nan'
 
 def get_place(seg):
     """
@@ -254,6 +293,8 @@ def get_place(seg):
     for m in matches:
         if m[1]:
             return m[0]
+        
+    return 'nan'
 
 def get_manner(seg):
     """
@@ -280,6 +321,7 @@ def get_manner(seg):
         ('lfr', seg.match({'son': -1, 'cons': 1, 'cont': 1, 'delrel': 1})),
         ('aff', seg.match({'son': -1, 'cons': 1, 'cont': -1, 'delrel': 1})),
         ('plo', seg.match({'son': -1, 'cons': 1, 'cont': -1, 'delrel': -1})),
+        ('plo', seg.match({'son': 1, 'cons': -1, 'cont': -1, 'delrel': -1})),
         ('nas', seg.match({'son': 1, 'cons': 1, 'cont': -1, 'delrel': -1})),
         ('ttf', seg.match({'son': 1, 'cons': 1, 'cont': 1, 'delrel': 0})),
         ('lap', seg.match({'son': 1, 'cons': 1, 'cont': 1, 'delrel': -1})),
@@ -289,6 +331,8 @@ def get_manner(seg):
     for m in matches:
         if m[1]:
             return m[0]
+        
+    return 'nan'
 
 # Example usage for testing
 if __name__ == "__main__":

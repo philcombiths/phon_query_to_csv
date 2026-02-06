@@ -38,9 +38,10 @@ def calculate_accuracy(filepath):
     acc_check = (idx for idx in df.index if not df.at[idx, "Accuracy"])
 
     for idx in acc_check :
-       print(idx)
-       accuracy = get_accuracy(df.at[idx, "Alignment"], df.at[idx, "Analysis"])
-       df.at[idx, "Accuracy"] = accuracy
+       df.at[idx, "Accuracy"], msg = get_accuracy(df.at[idx, "Alignment"], df.at[idx, "Analysis"])
+
+       if msg:
+           print(idx, ":", msg, "(" + str(df.at[idx, "Alignment"]) + ")")
 
     # Save the updated DataFrame to a new CSV file
     print(f"Generating {output_filename}...")
