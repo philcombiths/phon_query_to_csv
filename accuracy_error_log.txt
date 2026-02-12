@@ -1,0 +1,324 @@
+Accuracy Error Log
+
+Error at entry 15 : Invalid alignment!
+	Alignment ~ r:O↔ɾ:C
+
+Error at entry 16 : Invalid alignment!
+	Alignment ~ ɡ:O↔k:O
+
+Error at entry 30 : Invalid alignment!
+	Alignment ~ s:C↔ʪ:C
+
+Error at entry 38 : Invalid alignment!
+	Alignment ~ ɾ:O↔d:O
+
+Error at entry 41 : Invalid alignment!
+	Alignment ~ l:O↔ʝ:O
+
+Error at entry 61 : Invalid alignment!
+	Alignment ~ s:C↔ʪ:C
+
+Error at entry 94 : Invalid alignment!
+	Alignment ~ r:O↔ɾ:C
+
+Error at entry 111 : Invalid alignment!
+	Alignment ~ ɡ:O↔b:O
+
+Error at entry 112 : Invalid alignment!
+	Alignment ~ w:O↔l:O
+
+Error at entry 122 : Invalid alignment!
+	Alignment ~ j:O↔ʧ:O
+
+Error at entry 130 : Invalid alignment!
+	Alignment ~ ɾ:C↔ɹ:C
+
+Error at entry 134 : Invalid alignment!
+	Alignment ~ w:O↔l:O
+
+Error at entry 147 : Invalid alignment!
+	Alignment ~ s:O↔sʲ:C
+
+Error at entry 150 : Invalid alignment!
+	Alignment ~ p:O↔b:O
+
+Error at entry 153 : Invalid alignment!
+	Alignment ~ l:O↔w:O
+
+Error at entry 159 : Invalid alignment!
+	Alignment ~ w:O↔b͈:O
+
+Error at entry 161 : Invalid alignment!
+	Alignment ~ t:O↔d:O
+
+Error at entry 167 : Invalid alignment!
+	Alignment ~ s:C↔ʪ:C
+
+Error at entry 171 : Invalid alignment!
+	Alignment ~ ɾ:O↔r:O
+
+Error at entry 174 : Invalid alignment!
+	Alignment ~ r:O↔d:O
+
+Error at entry 179 : Invalid alignment!
+	Alignment ~ l:C↔lʳ:C
+
+Error at entry 182 : Invalid alignment!
+	Alignment ~ s:C↔θ:C
+
+Error at entry 186 : Invalid alignment!
+	Alignment ~ s:O↔θ:O
+
+Error at entry 188 : Invalid alignment!
+	Alignment ~ s:O↔sʲ:O
+
+Error at entry 194 : Invalid alignment!
+	Alignment ~ d:O↔l:C
+
+Error at entry 210 : Invalid alignment!
+	Alignment ~ ɡ:O↔d:O
+
+Error at entry 238 : Invalid alignment!
+	Alignment ~ r:O↔ʝ:O
+
+Error at entry 241 : Invalid alignment!
+	Alignment ~ k:O↔t:O
+
+Error at entry 246 : Invalid alignment!
+	Alignment ~ s:C↔θ:C
+
+Error at entry 265 : Invalid alignment!
+	Alignment ~ r:O↔g:O
+
+Error at entry 270 : Invalid alignment!
+	Alignment ~ r:O↔v:O
+
+Error at entry 273 : Invalid alignment!
+	Alignment ~ ɾ:C↔r:C
+
+Error at entry 278 : Invalid alignment!
+	Alignment ~ w:O↔v:O
+
+Error at entry 280 : Invalid alignment!
+	Alignment ~ s:O↔ʧ:O
+
+Error at entry 285 : Invalid alignment!
+	Alignment ~ ɡ:O↔b:O
+
+Error at entry 291 : Invalid alignment!
+	Alignment ~ ɡ:O↔ɡ͈:O
+
+Error at entry 293 : Invalid alignment!
+	Alignment ~ w:O↔b:O
+
+Error at entry 306 : Invalid alignment!
+	Alignment ~ ɾ:O↔w:O
+
+Error at entry 321 : Invalid alignment!
+	Alignment ~ ʧ:O↔s:O
+
+Error at entry 323 : Invalid alignment!
+	Alignment ~ k:O↔t:O
+
+Error at entry 337 : Invalid alignment!
+	Alignment ~ s:O↔θ:O
+
+Error at entry 345 : Invalid alignment!
+	Alignment ~ s:C↔θ:C
+
+Error at entry 347 : Invalid alignment!
+	Alignment ~ l:O↔w:O
+
+Error at entry 363 : Invalid alignment!
+	Alignment ~ ɡ:O↔d:O
+
+Error at entry 364 : Invalid alignment!
+	Alignment ~ s:O↔θ:O
+
+Error at entry 367 : Invalid alignment!
+	Alignment ~ ɡ:O↔d:O
+
+Error at entry 371 : Invalid alignment!
+	Alignment ~ s:O↔s̪:O
+
+Error at entry 374 : Invalid alignment!
+	Alignment ~ k:O↔g:O
+
+Error at entry 381 : Invalid alignment!
+	Alignment ~ b:O↔m:O
+
+Error at entry 382 : Invalid alignment!
+	Alignment ~ r:O↔θ:O
+
+Error at entry 389 : Invalid alignment!
+	Alignment ~ s:C↔θ:C
+
+Error at entry 391 : Invalid alignment!
+	Alignment ~ j:O↔ʝ:O
+
+Error at entry 393 : Invalid alignment!
+	Alignment ~ s:O↔s̪:O
+
+Error at entry 395 : Invalid alignment!
+	Alignment ~ ɲ:O↔ʝ:O
+
+Error at entry 428 : Invalid alignment!
+	Alignment ~ l:C↔ɹ:C
+
+Error at entry 432 : Invalid alignment!
+	Alignment ~ s:O↔sʲ:O
+
+Error at entry 439 : Invalid alignment!
+	Alignment ~ s:C↔θ:C
+
+Error at entry 440 : Invalid alignment!
+	Alignment ~ p:O↔f:O
+
+Error at entry 442 : Invalid alignment!
+	Alignment ~ s:O↔ʃ:O
+
+Error at entry 479 : Invalid alignment!
+	Alignment ~ r:O↔l:O
+
+Error at entry 491 : Invalid alignment!
+	Alignment ~ r:O↔l:O
+
+Error at entry 495 : Invalid alignment!
+	Alignment ~ r:O↔d:O
+
+Error at entry 502 : Invalid alignment!
+	Alignment ~ r:O↔d:O
+
+Error at entry 506 : Invalid alignment!
+	Alignment ~ j:O↔ʝ:O
+
+Error at entry 510 : Invalid alignment!
+	Alignment ~ ʧ:O↔ʃ:O
+
+Error at entry 513 : Invalid alignment!
+	Alignment ~ r:O↔l:O
+
+Error at entry 524 : Invalid alignment!
+	Alignment ~ s:C↔s̪:C
+
+Error at entry 529 : Invalid alignment!
+	Alignment ~ r:O↔l:O
+
+Error at entry 541 : Invalid alignment!
+	Alignment ~ ʧ:O↔s̪:O
+
+Error at entry 542 : Invalid alignment!
+	Alignment ~ s:O↔θ:O
+
+Error at entry 554 : Invalid alignment!
+	Alignment ~ l:O↔n:O
+
+Error at entry 561 : Invalid alignment!
+	Alignment ~ ʧ:O↔ʝ:O
+
+Error at entry 579 : Invalid alignment!
+	Alignment ~ ɡ:O↔ð̞:O
+
+Error at entry 584 : Invalid alignment!
+	Alignment ~ ɾ:O↔d:O
+
+Error at entry 602 : Invalid alignment!
+	Alignment ~ b:O↔w:O
+
+Error at entry 603 : Invalid alignment!
+	Alignment ~ b:O↔g:O
+
+Error at entry 606 : Invalid alignment!
+	Alignment ~ r:O↔d:O
+
+Error at entry 616 : Invalid alignment!
+	Alignment ~ n:O↔ʝ:O
+
+Error at entry 623 : Invalid alignment!
+	Alignment ~ j:O↔ʝ:O
+
+Error at entry 624 : Invalid alignment!
+	Alignment ~ s:C↔θ:C
+
+Error at entry 638 : Invalid alignment!
+	Alignment ~ r:O↔d:O
+
+Error at entry 642 : Invalid alignment!
+	Alignment ~ s:O↔θ:O
+
+Error at entry 650 : Invalid alignment!
+	Alignment ~ l:O↔z:O
+
+Error at entry 653 : Invalid alignment!
+	Alignment ~ r:O↔z:O
+
+Error at entry 672 : Invalid alignment!
+	Alignment ~ x:O↔f:O
+
+Error at entry 677 : Invalid alignment!
+	Alignment ~ t:O↔d:O
+
+Error at entry 678 : Invalid alignment!
+	Alignment ~ ɾ:O↔d:O
+
+Error at entry 693 : Invalid alignment!
+	Alignment ~ l:C↔ɹ:C
+
+Error at entry 694 : Invalid alignment!
+	Alignment ~ ɾ:O↔z:O
+
+Error at entry 702 : Invalid alignment!
+	Alignment ~ ɾ:O↔ʝ:O
+
+Error at entry 703 : Invalid alignment!
+	Alignment ~ ʧ:O↔ʃ:O
+
+Error at entry 713 : Invalid alignment!
+	Alignment ~ t:O↔d:O
+
+Error at entry 725 : Invalid alignment!
+	Alignment ~ m:O↔b:O
+
+Error at entry 742 : Invalid alignment!
+	Alignment ~ ɾ:O↔d:O
+
+Error at entry 746 : Invalid alignment!
+	Alignment ~ ɾ:O↔z:O
+
+Error at entry 753 : Invalid alignment!
+	Alignment ~ l:O↔j:O
+
+Error at entry 754 : Invalid alignment!
+	Alignment ~ ɾ:O↔d:O
+
+Error at entry 757 : Invalid alignment!
+	Alignment ~ s:C↔θ:C
+
+Error at entry 763 : Invalid alignment!
+	Alignment ~ l:C↔ɹ:C
+
+Error at entry 764 : Invalid alignment!
+	Alignment ~ n:O↔m:O
+
+Error at entry 767 : Invalid alignment!
+	Alignment ~ s:C↔θ:C
+
+Error at entry 769 : Invalid alignment!
+	Alignment ~ ɾ:O↔v:O
+
+Error at entry 773 : Invalid alignment!
+	Alignment ~ d:O↔b:O
+
+Error at entry 793 : Invalid alignment!
+	Alignment ~ s:O↔ʃ:O
+
+Error at entry 797 : Invalid alignment!
+	Alignment ~ s:O↔ʃ:O
+
+Error at entry 804 : Invalid alignment!
+	Alignment ~ s:C↔θ:C
+
+Total Error Count - 106
+
+
+Specifications

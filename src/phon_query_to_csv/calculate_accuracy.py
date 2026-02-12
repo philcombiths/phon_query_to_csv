@@ -50,7 +50,7 @@ def calculate_accuracy(filepath):
 
             error_count += 1
 
-    error_log_entries.append("\nTotal Error Count - " + error_count + "\n")
+    error_log_entries.append(f"\nTotal Error Count - {error_count}\n")
     error_log_entries.append("\n\nSpecifications\n")
 
     # Save the updated DataFrame to a new CSV file
@@ -70,4 +70,3 @@ def calculate_accuracy(filepath):
     print(f"Saved {errlog_filepath}")
 
     return output_filepath
-
