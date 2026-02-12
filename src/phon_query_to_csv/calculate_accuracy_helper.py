@@ -29,11 +29,19 @@ def get_accuracy(alignment, analysis):
     # Retrieve phones from alignment, convert to panphon segments, and place in parallel lists
     phones = get_phones(alignment)
 
+    invalid_phones = []
+
     for p in range(len(phones)):
         seg = None
-        
-        if phones[p] != '∅':
-            seg = f_table.word_fts(phones[p])[0]
+        phone = phones[p]
+
+        if phone != '∅':
+            segs = f_table.word_fts(phone)
+
+            if segs:
+                seg = segs[0]
+            else:
+                invalid_phones.append(phone)
 
         if p % 2:
             actual.append(seg)
@@ -49,8 +57,15 @@ def get_accuracy(alignment, analysis):
     for p in range(len(target)):
         score += score_pair(target[p], actual[p], analysis, phones[p * 2], phones[(p * 2) + 1])
 
+    if invalid_phones:
+        unique_invalid = sorted(set(invalid_phones))
+        return -1, "Unrecognized IPA phone(s): " + ", ".join(unique_invalid)
+
     if score < 0:
         return -1, "Invalid alignment!"
+
+    if t_len == 0:
+        return -1, "No valid target phones!"
 
     if analysis == 'Nucleus':
         return score / (t_len * 5), ""
