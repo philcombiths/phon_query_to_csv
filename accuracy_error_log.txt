@@ -3,1036 +3,310 @@ Accuracy Error Log
 Fallback category mapping at entry 15
 	Target-Actual: r ↔ ɾ
 	Alignment: r:O↔ɾ:C
-	Analysis: Consonants | Accuracy: 0.9411764705882353
-	Fallback place (target r) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=0
-	Fallback place (actual ɾ) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=0
-
-Fallback category mapping at entry 16
-	Target-Actual: ɡ ↔ k
-	Alignment: ɡ:O↔k:O
-	Analysis: Consonants | Accuracy: 0.9411764705882353
-	Fallback place (target ɡ) -> blb | mismatches=0/2 | compared=['cor', 'delrel'] | rule={'ant': 1, 'cor': -1, 'delrel': -1}
-		Features: ant=0, cor=-1, distr=0, hi=0, lo=0, back=1, strid=0, delrel=-1
-	Fallback place (actual k) -> blb | mismatches=0/2 | compared=['cor', 'delrel'] | rule={'ant': 1, 'cor': -1, 'delrel': -1}
-		Features: ant=0, cor=-1, distr=0, hi=0, lo=0, back=1, strid=0, delrel=-1
-
-Fallback category mapping at entry 30
-	Target-Actual: s ↔ ʪ
-	Alignment: s:C↔ʪ:C
-	Analysis: Consonants | Accuracy: 0.9411764705882353
-	Fallback place (target s) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=1, delrel=-1
-	Fallback place (actual ɬ) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=1, delrel=-1
+	Analysis: Consonants | Accuracy: 0.8823529411764706
+	Manual override place (target r) -> alv | reason=rhotic_place_override
+		Features: ant=1, cor=1, distr=-1, hi=0, lo=0, back=0, strid=0, delrel=0
+	Manual override place (actual ɾ) -> alv | reason=rhotic_place_override
+		Features: ant=1, cor=1, distr=-1, hi=0, lo=0, back=0, strid=0, delrel=0
+	Manual override manner (target r) -> ttf | reason=rhotic_manner_override_ttf
+		Features: son=1, cons=1, cont=-1, delrel=0
+	Manual override manner (actual ɾ) -> ttf | reason=rhotic_manner_override_ttf
+		Features: son=1, cons=1, cont=-1, delrel=0
 
 Fallback category mapping at entry 38
 	Target-Actual: ɾ ↔ d
 	Alignment: ɾ:O↔d:O
-	Analysis: Consonants | Accuracy: 0.8823529411764706
-	Fallback place (target ɾ) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=0
-	Fallback place (actual d) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=-1
-
-Fallback category mapping at entry 41
-	Target-Actual: l ↔ ʝ
-	Alignment: l:O↔ʝ:O
-	Analysis: Consonants | Accuracy: 0.5882352941176471
-	Fallback place (target l) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=0
-	Fallback place (actual ʝ) -> blb | mismatches=0/2 | compared=['cor', 'strid'] | rule={'ant': 1, 'cor': -1, 'strid': -1}
-		Features: ant=0, cor=-1, distr=0, hi=0, lo=0, back=-1, strid=-1, delrel=-1
-
-Fallback category mapping at entry 61
-	Target-Actual: s ↔ ʪ
-	Alignment: s:C↔ʪ:C
-	Analysis: Consonants | Accuracy: 0.9411764705882353
-	Fallback place (target s) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=1, delrel=-1
-	Fallback place (actual ɬ) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=1, delrel=-1
+	Analysis: Consonants | Accuracy: 0.8235294117647058
+	Manual override place (target ɾ) -> alv | reason=rhotic_place_override
+		Features: ant=1, cor=1, distr=-1, hi=0, lo=0, back=0, strid=0, delrel=0
+	Manual override manner (target ɾ) -> ttf | reason=rhotic_manner_override_ttf
+		Features: son=1, cons=1, cont=-1, delrel=0
 
 Fallback category mapping at entry 94
 	Target-Actual: r ↔ ɾ
 	Alignment: r:O↔ɾ:C
-	Analysis: Consonants | Accuracy: 0.9411764705882353
-	Fallback place (target r) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=0
-	Fallback place (actual ɾ) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=0
-
-Fallback category mapping at entry 111
-	Target-Actual: ɡ ↔ b
-	Alignment: ɡ:O↔b:O
-	Analysis: Consonants | Accuracy: 0.9411764705882353
-	Fallback place (target ɡ) -> blb | mismatches=0/2 | compared=['cor', 'delrel'] | rule={'ant': 1, 'cor': -1, 'delrel': -1}
-		Features: ant=0, cor=-1, distr=0, hi=0, lo=0, back=1, strid=0, delrel=-1
-	Fallback place (actual b) -> blb | mismatches=0/2 | compared=['cor', 'delrel'] | rule={'ant': 1, 'cor': -1, 'delrel': -1}
-		Features: ant=0, cor=-1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=-1
-
-Fallback category mapping at entry 112
-	Target-Actual: w ↔ l
-	Alignment: w:O↔l:O
-	Analysis: Consonants | Accuracy: 0.5882352941176471
-	Fallback place (target w) -> vlr | mismatches=0/1 | compared=['back'] | rule={'ant': -1, 'cor': -1, 'hi': 1, 'lo': -1, 'back': 1}
-		Features: ant=0, cor=0, distr=0, hi=0, lo=0, back=1, strid=0, delrel=0
-	Fallback place (actual l) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=0
-	Fallback manner (target w) -> app | mismatches=0/3 | compared=['son', 'cons', 'cont'] | rule={'son': 1, 'cons': -1, 'cont': 1, 'delrel': -1}
-		Features: son=1, cons=-1, cont=1, delrel=0
-
-Fallback category mapping at entry 122
-	Target-Actual: j ↔ ʧ
-	Alignment: j:O↔ʧ:O
-	Analysis: Consonants | Accuracy: 0.47058823529411764
-	Fallback place (target j) -> plt | mismatches=0/1 | compared=['back'] | rule={'ant': -1, 'cor': -1, 'hi': 1, 'lo': -1, 'back': -1}
-		Features: ant=0, cor=0, distr=0, hi=0, lo=0, back=-1, strid=0, delrel=0
-	Fallback place (actual t͡ʃ) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=-1
-	Fallback manner (target j) -> app | mismatches=0/3 | compared=['son', 'cons', 'cont'] | rule={'son': 1, 'cons': -1, 'cont': 1, 'delrel': -1}
-		Features: son=1, cons=-1, cont=1, delrel=0
-
-NAN feature mapping at entry 130
-	Target-Actual: ɾ ↔ ɹ
-	Alignment: ɾ:C↔ɹ:C
-	Analysis: Consonants | Accuracy: 0.29411764705882354
-	NAN parameter: place | Pair: ɾ ↔ ɹ | Mapped: dnt ↔ nan | Penalty: 10 | Policy: max
-		Target features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=0
-		Actual features: ant=0, cor=0, distr=0, hi=0, lo=0, back=0, strid=0, delrel=0
+	Analysis: Consonants | Accuracy: 0.8823529411764706
+	Manual override place (target r) -> alv | reason=rhotic_place_override
+		Features: ant=1, cor=1, distr=-1, hi=0, lo=0, back=0, strid=0, delrel=0
+	Manual override place (actual ɾ) -> alv | reason=rhotic_place_override
+		Features: ant=1, cor=1, distr=-1, hi=0, lo=0, back=0, strid=0, delrel=0
+	Manual override manner (target r) -> ttf | reason=rhotic_manner_override_ttf
+		Features: son=1, cons=1, cont=-1, delrel=0
+	Manual override manner (actual ɾ) -> ttf | reason=rhotic_manner_override_ttf
+		Features: son=1, cons=1, cont=-1, delrel=0
 
 Fallback category mapping at entry 130
 	Target-Actual: ɾ ↔ ɹ
 	Alignment: ɾ:C↔ɹ:C
-	Analysis: Consonants | Accuracy: 0.29411764705882354
-	Fallback place (target ɾ) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=0
-	Fallback unresolved place (actual ɹ)
-		Features: ant=0, cor=0, distr=0, hi=0, lo=0, back=0, strid=0, delrel=0
-	Fallback manner (actual ɹ) -> app | mismatches=0/3 | compared=['son', 'cons', 'cont'] | rule={'son': 1, 'cons': -1, 'cont': 1, 'delrel': -1}
-		Features: son=1, cons=-1, cont=1, delrel=0
-
-Fallback category mapping at entry 134
-	Target-Actual: w ↔ l
-	Alignment: w:O↔l:O
-	Analysis: Consonants | Accuracy: 0.5882352941176471
-	Fallback place (target w) -> vlr | mismatches=0/1 | compared=['back'] | rule={'ant': -1, 'cor': -1, 'hi': 1, 'lo': -1, 'back': 1}
-		Features: ant=0, cor=0, distr=0, hi=0, lo=0, back=1, strid=0, delrel=0
-	Fallback place (actual l) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=0
-	Fallback manner (target w) -> app | mismatches=0/3 | compared=['son', 'cons', 'cont'] | rule={'son': 1, 'cons': -1, 'cont': 1, 'delrel': -1}
-		Features: son=1, cons=-1, cont=1, delrel=0
-
-Fallback category mapping at entry 147
-	Target-Actual: s ↔ sʲ
-	Alignment: s:O↔sʲ:C
-	Analysis: Consonants | Accuracy: 0.9411764705882353
-	Fallback place (target s) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=1, delrel=-1
-	Fallback place (actual sʲ) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=1, lo=0, back=-1, strid=1, delrel=-1
-
-Fallback category mapping at entry 150
-	Target-Actual: p ↔ b
-	Alignment: p:O↔b:O
-	Analysis: Consonants | Accuracy: 0.9411764705882353
-	Fallback place (target p) -> blb | mismatches=0/2 | compared=['cor', 'delrel'] | rule={'ant': 1, 'cor': -1, 'delrel': -1}
-		Features: ant=0, cor=-1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=-1
-	Fallback place (actual b) -> blb | mismatches=0/2 | compared=['cor', 'delrel'] | rule={'ant': 1, 'cor': -1, 'delrel': -1}
-		Features: ant=0, cor=-1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=-1
-
-Fallback category mapping at entry 153
-	Target-Actual: l ↔ w
-	Alignment: l:O↔w:O
-	Analysis: Consonants | Accuracy: 0.5882352941176471
-	Fallback place (target l) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=0
-	Fallback place (actual w) -> vlr | mismatches=0/1 | compared=['back'] | rule={'ant': -1, 'cor': -1, 'hi': 1, 'lo': -1, 'back': 1}
-		Features: ant=0, cor=0, distr=0, hi=0, lo=0, back=1, strid=0, delrel=0
-	Fallback manner (actual w) -> app | mismatches=0/3 | compared=['son', 'cons', 'cont'] | rule={'son': 1, 'cons': -1, 'cont': 1, 'delrel': -1}
-		Features: son=1, cons=-1, cont=1, delrel=0
-
-Fallback category mapping at entry 159
-	Target-Actual: w ↔ b͈
-	Alignment: w:O↔b͈:O
-	Analysis: Consonants | Accuracy: 0.35294117647058826
-	Fallback place (target w) -> vlr | mismatches=0/1 | compared=['back'] | rule={'ant': -1, 'cor': -1, 'hi': 1, 'lo': -1, 'back': 1}
-		Features: ant=0, cor=0, distr=0, hi=0, lo=0, back=1, strid=0, delrel=0
-	Fallback place (actual b͈) -> blb | mismatches=0/2 | compared=['cor', 'delrel'] | rule={'ant': 1, 'cor': -1, 'delrel': -1}
-		Features: ant=0, cor=-1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=-1
-	Fallback manner (target w) -> app | mismatches=0/3 | compared=['son', 'cons', 'cont'] | rule={'son': 1, 'cons': -1, 'cont': 1, 'delrel': -1}
-		Features: son=1, cons=-1, cont=1, delrel=0
-
-Fallback category mapping at entry 161
-	Target-Actual: t ↔ d
-	Alignment: t:O↔d:O
-	Analysis: Consonants | Accuracy: 0.9411764705882353
-	Fallback place (target t) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=-1
-	Fallback place (actual d) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=-1
-
-Fallback category mapping at entry 167
-	Target-Actual: s ↔ ʪ
-	Alignment: s:C↔ʪ:C
-	Analysis: Consonants | Accuracy: 0.9411764705882353
-	Fallback place (target s) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=1, delrel=-1
-	Fallback place (actual ɬ) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=1, delrel=-1
+	Analysis: Consonants | Accuracy: 0.8823529411764706
+	Manual override place (target ɾ) -> alv | reason=rhotic_place_override
+		Features: ant=1, cor=1, distr=-1, hi=0, lo=0, back=0, strid=0, delrel=0
+	Manual override place (actual ɹ) -> alv | reason=rhotic_place_override
+		Features: ant=1, cor=1, distr=-1, hi=1, lo=-1, back=1, strid=0, delrel=-1
+	Manual override manner (target ɾ) -> ttf | reason=rhotic_manner_override_ttf
+		Features: son=1, cons=1, cont=-1, delrel=0
+	Manual override manner (actual ɹ) -> lap | reason=rhotic_manner_override_lap
+		Features: son=1, cons=1, cont=1, delrel=-1
 
 Fallback category mapping at entry 171
 	Target-Actual: ɾ ↔ r
 	Alignment: ɾ:O↔r:O
-	Analysis: Consonants | Accuracy: 0.9411764705882353
-	Fallback place (target ɾ) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=0
-	Fallback place (actual r) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=0
+	Analysis: Consonants | Accuracy: 0.8823529411764706
+	Manual override place (target ɾ) -> alv | reason=rhotic_place_override
+		Features: ant=1, cor=1, distr=-1, hi=0, lo=0, back=0, strid=0, delrel=0
+	Manual override place (actual r) -> alv | reason=rhotic_place_override
+		Features: ant=1, cor=1, distr=-1, hi=0, lo=0, back=0, strid=0, delrel=0
+	Manual override manner (target ɾ) -> ttf | reason=rhotic_manner_override_ttf
+		Features: son=1, cons=1, cont=-1, delrel=0
+	Manual override manner (actual r) -> ttf | reason=rhotic_manner_override_ttf
+		Features: son=1, cons=1, cont=-1, delrel=0
 
 Fallback category mapping at entry 174
 	Target-Actual: r ↔ d
 	Alignment: r:O↔d:O
-	Analysis: Consonants | Accuracy: 0.8823529411764706
-	Fallback place (target r) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=0
-	Fallback place (actual d) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=-1
-
-Fallback category mapping at entry 179
-	Target-Actual: l ↔ lʳ
-	Alignment: l:C↔lʳ:C
 	Analysis: Consonants | Accuracy: 0.8235294117647058
-	Fallback place (target l) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=0
-
-Fallback category mapping at entry 182
-	Target-Actual: s ↔ θ
-	Alignment: s:C↔θ:C
-	Analysis: Consonants | Accuracy: 0.9411764705882353
-	Fallback place (target s) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=1, delrel=-1
-	Fallback place (actual θ) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=-1, delrel=-1
-
-Fallback category mapping at entry 186
-	Target-Actual: s ↔ θ
-	Alignment: s:O↔θ:O
-	Analysis: Consonants | Accuracy: 0.9411764705882353
-	Fallback place (target s) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=1, delrel=-1
-	Fallback place (actual θ) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=-1, delrel=-1
-
-Fallback category mapping at entry 188
-	Target-Actual: s ↔ sʲ
-	Alignment: s:O↔sʲ:O
-	Analysis: Consonants | Accuracy: 0.9411764705882353
-	Fallback place (target s) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=1, delrel=-1
-	Fallback place (actual sʲ) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=1, lo=0, back=-1, strid=1, delrel=-1
-
-Fallback category mapping at entry 194
-	Target-Actual: d ↔ l
-	Alignment: d:O↔l:C
-	Analysis: Consonants | Accuracy: 0.8823529411764706
-	Fallback place (target d) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=-1
-	Fallback place (actual l) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=0
-
-Fallback category mapping at entry 210
-	Target-Actual: ɡ ↔ d
-	Alignment: ɡ:O↔d:O
-	Analysis: Consonants | Accuracy: 0.8823529411764706
-	Fallback place (target ɡ) -> blb | mismatches=0/2 | compared=['cor', 'delrel'] | rule={'ant': 1, 'cor': -1, 'delrel': -1}
-		Features: ant=0, cor=-1, distr=0, hi=0, lo=0, back=1, strid=0, delrel=-1
-	Fallback place (actual d) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=-1
+	Manual override place (target r) -> alv | reason=rhotic_place_override
+		Features: ant=1, cor=1, distr=-1, hi=0, lo=0, back=0, strid=0, delrel=0
+	Manual override manner (target r) -> ttf | reason=rhotic_manner_override_ttf
+		Features: son=1, cons=1, cont=-1, delrel=0
 
 Fallback category mapping at entry 238
 	Target-Actual: r ↔ ʝ
 	Alignment: r:O↔ʝ:O
-	Analysis: Consonants | Accuracy: 0.5882352941176471
-	Fallback place (target r) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=0
-	Fallback place (actual ʝ) -> blb | mismatches=0/2 | compared=['cor', 'strid'] | rule={'ant': 1, 'cor': -1, 'strid': -1}
-		Features: ant=0, cor=-1, distr=0, hi=0, lo=0, back=-1, strid=-1, delrel=-1
-
-Fallback category mapping at entry 241
-	Target-Actual: k ↔ t
-	Alignment: k:O↔t:O
-	Analysis: Consonants | Accuracy: 0.8823529411764706
-	Fallback place (target k) -> blb | mismatches=0/2 | compared=['cor', 'delrel'] | rule={'ant': 1, 'cor': -1, 'delrel': -1}
-		Features: ant=0, cor=-1, distr=0, hi=0, lo=0, back=1, strid=0, delrel=-1
-	Fallback place (actual t) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=-1
-
-Fallback category mapping at entry 246
-	Target-Actual: s ↔ θ
-	Alignment: s:C↔θ:C
-	Analysis: Consonants | Accuracy: 0.9411764705882353
-	Fallback place (target s) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=1, delrel=-1
-	Fallback place (actual θ) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=-1, delrel=-1
+	Analysis: Consonants | Accuracy: 0.47058823529411764
+	Manual override place (target r) -> alv | reason=rhotic_place_override
+		Features: ant=1, cor=1, distr=-1, hi=0, lo=0, back=0, strid=0, delrel=0
+	Manual override manner (target r) -> ttf | reason=rhotic_manner_override_ttf
+		Features: son=1, cons=1, cont=-1, delrel=0
 
 Fallback category mapping at entry 265
 	Target-Actual: r ↔ ɡ
 	Alignment: r:O↔g:O
-	Analysis: Consonants | Accuracy: 0.7647058823529411
-	Fallback place (target r) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=0
-	Fallback place (actual ɡ) -> blb | mismatches=0/2 | compared=['cor', 'delrel'] | rule={'ant': 1, 'cor': -1, 'delrel': -1}
-		Features: ant=0, cor=-1, distr=0, hi=0, lo=0, back=1, strid=0, delrel=-1
+	Analysis: Consonants | Accuracy: 0.5882352941176471
+	Manual override place (target r) -> alv | reason=rhotic_place_override
+		Features: ant=1, cor=1, distr=-1, hi=0, lo=0, back=0, strid=0, delrel=0
+	Manual override manner (target r) -> ttf | reason=rhotic_manner_override_ttf
+		Features: son=1, cons=1, cont=-1, delrel=0
 
 Fallback category mapping at entry 270
 	Target-Actual: r ↔ v
 	Alignment: r:O↔v:O
-	Analysis: Consonants | Accuracy: 0.5882352941176471
-	Fallback place (target r) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=0
-	Fallback place (actual v) -> blb | mismatches=0/2 | compared=['cor', 'delrel'] | rule={'ant': 1, 'cor': -1, 'delrel': -1}
-		Features: ant=0, cor=-1, distr=0, hi=0, lo=0, back=0, strid=1, delrel=-1
+	Analysis: Consonants | Accuracy: 0.47058823529411764
+	Manual override place (target r) -> alv | reason=rhotic_place_override
+		Features: ant=1, cor=1, distr=-1, hi=0, lo=0, back=0, strid=0, delrel=0
+	Manual override manner (target r) -> ttf | reason=rhotic_manner_override_ttf
+		Features: son=1, cons=1, cont=-1, delrel=0
 
 Fallback category mapping at entry 273
 	Target-Actual: ɾ ↔ r
 	Alignment: ɾ:C↔r:C
-	Analysis: Consonants | Accuracy: 0.9411764705882353
-	Fallback place (target ɾ) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=0
-	Fallback place (actual r) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=0
-
-Fallback category mapping at entry 278
-	Target-Actual: w ↔ v
-	Alignment: w:O↔v:O
-	Analysis: Consonants | Accuracy: 0.17647058823529413
-	Fallback place (target w) -> vlr | mismatches=0/1 | compared=['back'] | rule={'ant': -1, 'cor': -1, 'hi': 1, 'lo': -1, 'back': 1}
-		Features: ant=0, cor=0, distr=0, hi=0, lo=0, back=1, strid=0, delrel=0
-	Fallback place (actual v) -> blb | mismatches=0/2 | compared=['cor', 'delrel'] | rule={'ant': 1, 'cor': -1, 'delrel': -1}
-		Features: ant=0, cor=-1, distr=0, hi=0, lo=0, back=0, strid=1, delrel=-1
-	Fallback manner (target w) -> app | mismatches=0/3 | compared=['son', 'cons', 'cont'] | rule={'son': 1, 'cons': -1, 'cont': 1, 'delrel': -1}
-		Features: son=1, cons=-1, cont=1, delrel=0
-
-Fallback category mapping at entry 280
-	Target-Actual: s ↔ ʧ
-	Alignment: s:O↔ʧ:O
-	Analysis: Consonants | Accuracy: 0.8235294117647058
-	Fallback place (target s) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=1, delrel=-1
-	Fallback place (actual t͡ʃ) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=-1
-
-Fallback category mapping at entry 285
-	Target-Actual: ɡ ↔ b
-	Alignment: ɡ:O↔b:O
-	Analysis: Consonants | Accuracy: 0.9411764705882353
-	Fallback place (target ɡ) -> blb | mismatches=0/2 | compared=['cor', 'delrel'] | rule={'ant': 1, 'cor': -1, 'delrel': -1}
-		Features: ant=0, cor=-1, distr=0, hi=0, lo=0, back=1, strid=0, delrel=-1
-	Fallback place (actual b) -> blb | mismatches=0/2 | compared=['cor', 'delrel'] | rule={'ant': 1, 'cor': -1, 'delrel': -1}
-		Features: ant=0, cor=-1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=-1
-
-Fallback category mapping at entry 291
-	Target-Actual: ɡ ↔ ɡ͈
-	Alignment: ɡ:O↔ɡ͈:O
-	Analysis: Consonants | Accuracy: 0.9411764705882353
-	Fallback place (target ɡ) -> blb | mismatches=0/2 | compared=['cor', 'delrel'] | rule={'ant': 1, 'cor': -1, 'delrel': -1}
-		Features: ant=0, cor=-1, distr=0, hi=0, lo=0, back=1, strid=0, delrel=-1
-	Fallback place (actual ɡ͈) -> blb | mismatches=0/2 | compared=['cor', 'delrel'] | rule={'ant': 1, 'cor': -1, 'delrel': -1}
-		Features: ant=0, cor=-1, distr=0, hi=0, lo=0, back=1, strid=0, delrel=-1
-
-Fallback category mapping at entry 293
-	Target-Actual: w ↔ b
-	Alignment: w:O↔b:O
-	Analysis: Consonants | Accuracy: 0.35294117647058826
-	Fallback place (target w) -> vlr | mismatches=0/1 | compared=['back'] | rule={'ant': -1, 'cor': -1, 'hi': 1, 'lo': -1, 'back': 1}
-		Features: ant=0, cor=0, distr=0, hi=0, lo=0, back=1, strid=0, delrel=0
-	Fallback place (actual b) -> blb | mismatches=0/2 | compared=['cor', 'delrel'] | rule={'ant': 1, 'cor': -1, 'delrel': -1}
-		Features: ant=0, cor=-1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=-1
-	Fallback manner (target w) -> app | mismatches=0/3 | compared=['son', 'cons', 'cont'] | rule={'son': 1, 'cons': -1, 'cont': 1, 'delrel': -1}
-		Features: son=1, cons=-1, cont=1, delrel=0
+	Analysis: Consonants | Accuracy: 0.8823529411764706
+	Manual override place (target ɾ) -> alv | reason=rhotic_place_override
+		Features: ant=1, cor=1, distr=-1, hi=0, lo=0, back=0, strid=0, delrel=0
+	Manual override place (actual r) -> alv | reason=rhotic_place_override
+		Features: ant=1, cor=1, distr=-1, hi=0, lo=0, back=0, strid=0, delrel=0
+	Manual override manner (target ɾ) -> ttf | reason=rhotic_manner_override_ttf
+		Features: son=1, cons=1, cont=-1, delrel=0
+	Manual override manner (actual r) -> ttf | reason=rhotic_manner_override_ttf
+		Features: son=1, cons=1, cont=-1, delrel=0
 
 Fallback category mapping at entry 306
 	Target-Actual: ɾ ↔ w
 	Alignment: ɾ:O↔w:O
 	Analysis: Consonants | Accuracy: 0.5882352941176471
-	Fallback place (target ɾ) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=0
-	Fallback place (actual w) -> vlr | mismatches=0/1 | compared=['back'] | rule={'ant': -1, 'cor': -1, 'hi': 1, 'lo': -1, 'back': 1}
-		Features: ant=0, cor=0, distr=0, hi=0, lo=0, back=1, strid=0, delrel=0
-	Fallback manner (actual w) -> app | mismatches=0/3 | compared=['son', 'cons', 'cont'] | rule={'son': 1, 'cons': -1, 'cont': 1, 'delrel': -1}
-		Features: son=1, cons=-1, cont=1, delrel=0
-
-Fallback category mapping at entry 321
-	Target-Actual: ʧ ↔ s
-	Alignment: ʧ:O↔s:O
-	Analysis: Consonants | Accuracy: 0.8235294117647058
-	Fallback place (target t͡ʃ) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=-1
-	Fallback place (actual s) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=1, delrel=-1
-
-Fallback category mapping at entry 323
-	Target-Actual: k ↔ t
-	Alignment: k:O↔t:O
-	Analysis: Consonants | Accuracy: 0.8823529411764706
-	Fallback place (target k) -> blb | mismatches=0/2 | compared=['cor', 'delrel'] | rule={'ant': 1, 'cor': -1, 'delrel': -1}
-		Features: ant=0, cor=-1, distr=0, hi=0, lo=0, back=1, strid=0, delrel=-1
-	Fallback place (actual t) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=-1
-
-Fallback category mapping at entry 337
-	Target-Actual: s ↔ θ
-	Alignment: s:O↔θ:O
-	Analysis: Consonants | Accuracy: 0.9411764705882353
-	Fallback place (target s) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=1, delrel=-1
-	Fallback place (actual θ) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=-1, delrel=-1
-
-Fallback category mapping at entry 345
-	Target-Actual: s ↔ θ
-	Alignment: s:C↔θ:C
-	Analysis: Consonants | Accuracy: 0.9411764705882353
-	Fallback place (target s) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=1, delrel=-1
-	Fallback place (actual θ) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=-1, delrel=-1
-
-Fallback category mapping at entry 347
-	Target-Actual: l ↔ w
-	Alignment: l:O↔w:O
-	Analysis: Consonants | Accuracy: 0.5882352941176471
-	Fallback place (target l) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=0
-	Fallback place (actual w) -> vlr | mismatches=0/1 | compared=['back'] | rule={'ant': -1, 'cor': -1, 'hi': 1, 'lo': -1, 'back': 1}
-		Features: ant=0, cor=0, distr=0, hi=0, lo=0, back=1, strid=0, delrel=0
-	Fallback manner (actual w) -> app | mismatches=0/3 | compared=['son', 'cons', 'cont'] | rule={'son': 1, 'cons': -1, 'cont': 1, 'delrel': -1}
-		Features: son=1, cons=-1, cont=1, delrel=0
-
-Fallback category mapping at entry 363
-	Target-Actual: ɡ ↔ d
-	Alignment: ɡ:O↔d:O
-	Analysis: Consonants | Accuracy: 0.8823529411764706
-	Fallback place (target ɡ) -> blb | mismatches=0/2 | compared=['cor', 'delrel'] | rule={'ant': 1, 'cor': -1, 'delrel': -1}
-		Features: ant=0, cor=-1, distr=0, hi=0, lo=0, back=1, strid=0, delrel=-1
-	Fallback place (actual d) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=-1
-
-Fallback category mapping at entry 364
-	Target-Actual: s ↔ θ
-	Alignment: s:O↔θ:O
-	Analysis: Consonants | Accuracy: 0.9411764705882353
-	Fallback place (target s) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=1, delrel=-1
-	Fallback place (actual θ) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=-1, delrel=-1
-
-Fallback category mapping at entry 367
-	Target-Actual: ɡ ↔ d
-	Alignment: ɡ:O↔d:O
-	Analysis: Consonants | Accuracy: 0.8823529411764706
-	Fallback place (target ɡ) -> blb | mismatches=0/2 | compared=['cor', 'delrel'] | rule={'ant': 1, 'cor': -1, 'delrel': -1}
-		Features: ant=0, cor=-1, distr=0, hi=0, lo=0, back=1, strid=0, delrel=-1
-	Fallback place (actual d) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=-1
-
-Fallback category mapping at entry 371
-	Target-Actual: s ↔ s̪
-	Alignment: s:O↔s̪:O
-	Analysis: Consonants | Accuracy: 0.9411764705882353
-	Fallback place (target s) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=1, delrel=-1
-	Fallback place (actual s̪) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=1, delrel=-1
-
-Fallback category mapping at entry 374
-	Target-Actual: k ↔ ɡ
-	Alignment: k:O↔g:O
-	Analysis: Consonants | Accuracy: 0.9411764705882353
-	Fallback place (target k) -> blb | mismatches=0/2 | compared=['cor', 'delrel'] | rule={'ant': 1, 'cor': -1, 'delrel': -1}
-		Features: ant=0, cor=-1, distr=0, hi=0, lo=0, back=1, strid=0, delrel=-1
-	Fallback place (actual ɡ) -> blb | mismatches=0/2 | compared=['cor', 'delrel'] | rule={'ant': 1, 'cor': -1, 'delrel': -1}
-		Features: ant=0, cor=-1, distr=0, hi=0, lo=0, back=1, strid=0, delrel=-1
-
-Fallback category mapping at entry 381
-	Target-Actual: b ↔ m
-	Alignment: b:O↔m:O
-	Analysis: Consonants | Accuracy: 0.9411764705882353
-	Fallback place (target b) -> blb | mismatches=0/2 | compared=['cor', 'delrel'] | rule={'ant': 1, 'cor': -1, 'delrel': -1}
-		Features: ant=0, cor=-1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=-1
-	Fallback place (actual m) -> blb | mismatches=0/1 | compared=['cor'] | rule={'ant': 1, 'cor': -1, 'strid': -1}
-		Features: ant=0, cor=-1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=0
-	Fallback manner (actual m) -> nas | mismatches=0/3 | compared=['son', 'cons', 'cont'] | rule={'son': 1, 'cons': 1, 'cont': -1, 'delrel': -1}
+	Manual override place (target ɾ) -> alv | reason=rhotic_place_override
+		Features: ant=1, cor=1, distr=-1, hi=0, lo=0, back=0, strid=0, delrel=0
+	Manual override manner (target ɾ) -> ttf | reason=rhotic_manner_override_ttf
 		Features: son=1, cons=1, cont=-1, delrel=0
 
 Fallback category mapping at entry 382
 	Target-Actual: r ↔ θ
 	Alignment: r:O↔θ:O
-	Analysis: Consonants | Accuracy: 0.6470588235294118
-	Fallback place (target r) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=0
-	Fallback place (actual θ) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=-1, delrel=-1
-
-Fallback category mapping at entry 389
-	Target-Actual: s ↔ θ
-	Alignment: s:C↔θ:C
-	Analysis: Consonants | Accuracy: 0.9411764705882353
-	Fallback place (target s) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=1, delrel=-1
-	Fallback place (actual θ) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=-1, delrel=-1
-
-Fallback category mapping at entry 391
-	Target-Actual: j ↔ ʝ
-	Alignment: j:O↔ʝ:O
-	Analysis: Consonants | Accuracy: 0.23529411764705882
-	Fallback place (target j) -> plt | mismatches=0/1 | compared=['back'] | rule={'ant': -1, 'cor': -1, 'hi': 1, 'lo': -1, 'back': -1}
-		Features: ant=0, cor=0, distr=0, hi=0, lo=0, back=-1, strid=0, delrel=0
-	Fallback place (actual ʝ) -> blb | mismatches=0/2 | compared=['cor', 'strid'] | rule={'ant': 1, 'cor': -1, 'strid': -1}
-		Features: ant=0, cor=-1, distr=0, hi=0, lo=0, back=-1, strid=-1, delrel=-1
-	Fallback manner (target j) -> app | mismatches=0/3 | compared=['son', 'cons', 'cont'] | rule={'son': 1, 'cons': -1, 'cont': 1, 'delrel': -1}
-		Features: son=1, cons=-1, cont=1, delrel=0
-
-Fallback category mapping at entry 393
-	Target-Actual: s ↔ s̪
-	Alignment: s:O↔s̪:O
-	Analysis: Consonants | Accuracy: 0.9411764705882353
-	Fallback place (target s) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=1, delrel=-1
-	Fallback place (actual s̪) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=1, delrel=-1
-
-Fallback category mapping at entry 395
-	Target-Actual: ɲ ↔ ʝ
-	Alignment: ɲ:O↔ʝ:O
-	Analysis: Consonants | Accuracy: 0.4117647058823529
-	Fallback place (target ɲ) -> plt | mismatches=0/2 | compared=['cor', 'back'] | rule={'ant': -1, 'cor': -1, 'hi': 1, 'lo': -1, 'back': -1}
-		Features: ant=0, cor=-1, distr=0, hi=0, lo=0, back=-1, strid=0, delrel=0
-	Fallback place (actual ʝ) -> blb | mismatches=0/2 | compared=['cor', 'strid'] | rule={'ant': 1, 'cor': -1, 'strid': -1}
-		Features: ant=0, cor=-1, distr=0, hi=0, lo=0, back=-1, strid=-1, delrel=-1
-	Fallback manner (target ɲ) -> nas | mismatches=0/3 | compared=['son', 'cons', 'cont'] | rule={'son': 1, 'cons': 1, 'cont': -1, 'delrel': -1}
+	Analysis: Consonants | Accuracy: 0.5294117647058824
+	Manual override place (target r) -> alv | reason=rhotic_place_override
+		Features: ant=1, cor=1, distr=-1, hi=0, lo=0, back=0, strid=0, delrel=0
+	Manual override manner (target r) -> ttf | reason=rhotic_manner_override_ttf
 		Features: son=1, cons=1, cont=-1, delrel=0
-
-NAN feature mapping at entry 428
-	Target-Actual: l ↔ ɹ
-	Alignment: l:C↔ɹ:C
-	Analysis: Consonants | Accuracy: 0.29411764705882354
-	NAN parameter: place | Pair: l ↔ ɹ | Mapped: dnt ↔ nan | Penalty: 10 | Policy: max
-		Target features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=0
-		Actual features: ant=0, cor=0, distr=0, hi=0, lo=0, back=0, strid=0, delrel=0
 
 Fallback category mapping at entry 428
 	Target-Actual: l ↔ ɹ
 	Alignment: l:C↔ɹ:C
-	Analysis: Consonants | Accuracy: 0.29411764705882354
-	Fallback place (target l) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=0
-	Fallback unresolved place (actual ɹ)
-		Features: ant=0, cor=0, distr=0, hi=0, lo=0, back=0, strid=0, delrel=0
-	Fallback manner (actual ɹ) -> app | mismatches=0/3 | compared=['son', 'cons', 'cont'] | rule={'son': 1, 'cons': -1, 'cont': 1, 'delrel': -1}
-		Features: son=1, cons=-1, cont=1, delrel=0
-
-Fallback category mapping at entry 432
-	Target-Actual: s ↔ sʲ
-	Alignment: s:O↔sʲ:O
 	Analysis: Consonants | Accuracy: 0.9411764705882353
-	Fallback place (target s) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=1, delrel=-1
-	Fallback place (actual sʲ) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=1, lo=0, back=-1, strid=1, delrel=-1
-
-Fallback category mapping at entry 439
-	Target-Actual: s ↔ θ
-	Alignment: s:C↔θ:C
-	Analysis: Consonants | Accuracy: 0.9411764705882353
-	Fallback place (target s) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=1, delrel=-1
-	Fallback place (actual θ) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=-1, delrel=-1
-
-Fallback category mapping at entry 440
-	Target-Actual: p ↔ f
-	Alignment: p:O↔f:O
-	Analysis: Consonants | Accuracy: 0.8235294117647058
-	Fallback place (target p) -> blb | mismatches=0/2 | compared=['cor', 'delrel'] | rule={'ant': 1, 'cor': -1, 'delrel': -1}
-		Features: ant=0, cor=-1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=-1
-	Fallback place (actual f) -> blb | mismatches=0/2 | compared=['cor', 'delrel'] | rule={'ant': 1, 'cor': -1, 'delrel': -1}
-		Features: ant=0, cor=-1, distr=0, hi=0, lo=0, back=0, strid=1, delrel=-1
-
-Fallback category mapping at entry 442
-	Target-Actual: s ↔ ʃ
-	Alignment: s:O↔ʃ:O
-	Analysis: Consonants | Accuracy: 0.7647058823529411
-	Fallback place (target s) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=1, delrel=-1
-	Fallback place (actual ʃ) -> plt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': -1, 'cor': -1, 'hi': 1, 'lo': -1, 'back': -1}
-		Features: ant=-1, cor=-1, distr=0, hi=0, lo=0, back=0, strid=1, delrel=-1
+	Manual override place (actual ɹ) -> alv | reason=rhotic_place_override
+		Features: ant=1, cor=1, distr=-1, hi=1, lo=-1, back=1, strid=0, delrel=-1
+	Manual override manner (actual ɹ) -> lap | reason=rhotic_manner_override_lap
+		Features: son=1, cons=1, cont=1, delrel=-1
 
 Fallback category mapping at entry 479
 	Target-Actual: r ↔ l
 	Alignment: r:O↔l:O
-	Analysis: Consonants | Accuracy: 0.9411764705882353
-	Fallback place (target r) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=0
-	Fallback place (actual l) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=0
+	Analysis: Consonants | Accuracy: 0.8823529411764706
+	Manual override place (target r) -> alv | reason=rhotic_place_override
+		Features: ant=1, cor=1, distr=-1, hi=0, lo=0, back=0, strid=0, delrel=0
+	Manual override manner (target r) -> ttf | reason=rhotic_manner_override_ttf
+		Features: son=1, cons=1, cont=-1, delrel=0
 
 Fallback category mapping at entry 491
 	Target-Actual: r ↔ l
 	Alignment: r:O↔l:O
-	Analysis: Consonants | Accuracy: 0.9411764705882353
-	Fallback place (target r) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=0
-	Fallback place (actual l) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=0
+	Analysis: Consonants | Accuracy: 0.8823529411764706
+	Manual override place (target r) -> alv | reason=rhotic_place_override
+		Features: ant=1, cor=1, distr=-1, hi=0, lo=0, back=0, strid=0, delrel=0
+	Manual override manner (target r) -> ttf | reason=rhotic_manner_override_ttf
+		Features: son=1, cons=1, cont=-1, delrel=0
 
 Fallback category mapping at entry 495
 	Target-Actual: r ↔ d
 	Alignment: r:O↔d:O
-	Analysis: Consonants | Accuracy: 0.8823529411764706
-	Fallback place (target r) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=0
-	Fallback place (actual d) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=-1
+	Analysis: Consonants | Accuracy: 0.8235294117647058
+	Manual override place (target r) -> alv | reason=rhotic_place_override
+		Features: ant=1, cor=1, distr=-1, hi=0, lo=0, back=0, strid=0, delrel=0
+	Manual override manner (target r) -> ttf | reason=rhotic_manner_override_ttf
+		Features: son=1, cons=1, cont=-1, delrel=0
 
 Fallback category mapping at entry 502
 	Target-Actual: r ↔ d
 	Alignment: r:O↔d:O
-	Analysis: Consonants | Accuracy: 0.8823529411764706
-	Fallback place (target r) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=0
-	Fallback place (actual d) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=-1
-
-Fallback category mapping at entry 506
-	Target-Actual: j ↔ ʝ
-	Alignment: j:O↔ʝ:O
-	Analysis: Consonants | Accuracy: 0.23529411764705882
-	Fallback place (target j) -> plt | mismatches=0/1 | compared=['back'] | rule={'ant': -1, 'cor': -1, 'hi': 1, 'lo': -1, 'back': -1}
-		Features: ant=0, cor=0, distr=0, hi=0, lo=0, back=-1, strid=0, delrel=0
-	Fallback place (actual ʝ) -> blb | mismatches=0/2 | compared=['cor', 'strid'] | rule={'ant': 1, 'cor': -1, 'strid': -1}
-		Features: ant=0, cor=-1, distr=0, hi=0, lo=0, back=-1, strid=-1, delrel=-1
-	Fallback manner (target j) -> app | mismatches=0/3 | compared=['son', 'cons', 'cont'] | rule={'son': 1, 'cons': -1, 'cont': 1, 'delrel': -1}
-		Features: son=1, cons=-1, cont=1, delrel=0
-
-Fallback category mapping at entry 510
-	Target-Actual: ʧ ↔ ʃ
-	Alignment: ʧ:O↔ʃ:O
-	Analysis: Consonants | Accuracy: 0.5882352941176471
-	Fallback place (target t͡ʃ) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=-1
-	Fallback place (actual ʃ) -> plt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': -1, 'cor': -1, 'hi': 1, 'lo': -1, 'back': -1}
-		Features: ant=-1, cor=-1, distr=0, hi=0, lo=0, back=0, strid=1, delrel=-1
+	Analysis: Consonants | Accuracy: 0.8235294117647058
+	Manual override place (target r) -> alv | reason=rhotic_place_override
+		Features: ant=1, cor=1, distr=-1, hi=0, lo=0, back=0, strid=0, delrel=0
+	Manual override manner (target r) -> ttf | reason=rhotic_manner_override_ttf
+		Features: son=1, cons=1, cont=-1, delrel=0
 
 Fallback category mapping at entry 513
 	Target-Actual: r ↔ l
 	Alignment: r:O↔l:O
-	Analysis: Consonants | Accuracy: 0.9411764705882353
-	Fallback place (target r) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=0
-	Fallback place (actual l) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=0
-
-Fallback category mapping at entry 524
-	Target-Actual: s ↔ s̪
-	Alignment: s:C↔s̪:C
-	Analysis: Consonants | Accuracy: 0.9411764705882353
-	Fallback place (target s) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=1, delrel=-1
-	Fallback place (actual s̪) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=1, delrel=-1
+	Analysis: Consonants | Accuracy: 0.8823529411764706
+	Manual override place (target r) -> alv | reason=rhotic_place_override
+		Features: ant=1, cor=1, distr=-1, hi=0, lo=0, back=0, strid=0, delrel=0
+	Manual override manner (target r) -> ttf | reason=rhotic_manner_override_ttf
+		Features: son=1, cons=1, cont=-1, delrel=0
 
 Fallback category mapping at entry 529
 	Target-Actual: r ↔ l
 	Alignment: r:O↔l:O
-	Analysis: Consonants | Accuracy: 0.9411764705882353
-	Fallback place (target r) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=0
-	Fallback place (actual l) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=0
-
-Fallback category mapping at entry 541
-	Target-Actual: ʧ ↔ s̪
-	Alignment: ʧ:O↔s̪:O
-	Analysis: Consonants | Accuracy: 0.8235294117647058
-	Fallback place (target t͡ʃ) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=-1
-	Fallback place (actual s̪) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=1, delrel=-1
-
-Fallback category mapping at entry 542
-	Target-Actual: s ↔ θ
-	Alignment: s:O↔θ:O
-	Analysis: Consonants | Accuracy: 0.9411764705882353
-	Fallback place (target s) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=1, delrel=-1
-	Fallback place (actual θ) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=-1, delrel=-1
-
-Fallback category mapping at entry 554
-	Target-Actual: l ↔ n
-	Alignment: l:O↔n:O
-	Analysis: Consonants | Accuracy: 0.9411764705882353
-	Fallback place (target l) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=0
-	Fallback place (actual n) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=0
-	Fallback manner (actual n) -> nas | mismatches=0/3 | compared=['son', 'cons', 'cont'] | rule={'son': 1, 'cons': 1, 'cont': -1, 'delrel': -1}
+	Analysis: Consonants | Accuracy: 0.8823529411764706
+	Manual override place (target r) -> alv | reason=rhotic_place_override
+		Features: ant=1, cor=1, distr=-1, hi=0, lo=0, back=0, strid=0, delrel=0
+	Manual override manner (target r) -> ttf | reason=rhotic_manner_override_ttf
 		Features: son=1, cons=1, cont=-1, delrel=0
-
-Fallback category mapping at entry 561
-	Target-Actual: ʧ ↔ ʝ
-	Alignment: ʧ:O↔ʝ:O
-	Analysis: Consonants | Accuracy: 0.6470588235294118
-	Fallback place (target t͡ʃ) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=-1
-	Fallback place (actual ʝ) -> blb | mismatches=0/2 | compared=['cor', 'strid'] | rule={'ant': 1, 'cor': -1, 'strid': -1}
-		Features: ant=0, cor=-1, distr=0, hi=0, lo=0, back=-1, strid=-1, delrel=-1
-
-Fallback category mapping at entry 579
-	Target-Actual: ɡ ↔ ð̞
-	Alignment: ɡ:O↔ð̞:O
-	Analysis: Consonants | Accuracy: 0.7647058823529411
-	Fallback place (target ɡ) -> blb | mismatches=0/2 | compared=['cor', 'delrel'] | rule={'ant': 1, 'cor': -1, 'delrel': -1}
-		Features: ant=0, cor=-1, distr=0, hi=0, lo=0, back=1, strid=0, delrel=-1
-	Fallback place (actual ð̞) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=-1, delrel=1
 
 Fallback category mapping at entry 584
 	Target-Actual: ɾ ↔ d
 	Alignment: ɾ:O↔d:O
-	Analysis: Consonants | Accuracy: 0.8823529411764706
-	Fallback place (target ɾ) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=0
-	Fallback place (actual d) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=-1
-
-Fallback category mapping at entry 602
-	Target-Actual: b ↔ w
-	Alignment: b:O↔w:O
-	Analysis: Consonants | Accuracy: 0.35294117647058826
-	Fallback place (target b) -> blb | mismatches=0/2 | compared=['cor', 'delrel'] | rule={'ant': 1, 'cor': -1, 'delrel': -1}
-		Features: ant=0, cor=-1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=-1
-	Fallback place (actual w) -> vlr | mismatches=0/1 | compared=['back'] | rule={'ant': -1, 'cor': -1, 'hi': 1, 'lo': -1, 'back': 1}
-		Features: ant=0, cor=0, distr=0, hi=0, lo=0, back=1, strid=0, delrel=0
-	Fallback manner (actual w) -> app | mismatches=0/3 | compared=['son', 'cons', 'cont'] | rule={'son': 1, 'cons': -1, 'cont': 1, 'delrel': -1}
-		Features: son=1, cons=-1, cont=1, delrel=0
-
-Fallback category mapping at entry 603
-	Target-Actual: b ↔ ɡ
-	Alignment: b:O↔g:O
-	Analysis: Consonants | Accuracy: 0.9411764705882353
-	Fallback place (target b) -> blb | mismatches=0/2 | compared=['cor', 'delrel'] | rule={'ant': 1, 'cor': -1, 'delrel': -1}
-		Features: ant=0, cor=-1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=-1
-	Fallback place (actual ɡ) -> blb | mismatches=0/2 | compared=['cor', 'delrel'] | rule={'ant': 1, 'cor': -1, 'delrel': -1}
-		Features: ant=0, cor=-1, distr=0, hi=0, lo=0, back=1, strid=0, delrel=-1
+	Analysis: Consonants | Accuracy: 0.8235294117647058
+	Manual override place (target ɾ) -> alv | reason=rhotic_place_override
+		Features: ant=1, cor=1, distr=-1, hi=0, lo=0, back=0, strid=0, delrel=0
+	Manual override manner (target ɾ) -> ttf | reason=rhotic_manner_override_ttf
+		Features: son=1, cons=1, cont=-1, delrel=0
 
 Fallback category mapping at entry 606
 	Target-Actual: r ↔ d
 	Alignment: r:O↔d:O
-	Analysis: Consonants | Accuracy: 0.8823529411764706
-	Fallback place (target r) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=0
-	Fallback place (actual d) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=-1
-
-Fallback category mapping at entry 616
-	Target-Actual: n ↔ ʝ
-	Alignment: n:O↔ʝ:O
-	Analysis: Consonants | Accuracy: 0.6470588235294118
-	Fallback place (target n) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=0
-	Fallback place (actual ʝ) -> blb | mismatches=0/2 | compared=['cor', 'strid'] | rule={'ant': 1, 'cor': -1, 'strid': -1}
-		Features: ant=0, cor=-1, distr=0, hi=0, lo=0, back=-1, strid=-1, delrel=-1
-	Fallback manner (target n) -> nas | mismatches=0/3 | compared=['son', 'cons', 'cont'] | rule={'son': 1, 'cons': 1, 'cont': -1, 'delrel': -1}
+	Analysis: Consonants | Accuracy: 0.8235294117647058
+	Manual override place (target r) -> alv | reason=rhotic_place_override
+		Features: ant=1, cor=1, distr=-1, hi=0, lo=0, back=0, strid=0, delrel=0
+	Manual override manner (target r) -> ttf | reason=rhotic_manner_override_ttf
 		Features: son=1, cons=1, cont=-1, delrel=0
-
-Fallback category mapping at entry 623
-	Target-Actual: j ↔ ʝ
-	Alignment: j:O↔ʝ:O
-	Analysis: Consonants | Accuracy: 0.23529411764705882
-	Fallback place (target j) -> plt | mismatches=0/1 | compared=['back'] | rule={'ant': -1, 'cor': -1, 'hi': 1, 'lo': -1, 'back': -1}
-		Features: ant=0, cor=0, distr=0, hi=0, lo=0, back=-1, strid=0, delrel=0
-	Fallback place (actual ʝ) -> blb | mismatches=0/2 | compared=['cor', 'strid'] | rule={'ant': 1, 'cor': -1, 'strid': -1}
-		Features: ant=0, cor=-1, distr=0, hi=0, lo=0, back=-1, strid=-1, delrel=-1
-	Fallback manner (target j) -> app | mismatches=0/3 | compared=['son', 'cons', 'cont'] | rule={'son': 1, 'cons': -1, 'cont': 1, 'delrel': -1}
-		Features: son=1, cons=-1, cont=1, delrel=0
-
-Fallback category mapping at entry 624
-	Target-Actual: s ↔ θ
-	Alignment: s:C↔θ:C
-	Analysis: Consonants | Accuracy: 0.9411764705882353
-	Fallback place (target s) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=1, delrel=-1
-	Fallback place (actual θ) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=-1, delrel=-1
 
 Fallback category mapping at entry 638
 	Target-Actual: r ↔ d
 	Alignment: r:O↔d:O
-	Analysis: Consonants | Accuracy: 0.8823529411764706
-	Fallback place (target r) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=0
-	Fallback place (actual d) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=-1
-
-Fallback category mapping at entry 642
-	Target-Actual: s ↔ θ
-	Alignment: s:O↔θ:O
-	Analysis: Consonants | Accuracy: 0.9411764705882353
-	Fallback place (target s) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=1, delrel=-1
-	Fallback place (actual θ) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=-1, delrel=-1
-
-Fallback category mapping at entry 650
-	Target-Actual: l ↔ z
-	Alignment: l:O↔z:O
-	Analysis: Consonants | Accuracy: 0.7058823529411765
-	Fallback place (target l) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=0
-	Fallback place (actual z) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=1, delrel=-1
+	Analysis: Consonants | Accuracy: 0.8235294117647058
+	Manual override place (target r) -> alv | reason=rhotic_place_override
+		Features: ant=1, cor=1, distr=-1, hi=0, lo=0, back=0, strid=0, delrel=0
+	Manual override manner (target r) -> ttf | reason=rhotic_manner_override_ttf
+		Features: son=1, cons=1, cont=-1, delrel=0
 
 Fallback category mapping at entry 653
 	Target-Actual: r ↔ z
 	Alignment: r:O↔z:O
-	Analysis: Consonants | Accuracy: 0.7058823529411765
-	Fallback place (target r) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=0
-	Fallback place (actual z) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=1, delrel=-1
-
-Fallback category mapping at entry 672
-	Target-Actual: x ↔ f
-	Alignment: x:O↔f:O
-	Analysis: Consonants | Accuracy: 0.9411764705882353
-	Fallback place (target x) -> blb | mismatches=0/2 | compared=['cor', 'delrel'] | rule={'ant': 1, 'cor': -1, 'delrel': -1}
-		Features: ant=0, cor=-1, distr=0, hi=0, lo=0, back=1, strid=0, delrel=-1
-	Fallback place (actual f) -> blb | mismatches=0/2 | compared=['cor', 'delrel'] | rule={'ant': 1, 'cor': -1, 'delrel': -1}
-		Features: ant=0, cor=-1, distr=0, hi=0, lo=0, back=0, strid=1, delrel=-1
-
-Fallback category mapping at entry 677
-	Target-Actual: t ↔ d
-	Alignment: t:O↔d:O
-	Analysis: Consonants | Accuracy: 0.9411764705882353
-	Fallback place (target t) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=-1
-	Fallback place (actual d) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=-1
+	Analysis: Consonants | Accuracy: 0.6470588235294118
+	Manual override place (target r) -> alv | reason=rhotic_place_override
+		Features: ant=1, cor=1, distr=-1, hi=0, lo=0, back=0, strid=0, delrel=0
+	Manual override manner (target r) -> ttf | reason=rhotic_manner_override_ttf
+		Features: son=1, cons=1, cont=-1, delrel=0
 
 Fallback category mapping at entry 678
 	Target-Actual: ɾ ↔ d
 	Alignment: ɾ:O↔d:O
-	Analysis: Consonants | Accuracy: 0.8823529411764706
-	Fallback place (target ɾ) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=0
-	Fallback place (actual d) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=-1
-
-NAN feature mapping at entry 693
-	Target-Actual: l ↔ ɹ
-	Alignment: l:C↔ɹ:C
-	Analysis: Consonants | Accuracy: 0.29411764705882354
-	NAN parameter: place | Pair: l ↔ ɹ | Mapped: dnt ↔ nan | Penalty: 10 | Policy: max
-		Target features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=0
-		Actual features: ant=0, cor=0, distr=0, hi=0, lo=0, back=0, strid=0, delrel=0
+	Analysis: Consonants | Accuracy: 0.8235294117647058
+	Manual override place (target ɾ) -> alv | reason=rhotic_place_override
+		Features: ant=1, cor=1, distr=-1, hi=0, lo=0, back=0, strid=0, delrel=0
+	Manual override manner (target ɾ) -> ttf | reason=rhotic_manner_override_ttf
+		Features: son=1, cons=1, cont=-1, delrel=0
 
 Fallback category mapping at entry 693
 	Target-Actual: l ↔ ɹ
 	Alignment: l:C↔ɹ:C
-	Analysis: Consonants | Accuracy: 0.29411764705882354
-	Fallback place (target l) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=0
-	Fallback unresolved place (actual ɹ)
-		Features: ant=0, cor=0, distr=0, hi=0, lo=0, back=0, strid=0, delrel=0
-	Fallback manner (actual ɹ) -> app | mismatches=0/3 | compared=['son', 'cons', 'cont'] | rule={'son': 1, 'cons': -1, 'cont': 1, 'delrel': -1}
-		Features: son=1, cons=-1, cont=1, delrel=0
+	Analysis: Consonants | Accuracy: 0.9411764705882353
+	Manual override place (actual ɹ) -> alv | reason=rhotic_place_override
+		Features: ant=1, cor=1, distr=-1, hi=1, lo=-1, back=1, strid=0, delrel=-1
+	Manual override manner (actual ɹ) -> lap | reason=rhotic_manner_override_lap
+		Features: son=1, cons=1, cont=1, delrel=-1
 
 Fallback category mapping at entry 694
 	Target-Actual: ɾ ↔ z
 	Alignment: ɾ:O↔z:O
-	Analysis: Consonants | Accuracy: 0.7058823529411765
-	Fallback place (target ɾ) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=0
-	Fallback place (actual z) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=1, delrel=-1
+	Analysis: Consonants | Accuracy: 0.6470588235294118
+	Manual override place (target ɾ) -> alv | reason=rhotic_place_override
+		Features: ant=1, cor=1, distr=-1, hi=0, lo=0, back=0, strid=0, delrel=0
+	Manual override manner (target ɾ) -> ttf | reason=rhotic_manner_override_ttf
+		Features: son=1, cons=1, cont=-1, delrel=0
 
 Fallback category mapping at entry 702
 	Target-Actual: ɾ ↔ ʝ
 	Alignment: ɾ:O↔ʝ:O
-	Analysis: Consonants | Accuracy: 0.5882352941176471
-	Fallback place (target ɾ) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=0
-	Fallback place (actual ʝ) -> blb | mismatches=0/2 | compared=['cor', 'strid'] | rule={'ant': 1, 'cor': -1, 'strid': -1}
-		Features: ant=0, cor=-1, distr=0, hi=0, lo=0, back=-1, strid=-1, delrel=-1
-
-Fallback category mapping at entry 703
-	Target-Actual: ʧ ↔ ʃ
-	Alignment: ʧ:O↔ʃ:O
-	Analysis: Consonants | Accuracy: 0.5882352941176471
-	Fallback place (target t͡ʃ) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=-1
-	Fallback place (actual ʃ) -> plt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': -1, 'cor': -1, 'hi': 1, 'lo': -1, 'back': -1}
-		Features: ant=-1, cor=-1, distr=0, hi=0, lo=0, back=0, strid=1, delrel=-1
-
-Fallback category mapping at entry 713
-	Target-Actual: t ↔ d
-	Alignment: t:O↔d:O
-	Analysis: Consonants | Accuracy: 0.9411764705882353
-	Fallback place (target t) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=-1
-	Fallback place (actual d) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=-1
-
-Fallback category mapping at entry 725
-	Target-Actual: m ↔ b
-	Alignment: m:O↔b:O
-	Analysis: Consonants | Accuracy: 0.9411764705882353
-	Fallback place (target m) -> blb | mismatches=0/1 | compared=['cor'] | rule={'ant': 1, 'cor': -1, 'strid': -1}
-		Features: ant=0, cor=-1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=0
-	Fallback place (actual b) -> blb | mismatches=0/2 | compared=['cor', 'delrel'] | rule={'ant': 1, 'cor': -1, 'delrel': -1}
-		Features: ant=0, cor=-1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=-1
-	Fallback manner (target m) -> nas | mismatches=0/3 | compared=['son', 'cons', 'cont'] | rule={'son': 1, 'cons': 1, 'cont': -1, 'delrel': -1}
+	Analysis: Consonants | Accuracy: 0.47058823529411764
+	Manual override place (target ɾ) -> alv | reason=rhotic_place_override
+		Features: ant=1, cor=1, distr=-1, hi=0, lo=0, back=0, strid=0, delrel=0
+	Manual override manner (target ɾ) -> ttf | reason=rhotic_manner_override_ttf
 		Features: son=1, cons=1, cont=-1, delrel=0
 
 Fallback category mapping at entry 742
 	Target-Actual: ɾ ↔ d
 	Alignment: ɾ:O↔d:O
-	Analysis: Consonants | Accuracy: 0.8823529411764706
-	Fallback place (target ɾ) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=0
-	Fallback place (actual d) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=-1
+	Analysis: Consonants | Accuracy: 0.8235294117647058
+	Manual override place (target ɾ) -> alv | reason=rhotic_place_override
+		Features: ant=1, cor=1, distr=-1, hi=0, lo=0, back=0, strid=0, delrel=0
+	Manual override manner (target ɾ) -> ttf | reason=rhotic_manner_override_ttf
+		Features: son=1, cons=1, cont=-1, delrel=0
 
 Fallback category mapping at entry 746
 	Target-Actual: ɾ ↔ z
 	Alignment: ɾ:O↔z:O
-	Analysis: Consonants | Accuracy: 0.7058823529411765
-	Fallback place (target ɾ) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=0
-	Fallback place (actual z) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=1, delrel=-1
-
-Fallback category mapping at entry 753
-	Target-Actual: l ↔ j
-	Alignment: l:O↔j:O
 	Analysis: Consonants | Accuracy: 0.6470588235294118
-	Fallback place (target l) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=0
-	Fallback place (actual j) -> plt | mismatches=0/1 | compared=['back'] | rule={'ant': -1, 'cor': -1, 'hi': 1, 'lo': -1, 'back': -1}
-		Features: ant=0, cor=0, distr=0, hi=0, lo=0, back=-1, strid=0, delrel=0
-	Fallback manner (actual j) -> app | mismatches=0/3 | compared=['son', 'cons', 'cont'] | rule={'son': 1, 'cons': -1, 'cont': 1, 'delrel': -1}
-		Features: son=1, cons=-1, cont=1, delrel=0
+	Manual override place (target ɾ) -> alv | reason=rhotic_place_override
+		Features: ant=1, cor=1, distr=-1, hi=0, lo=0, back=0, strid=0, delrel=0
+	Manual override manner (target ɾ) -> ttf | reason=rhotic_manner_override_ttf
+		Features: son=1, cons=1, cont=-1, delrel=0
 
 Fallback category mapping at entry 754
 	Target-Actual: ɾ ↔ d
 	Alignment: ɾ:O↔d:O
-	Analysis: Consonants | Accuracy: 0.8823529411764706
-	Fallback place (target ɾ) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=0
-	Fallback place (actual d) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=-1
-
-Fallback category mapping at entry 757
-	Target-Actual: s ↔ θ
-	Alignment: s:C↔θ:C
-	Analysis: Consonants | Accuracy: 0.9411764705882353
-	Fallback place (target s) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=1, delrel=-1
-	Fallback place (actual θ) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=-1, delrel=-1
-
-NAN feature mapping at entry 763
-	Target-Actual: l ↔ ɹ
-	Alignment: l:C↔ɹ:C
-	Analysis: Consonants | Accuracy: 0.29411764705882354
-	NAN parameter: place | Pair: l ↔ ɹ | Mapped: dnt ↔ nan | Penalty: 10 | Policy: max
-		Target features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=0
-		Actual features: ant=0, cor=0, distr=0, hi=0, lo=0, back=0, strid=0, delrel=0
+	Analysis: Consonants | Accuracy: 0.8235294117647058
+	Manual override place (target ɾ) -> alv | reason=rhotic_place_override
+		Features: ant=1, cor=1, distr=-1, hi=0, lo=0, back=0, strid=0, delrel=0
+	Manual override manner (target ɾ) -> ttf | reason=rhotic_manner_override_ttf
+		Features: son=1, cons=1, cont=-1, delrel=0
 
 Fallback category mapping at entry 763
 	Target-Actual: l ↔ ɹ
 	Alignment: l:C↔ɹ:C
-	Analysis: Consonants | Accuracy: 0.29411764705882354
-	Fallback place (target l) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=0
-	Fallback unresolved place (actual ɹ)
-		Features: ant=0, cor=0, distr=0, hi=0, lo=0, back=0, strid=0, delrel=0
-	Fallback manner (actual ɹ) -> app | mismatches=0/3 | compared=['son', 'cons', 'cont'] | rule={'son': 1, 'cons': -1, 'cont': 1, 'delrel': -1}
-		Features: son=1, cons=-1, cont=1, delrel=0
-
-Fallback category mapping at entry 764
-	Target-Actual: n ↔ m
-	Alignment: n:O↔m:O
-	Analysis: Consonants | Accuracy: 0.8823529411764706
-	Fallback place (target n) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=0
-	Fallback place (actual m) -> blb | mismatches=0/1 | compared=['cor'] | rule={'ant': 1, 'cor': -1, 'strid': -1}
-		Features: ant=0, cor=-1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=0
-	Fallback manner (target n) -> nas | mismatches=0/3 | compared=['son', 'cons', 'cont'] | rule={'son': 1, 'cons': 1, 'cont': -1, 'delrel': -1}
-		Features: son=1, cons=1, cont=-1, delrel=0
-	Fallback manner (actual m) -> nas | mismatches=0/3 | compared=['son', 'cons', 'cont'] | rule={'son': 1, 'cons': 1, 'cont': -1, 'delrel': -1}
-		Features: son=1, cons=1, cont=-1, delrel=0
-
-Fallback category mapping at entry 767
-	Target-Actual: s ↔ θ
-	Alignment: s:C↔θ:C
 	Analysis: Consonants | Accuracy: 0.9411764705882353
-	Fallback place (target s) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=1, delrel=-1
-	Fallback place (actual θ) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=-1, delrel=-1
+	Manual override place (actual ɹ) -> alv | reason=rhotic_place_override
+		Features: ant=1, cor=1, distr=-1, hi=1, lo=-1, back=1, strid=0, delrel=-1
+	Manual override manner (actual ɹ) -> lap | reason=rhotic_manner_override_lap
+		Features: son=1, cons=1, cont=1, delrel=-1
 
 Fallback category mapping at entry 769
 	Target-Actual: ɾ ↔ v
 	Alignment: ɾ:O↔v:O
-	Analysis: Consonants | Accuracy: 0.5882352941176471
-	Fallback place (target ɾ) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=0
-	Fallback place (actual v) -> blb | mismatches=0/2 | compared=['cor', 'delrel'] | rule={'ant': 1, 'cor': -1, 'delrel': -1}
-		Features: ant=0, cor=-1, distr=0, hi=0, lo=0, back=0, strid=1, delrel=-1
-
-Fallback category mapping at entry 773
-	Target-Actual: d ↔ b
-	Alignment: d:O↔b:O
-	Analysis: Consonants | Accuracy: 0.8823529411764706
-	Fallback place (target d) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=-1
-	Fallback place (actual b) -> blb | mismatches=0/2 | compared=['cor', 'delrel'] | rule={'ant': 1, 'cor': -1, 'delrel': -1}
-		Features: ant=0, cor=-1, distr=0, hi=0, lo=0, back=0, strid=0, delrel=-1
-
-Fallback category mapping at entry 793
-	Target-Actual: s ↔ ʃ
-	Alignment: s:O↔ʃ:O
-	Analysis: Consonants | Accuracy: 0.7647058823529411
-	Fallback place (target s) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=1, delrel=-1
-	Fallback place (actual ʃ) -> plt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': -1, 'cor': -1, 'hi': 1, 'lo': -1, 'back': -1}
-		Features: ant=-1, cor=-1, distr=0, hi=0, lo=0, back=0, strid=1, delrel=-1
-
-Fallback category mapping at entry 797
-	Target-Actual: s ↔ ʃ
-	Alignment: s:O↔ʃ:O
-	Analysis: Consonants | Accuracy: 0.7647058823529411
-	Fallback place (target s) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=1, delrel=-1
-	Fallback place (actual ʃ) -> plt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': -1, 'cor': -1, 'hi': 1, 'lo': -1, 'back': -1}
-		Features: ant=-1, cor=-1, distr=0, hi=0, lo=0, back=0, strid=1, delrel=-1
-
-Fallback category mapping at entry 804
-	Target-Actual: s ↔ θ
-	Alignment: s:C↔θ:C
-	Analysis: Consonants | Accuracy: 0.9411764705882353
-	Fallback place (target s) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=1, delrel=-1
-	Fallback place (actual θ) -> dnt | mismatches=0/2 | compared=['ant', 'cor'] | rule={'ant': 1, 'cor': 1, 'distr': 1}
-		Features: ant=1, cor=1, distr=0, hi=0, lo=0, back=0, strid=-1, delrel=-1
+	Analysis: Consonants | Accuracy: 0.47058823529411764
+	Manual override place (target ɾ) -> alv | reason=rhotic_place_override
+		Features: ant=1, cor=1, distr=-1, hi=0, lo=0, back=0, strid=0, delrel=0
+	Manual override manner (target ɾ) -> ttf | reason=rhotic_manner_override_ttf
+		Features: son=1, cons=1, cont=-1, delrel=0
 
 Total Error Count - 0
 

@@ -317,7 +317,7 @@ def score_pair(target, actual, analysis, t_phone, a_phone, nan_policy="max", nan
     if target == None:
         p_score -= 1
 
-    # Score according to analysis type and remove point for secondary articulations
+    # Score according to analysis type.
     if target != None and actual != None:
         if analysis == 'Nucleus':
             p_score = score_vowels(
@@ -329,9 +329,6 @@ def score_pair(target, actual, analysis, t_phone, a_phone, nan_policy="max", nan
                 nan_events=nan_events,
                 fallback_events=fallback_events
             )
-
-            if p_score == 5 and t_phone != a_phone:
-                p_score -= 1
         else:
             p_score = score_consonants(
                 target,
@@ -342,9 +339,10 @@ def score_pair(target, actual, analysis, t_phone, a_phone, nan_policy="max", nan
                 nan_events=nan_events,
                 fallback_events=fallback_events
             )
-        
-            if p_score == 17 and t_phone != a_phone:
-                p_score -= 1
+
+        # Apply symbol mismatch penalty for any non-identical realized pair.
+        if t_phone != a_phone:
+            p_score -= 1
 
     return p_score
 
@@ -396,6 +394,14 @@ def score_consonants(target, actual, nan_policy="max", t_phone=None, a_phone=Non
         nan_events=nan_events,
         fallback_events=fallback_events
     )
+
+    # Rhotic sub-manner penalty: distinguish trill contrasts within rhotics.
+    if (
+        t_phone in RHOTIC_PHONES
+        and a_phone in RHOTIC_PHONES
+        and target["trill"] != actual["trill"]
+    ):
+        score -= 1
 
     return score;
 
