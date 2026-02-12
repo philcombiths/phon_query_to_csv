@@ -4,11 +4,47 @@ import os
 import unicodedata
 
 VALID_NAN_POLICIES = {"max", "mid", "zero"}
+RHOTIC_PHONES = {"r", "ɾ", "ɹ"}
 PARAM_FEATURE_KEYS = {
     "place": ["ant", "cor", "distr", "hi", "lo", "back", "strid", "delrel"],
     "manner": ["son", "cons", "cont", "delrel"],
     "height": ["hi", "lo"]
 }
+PLACE_RULES = [
+    ("blb", {"ant": 1, "cor": -1, "strid": -1}),
+    ("blb", {"ant": 1, "cor": -1, "strid": 0}),
+    ("blb", {"ant": 1, "cor": -1, "delrel": -1}),
+    ("blb", {"ant": 1, "cor": -1, "delrel": 1}),
+    ("lbd", {"ant": 1, "cor": -1, "strid": 1}),
+    ("lbd", {"ant": 1, "cor": -1, "delrel": 0}),
+    ("dnt", {"ant": 1, "cor": 1, "distr": 1}),
+    ("alv", {"ant": 1, "cor": 1, "distr": -1}),
+    ("plv", {"ant": -1, "cor": 1, "distr": 1}),
+    ("rtf", {"ant": -1, "cor": 1, "distr": -1}),
+    ("rtf", {"ant": -1, "cor": 1, "distr": 0}),
+    ("plt", {"ant": -1, "cor": -1, "hi": 1, "lo": -1, "back": -1}),
+    ("vlr", {"ant": -1, "cor": -1, "hi": 1, "lo": -1, "back": 0}),
+    ("vlr", {"ant": -1, "cor": -1, "hi": 1, "lo": -1, "back": 1}),
+    ("uvl", {"ant": -1, "cor": -1, "hi": -1, "lo": -1, "back": 1}),
+    ("phr", {"ant": -1, "cor": -1, "hi": -1, "lo": 1, "back": 1}),
+    ("glt", {"ant": -1, "cor": -1, "hi": -1, "lo": -1, "back": -1}),
+]
+MANNER_RULES = [
+    ("fri", {"son": -1, "cons": 1, "cont": 1, "delrel": -1}),
+    ("lfr", {"son": -1, "cons": 1, "cont": 1, "delrel": 1}),
+    ("aff", {"son": -1, "cons": 1, "cont": -1, "delrel": 1}),
+    ("plo", {"son": -1, "cons": 1, "cont": -1, "delrel": -1}),
+    ("plo", {"son": 1, "cons": -1, "cont": -1, "delrel": -1}),
+    ("nas", {"son": 1, "cons": 1, "cont": -1, "delrel": -1}),
+    ("ttf", {"son": 1, "cons": 1, "cont": 1, "delrel": 0}),
+    ("lap", {"son": 1, "cons": 1, "cont": 1, "delrel": -1}),
+    ("app", {"son": 1, "cons": -1, "cont": 1, "delrel": -1}),
+]
+HEIGHT_RULES = [
+    ("cls", {"hi": 1, "lo": -1}),
+    ("mid", {"hi": -1, "lo": -1}),
+    ("opn", {"hi": -1, "lo": 1}),
+]
 
 def _feature_snapshot(seg, art_name):
     if seg is None:
@@ -22,6 +58,92 @@ def _feature_snapshot(seg, art_name):
 
     return snapshot
 
+def _classify_with_fallback(seg, rules, parameter, phone, role, fallback_events):
+    for label, cond in rules:
+        if seg.match(cond):
+            return label
+
+    best = None
+
+    for label, cond in rules:
+        compared = 0
+        mismatches = 0
+        compared_features = []
+
+        for feat, expected in cond.items():
+            actual = seg[feat]
+
+            if actual == 0:
+                continue
+
+            compared += 1
+            compared_features.append(feat)
+
+            if actual != expected:
+                mismatches += 1
+
+        if compared == 0:
+            continue
+
+        candidate = {
+            "label": label,
+            "rule": cond,
+            "compared": compared,
+            "mismatches": mismatches,
+            "compared_features": compared_features
+        }
+
+        if (
+            best is None
+            or candidate["mismatches"] < best["mismatches"]
+            or (
+                candidate["mismatches"] == best["mismatches"]
+                and candidate["compared"] > best["compared"]
+            )
+        ):
+            best = candidate
+
+    if best is None:
+        if fallback_events is not None:
+            fallback_events.append({
+                "event_type": "fallback_unresolved",
+                "parameter": parameter,
+                "phone": phone,
+                "role": role,
+                "features": _feature_snapshot(seg, parameter)
+            })
+        return "nan"
+
+    if fallback_events is not None:
+        fallback_events.append({
+            "event_type": "fallback_used",
+            "parameter": parameter,
+            "phone": phone,
+            "role": role,
+            "selected_label": best["label"],
+            "mismatches": best["mismatches"],
+            "compared": best["compared"],
+            "compared_features": best["compared_features"],
+            "rule": best["rule"],
+            "features": _feature_snapshot(seg, parameter)
+        })
+
+    return best["label"]
+
+def _log_manual_override(fallback_events, parameter, phone, role, selected_label, reason, seg):
+    if fallback_events is None:
+        return
+
+    fallback_events.append({
+        "event_type": "manual_override",
+        "parameter": parameter,
+        "phone": phone,
+        "role": role,
+        "selected_label": selected_label,
+        "reason": reason,
+        "features": _feature_snapshot(seg, parameter)
+    })
+
 def get_accuracy(alignment, analysis, nan_policy="max", return_debug=False):
     """
     Determines a more detailed scoring of accuracy of IPA Actual with respect to IPA Target
@@ -31,7 +153,8 @@ def get_accuracy(alignment, analysis, nan_policy="max", return_debug=False):
         analysis (str): Syllable category of the phones being analyzed
         nan_policy (str): Policy for handling unclassified articulations ('nan').
             Supported values: 'max', 'mid', 'zero'
-        return_debug (bool): If True, returns a third value with nan-event details.
+        return_debug (bool): If True, returns a third value with debug details
+            (nan_events and fallback_events).
 
     Returns:
         (float): The detailed score of accuracy, to be interpreted as a percentage
@@ -39,12 +162,12 @@ def get_accuracy(alignment, analysis, nan_policy="max", return_debug=False):
 
     if not isinstance(alignment, str):
         if return_debug:
-            return -1, "No alignment!", []
+            return -1, "No alignment!", {"nan_events": [], "fallback_events": []}
         return -1, "No alignment!"
 
     if nan_policy not in VALID_NAN_POLICIES:
         if return_debug:
-            return -1, f"Invalid nan_policy '{nan_policy}'. Use one of: max, mid, zero", []
+            return -1, f"Invalid nan_policy '{nan_policy}'. Use one of: max, mid, zero", {"nan_events": [], "fallback_events": []}
         return -1, f"Invalid nan_policy '{nan_policy}'. Use one of: max, mid, zero"
 
     score = 0
@@ -83,6 +206,7 @@ def get_accuracy(alignment, analysis, nan_policy="max", return_debug=False):
     # Score pair by pair, sum the scores, and divide it according to summed max possible scores
     score = 0
     nan_events = []
+    fallback_events = []
 
     for p in range(len(target)):
         score += score_pair(
@@ -92,34 +216,35 @@ def get_accuracy(alignment, analysis, nan_policy="max", return_debug=False):
             phones[p * 2],
             phones[(p * 2) + 1],
             nan_policy=nan_policy,
-            nan_events=nan_events
+            nan_events=nan_events,
+            fallback_events=fallback_events
         )
 
     if invalid_phones:
         unique_invalid = sorted(set(invalid_phones))
         if return_debug:
-            return -1, "Unrecognized IPA phone(s): " + ", ".join(unique_invalid), nan_events
+            return -1, "Unrecognized IPA phone(s): " + ", ".join(unique_invalid), {"nan_events": nan_events, "fallback_events": fallback_events}
         return -1, "Unrecognized IPA phone(s): " + ", ".join(unique_invalid)
 
     if score < 0:
         if return_debug:
-            return -1, "Invalid alignment!", nan_events
+            return -1, "Invalid alignment!", {"nan_events": nan_events, "fallback_events": fallback_events}
         return -1, "Invalid alignment!"
 
     if t_len == 0:
         if return_debug:
-            return -1, "No valid target phones!", nan_events
+            return -1, "No valid target phones!", {"nan_events": nan_events, "fallback_events": fallback_events}
         return -1, "No valid target phones!"
 
     if analysis == 'Nucleus':
         accuracy = score / (t_len * 5)
         if return_debug:
-            return accuracy, "", nan_events
+            return accuracy, "", {"nan_events": nan_events, "fallback_events": fallback_events}
         return accuracy, ""
 
     accuracy = score / (t_len * 17)
     if return_debug:
-        return accuracy, "", nan_events
+        return accuracy, "", {"nan_events": nan_events, "fallback_events": fallback_events}
     return accuracy, ""
 
 def get_phones(alignment):
@@ -166,7 +291,7 @@ def filter_base_helper(phone, old_base, new_base):
 
     return "".join(result)
 
-def score_pair(target, actual, analysis, t_phone, a_phone, nan_policy="max", nan_events=None):
+def score_pair(target, actual, analysis, t_phone, a_phone, nan_policy="max", nan_events=None, fallback_events=None):
     """
     Gets the distance between two different primary articulations
     
@@ -201,7 +326,8 @@ def score_pair(target, actual, analysis, t_phone, a_phone, nan_policy="max", nan
                 nan_policy=nan_policy,
                 t_phone=t_phone,
                 a_phone=a_phone,
-                nan_events=nan_events
+                nan_events=nan_events,
+                fallback_events=fallback_events
             )
 
             if p_score == 5 and t_phone != a_phone:
@@ -213,7 +339,8 @@ def score_pair(target, actual, analysis, t_phone, a_phone, nan_policy="max", nan
                 nan_policy=nan_policy,
                 t_phone=t_phone,
                 a_phone=a_phone,
-                nan_events=nan_events
+                nan_events=nan_events,
+                fallback_events=fallback_events
             )
         
             if p_score == 17 and t_phone != a_phone:
@@ -221,7 +348,7 @@ def score_pair(target, actual, analysis, t_phone, a_phone, nan_policy="max", nan
 
     return p_score
 
-def score_consonants(target, actual, nan_policy="max", t_phone=None, a_phone=None, nan_events=None):
+def score_consonants(target, actual, nan_policy="max", t_phone=None, a_phone=None, nan_events=None, fallback_events=None):
     """
     Calculates the accuracy of a single actual phone with resepct to its paired target phone
     
@@ -254,7 +381,8 @@ def score_consonants(target, actual, nan_policy="max", t_phone=None, a_phone=Non
         art_name="place",
         t_phone=t_phone,
         a_phone=a_phone,
-        nan_events=nan_events
+        nan_events=nan_events,
+        fallback_events=fallback_events
     )
     score -= get_distance(
         mans,
@@ -265,12 +393,13 @@ def score_consonants(target, actual, nan_policy="max", t_phone=None, a_phone=Non
         art_name="manner",
         t_phone=t_phone,
         a_phone=a_phone,
-        nan_events=nan_events
+        nan_events=nan_events,
+        fallback_events=fallback_events
     )
 
     return score;
 
-def score_vowels(target, actual, nan_policy="max", t_phone=None, a_phone=None, nan_events=None):
+def score_vowels(target, actual, nan_policy="max", t_phone=None, a_phone=None, nan_events=None, fallback_events=None):
     """
     Calculates the accuracy of a single actual phone with resepct to its paired target phone
     
@@ -306,7 +435,8 @@ def score_vowels(target, actual, nan_policy="max", t_phone=None, a_phone=None, n
         art_name="height",
         t_phone=t_phone,
         a_phone=a_phone,
-        nan_events=nan_events
+        nan_events=nan_events,
+        fallback_events=fallback_events
     )
 
     return score
@@ -320,7 +450,8 @@ def get_distance(
     art_name=None,
     t_phone=None,
     a_phone=None,
-    nan_events=None
+    nan_events=None,
+    fallback_events=None
 ):
     """
     Gets the distance between two different primary articulations
@@ -337,8 +468,18 @@ def get_distance(
         dist (float): The distance between the two primary articulations
     """
 
-    t_art = get_art(t_seg)
-    a_art = get_art(a_seg)
+    t_art = get_art(
+        t_seg,
+        fallback_events=fallback_events,
+        role="target",
+        phone=t_phone
+    )
+    a_art = get_art(
+        a_seg,
+        fallback_events=fallback_events,
+        role="actual",
+        phone=a_phone
+    )
 
     # Panphon frequently underspecifies some features as 0, which can make
     # our categorical mapper return 'nan'. Use bounded penalties so
@@ -371,7 +512,7 @@ def get_distance(
         
     return dist
     
-def get_height(seg):
+def get_height(seg, fallback_events=None, role=None, phone=None):
     """
     Helper function of get_distance to determine height.
 
@@ -382,23 +523,16 @@ def get_height(seg):
         (str): The height
     """
 
-    # Close                 [+hi][-lo]
-    # Mid                   [-hi][-lo]
-    # Open                  [-hi][+lo]
+    return _classify_with_fallback(
+        seg,
+        HEIGHT_RULES,
+        parameter="height",
+        phone=phone,
+        role=role,
+        fallback_events=fallback_events
+    )
 
-    matches = [
-        ('cls', seg.match({'hi': 1, 'lo': -1})),
-        ('mid', seg.match({'hi': -1, 'lo': -1})),
-        ('opn', seg.match({'hi': -1, 'lo': 1}))
-    ]
-
-    for m in matches:
-        if m[1]:
-            return m[0]
-        
-    return 'nan'
-
-def get_place(seg):
+def get_place(seg, fallback_events=None, role=None, phone=None):
     """
     Helper function of get_distance to determine place of articulation.
 
@@ -421,33 +555,30 @@ def get_place(seg):
     # Pharyngeal            [-ant][-cor][-hi][+lo][+back]
     # Glottal               [-ant][-cor][-hi][-lo][-back]
 
-    matches = [
-        ('blb', seg.match({'ant': 1, 'cor': -1, 'strid': -1})),
-        ('blb', seg.match({'ant': 1, 'cor': -1, 'strid': 0})),
-        ('blb', seg.match({'ant': 1, 'cor': -1, 'delrel': -1})),
-        ('blb', seg.match({'ant': 1, 'cor': -1, 'delrel': 1})),
-        ('lbd', seg.match({'ant': 1, 'cor': -1, 'strid': 1})),
-        ('lbd', seg.match({'ant': 1, 'cor': -1, 'delrel': 0})),
-        ('dnt', seg.match({'ant': 1, 'cor': 1, 'distr': 1})),
-        ('alv', seg.match({'ant': 1, 'cor': 1, 'distr': -1})),
-        ('plv', seg.match({'ant': -1, 'cor': 1, 'distr': 1})),
-        ('rtf', seg.match({'ant': -1, 'cor': 1, 'distr': -1})),
-        ('rtf', seg.match({'ant': -1, 'cor': 1, 'distr': 0})),
-        ('plt', seg.match({'ant': -1, 'cor': -1, 'hi': 1, 'lo': -1, 'back': -1})),
-        ('vlr', seg.match({'ant': -1, 'cor': -1, 'hi': 1, 'lo': -1, 'back': 0})),
-        ('vlr', seg.match({'ant': -1, 'cor': -1, 'hi': 1, 'lo': -1, 'back': 1})),
-        ('uvl', seg.match({'ant': -1, 'cor': -1, 'hi': -1, 'lo': -1, 'back': 1})),
-        ('phr', seg.match({'ant': -1, 'cor': -1, 'hi': -1, 'lo': 1, 'back': 1})),
-        ('glt', seg.match({'ant': -1, 'cor': -1, 'hi': -1, 'lo': -1, 'back': -1}))
-    ]
+    # Manual rhotic override: keep rhotics in a shared coronal bucket so
+    # /r ɾ ɹ/ are not treated as maximally distant due underspecification.
+    if phone in RHOTIC_PHONES:
+        _log_manual_override(
+            fallback_events,
+            parameter="place",
+            phone=phone,
+            role=role,
+            selected_label="alv",
+            reason="rhotic_place_override",
+            seg=seg
+        )
+        return "alv"
 
-    for m in matches:
-        if m[1]:
-            return m[0]
-        
-    return 'nan'
+    return _classify_with_fallback(
+        seg,
+        PLACE_RULES,
+        parameter="place",
+        phone=phone,
+        role=role,
+        fallback_events=fallback_events
+    )
 
-def get_manner(seg):
+def get_manner(seg, fallback_events=None, role=None, phone=None):
     """
     Helper function of get_distance to determine manner of articulation.
 
@@ -467,20 +598,37 @@ def get_manner(seg):
     # L. Approximant        [+son][+cons][+cont][-delrel]
     # Approximant           [+son][-cons][+cont][-delrel]
 
-    matches = [
-        ('fri', seg.match({'son': -1, 'cons': 1, 'cont': 1, 'delrel': -1})),
-        ('lfr', seg.match({'son': -1, 'cons': 1, 'cont': 1, 'delrel': 1})),
-        ('aff', seg.match({'son': -1, 'cons': 1, 'cont': -1, 'delrel': 1})),
-        ('plo', seg.match({'son': -1, 'cons': 1, 'cont': -1, 'delrel': -1})),
-        ('plo', seg.match({'son': 1, 'cons': -1, 'cont': -1, 'delrel': -1})),
-        ('nas', seg.match({'son': 1, 'cons': 1, 'cont': -1, 'delrel': -1})),
-        ('ttf', seg.match({'son': 1, 'cons': 1, 'cont': 1, 'delrel': 0})),
-        ('lap', seg.match({'son': 1, 'cons': 1, 'cont': 1, 'delrel': -1})),
-        ('app', seg.match({'son': 1, 'cons': -1, 'cont': 1, 'delrel': -1}))
-    ]
+    # Manual rhotic override: tap/trill rhotics stay ttf, approximant rhotic
+    # maps to lap so rhotic substitutions remain close but not identical.
+    if phone in {"r", "ɾ"}:
+        _log_manual_override(
+            fallback_events,
+            parameter="manner",
+            phone=phone,
+            role=role,
+            selected_label="ttf",
+            reason="rhotic_manner_override_ttf",
+            seg=seg
+        )
+        return "ttf"
 
-    for m in matches:
-        if m[1]:
-            return m[0]
-        
-    return 'nan'
+    if phone == "ɹ":
+        _log_manual_override(
+            fallback_events,
+            parameter="manner",
+            phone=phone,
+            role=role,
+            selected_label="lap",
+            reason="rhotic_manner_override_lap",
+            seg=seg
+        )
+        return "lap"
+
+    return _classify_with_fallback(
+        seg,
+        MANNER_RULES,
+        parameter="manner",
+        phone=phone,
+        role=role,
+        fallback_events=fallback_events
+    )

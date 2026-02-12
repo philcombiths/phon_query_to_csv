@@ -50,13 +50,15 @@ def calculate_accuracy(filepath, nan_policy="max"):
 
     for idx in acc_check :
         print(idx, "/", len(df.index))
-        accuracy, msg, nan_events = get_accuracy(
+        accuracy, msg, debug_info = get_accuracy(
             df.at[idx, "Alignment"],
             df.at[idx, "Analysis"],
             nan_policy=nan_policy,
             return_debug=True
         )
         df.at[idx, "Accuracy"] = accuracy
+        nan_events = debug_info["nan_events"]
+        fallback_events = debug_info["fallback_events"]
 
         if nan_events:
             error_log_entries.append(f"\nNAN feature mapping at entry {idx}\n")
@@ -82,6 +84,44 @@ def calculate_accuracy(filepath, nan_policy="max"):
                 error_log_entries.append(
                     f"\t\tActual features: {_format_feature_map(event['actual_features'])}\n"
                 )
+
+        if fallback_events:
+            error_log_entries.append(f"\nFallback category mapping at entry {idx}\n")
+            error_log_entries.append(
+                f"\tTarget-Actual: {df.at[idx, 'IPA Target']} ↔ {df.at[idx, 'IPA Actual']}\n"
+            )
+            error_log_entries.append(
+                f"\tAlignment: {df.at[idx, 'Alignment']}\n"
+            )
+            error_log_entries.append(
+                f"\tAnalysis: {df.at[idx, 'Analysis']} | Accuracy: {accuracy}\n"
+            )
+
+            for event in fallback_events:
+                if event["event_type"] == "fallback_used":
+                    error_log_entries.append(
+                        "\tFallback {parameter} ({role} {phone}) -> {selected_label} | "
+                        "mismatches={mismatches}/{compared} | compared={compared_features} | "
+                        "rule={rule}\n".format(**event)
+                    )
+                    error_log_entries.append(
+                        f"\t\tFeatures: {_format_feature_map(event['features'])}\n"
+                    )
+                elif event["event_type"] == "manual_override":
+                    error_log_entries.append(
+                        "\tManual override {parameter} ({role} {phone}) -> {selected_label} | "
+                        "reason={reason}\n".format(**event)
+                    )
+                    error_log_entries.append(
+                        f"\t\tFeatures: {_format_feature_map(event['features'])}\n"
+                    )
+                else:
+                    error_log_entries.append(
+                        "\tFallback unresolved {parameter} ({role} {phone})\n".format(**event)
+                    )
+                    error_log_entries.append(
+                        f"\t\tFeatures: {_format_feature_map(event['features'])}\n"
+                    )
 
         if msg:
             error_log_entries.append("\nError at entry " + str(idx) + " : " + msg + "\n")
