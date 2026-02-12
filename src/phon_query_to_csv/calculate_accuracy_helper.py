@@ -3,20 +3,49 @@ import pandas as pd
 import os
 import unicodedata
 
-def get_accuracy(alignment, analysis):
+VALID_NAN_POLICIES = {"max", "mid", "zero"}
+PARAM_FEATURE_KEYS = {
+    "place": ["ant", "cor", "distr", "hi", "lo", "back", "strid", "delrel"],
+    "manner": ["son", "cons", "cont", "delrel"],
+    "height": ["hi", "lo"]
+}
+
+def _feature_snapshot(seg, art_name):
+    if seg is None:
+        return {}
+
+    keys = PARAM_FEATURE_KEYS.get(art_name, [])
+    snapshot = {}
+
+    for key in keys:
+        snapshot[key] = seg[key]
+
+    return snapshot
+
+def get_accuracy(alignment, analysis, nan_policy="max", return_debug=False):
     """
     Determines a more detailed scoring of accuracy of IPA Actual with respect to IPA Target
 
     Args:
         alignment (str): Each phone of target paired with their respective realization
         analysis (str): Syllable category of the phones being analyzed
+        nan_policy (str): Policy for handling unclassified articulations ('nan').
+            Supported values: 'max', 'mid', 'zero'
+        return_debug (bool): If True, returns a third value with nan-event details.
 
     Returns:
         (float): The detailed score of accuracy, to be interpreted as a percentage
     """
 
     if not isinstance(alignment, str):
+        if return_debug:
+            return -1, "No alignment!", []
         return -1, "No alignment!"
+
+    if nan_policy not in VALID_NAN_POLICIES:
+        if return_debug:
+            return -1, f"Invalid nan_policy '{nan_policy}'. Use one of: max, mid, zero", []
+        return -1, f"Invalid nan_policy '{nan_policy}'. Use one of: max, mid, zero"
 
     score = 0
     t_len = 0
@@ -53,24 +82,45 @@ def get_accuracy(alignment, analysis):
 
     # Score pair by pair, sum the scores, and divide it according to summed max possible scores
     score = 0
+    nan_events = []
 
     for p in range(len(target)):
-        score += score_pair(target[p], actual[p], analysis, phones[p * 2], phones[(p * 2) + 1])
+        score += score_pair(
+            target[p],
+            actual[p],
+            analysis,
+            phones[p * 2],
+            phones[(p * 2) + 1],
+            nan_policy=nan_policy,
+            nan_events=nan_events
+        )
 
     if invalid_phones:
         unique_invalid = sorted(set(invalid_phones))
+        if return_debug:
+            return -1, "Unrecognized IPA phone(s): " + ", ".join(unique_invalid), nan_events
         return -1, "Unrecognized IPA phone(s): " + ", ".join(unique_invalid)
 
     if score < 0:
+        if return_debug:
+            return -1, "Invalid alignment!", nan_events
         return -1, "Invalid alignment!"
 
     if t_len == 0:
+        if return_debug:
+            return -1, "No valid target phones!", nan_events
         return -1, "No valid target phones!"
 
     if analysis == 'Nucleus':
-        return score / (t_len * 5), ""
+        accuracy = score / (t_len * 5)
+        if return_debug:
+            return accuracy, "", nan_events
+        return accuracy, ""
 
-    return score / (t_len * 17), ""
+    accuracy = score / (t_len * 17)
+    if return_debug:
+        return accuracy, "", nan_events
+    return accuracy, ""
 
 def get_phones(alignment):
     phones = []
@@ -116,7 +166,7 @@ def filter_base_helper(phone, old_base, new_base):
 
     return "".join(result)
 
-def score_pair(target, actual, analysis, t_phone, a_phone):
+def score_pair(target, actual, analysis, t_phone, a_phone, nan_policy="max", nan_events=None):
     """
     Gets the distance between two different primary articulations
     
@@ -126,6 +176,11 @@ def score_pair(target, actual, analysis, t_phone, a_phone):
         analysis (string): Type of analysis being examined
         t_phone (string): Target phone in pair
         a_phone (string): Actual phone in pair
+        nan_policy (str): Policy for handling unclassified articulations ('nan').
+            Supported values: 'max', 'mid', 'zero'
+            max: Unclassified features receive the maximum distance penalty [len(arts) - 1]
+            mid: Unclassified features receive a mid-distance penalty [(len(arts)-1) / 2]
+            zero: Unclassified features receive no penalty [0]
         
     Returns:
         (float): The distance between the two primary articulations
@@ -140,25 +195,41 @@ def score_pair(target, actual, analysis, t_phone, a_phone):
     # Score according to analysis type and remove point for secondary articulations
     if target != None and actual != None:
         if analysis == 'Nucleus':
-            p_score = score_vowels(target, actual)
+            p_score = score_vowels(
+                target,
+                actual,
+                nan_policy=nan_policy,
+                t_phone=t_phone,
+                a_phone=a_phone,
+                nan_events=nan_events
+            )
 
             if p_score == 5 and t_phone != a_phone:
                 p_score -= 1
         else:
-            p_score = score_consonants(target, actual)
+            p_score = score_consonants(
+                target,
+                actual,
+                nan_policy=nan_policy,
+                t_phone=t_phone,
+                a_phone=a_phone,
+                nan_events=nan_events
+            )
         
             if p_score == 17 and t_phone != a_phone:
                 p_score -= 1
 
     return p_score
 
-def score_consonants(target, actual):
+def score_consonants(target, actual, nan_policy="max", t_phone=None, a_phone=None, nan_events=None):
     """
     Calculates the accuracy of a single actual phone with resepct to its paired target phone
     
     Args:
         target (<Segment>): Phon segment of the target phone
         actual (<Segment>): Phon segment of the actual phone
+        nan_policy (str): Policy for handling unclassified articulations ('nan').
+            Supported values: 'max', 'mid', 'zero'
         
     Returns:
         score (float): The detailed score of accuracy
@@ -174,18 +245,40 @@ def score_consonants(target, actual):
         score -= 1
 
     # Check for place and manner of articulation
-    score -= get_distance(plcs, get_place, target, actual)
-    score -= get_distance(mans, get_manner, target, actual)
+    score -= get_distance(
+        plcs,
+        get_place,
+        target,
+        actual,
+        nan_policy=nan_policy,
+        art_name="place",
+        t_phone=t_phone,
+        a_phone=a_phone,
+        nan_events=nan_events
+    )
+    score -= get_distance(
+        mans,
+        get_manner,
+        target,
+        actual,
+        nan_policy=nan_policy,
+        art_name="manner",
+        t_phone=t_phone,
+        a_phone=a_phone,
+        nan_events=nan_events
+    )
 
     return score;
 
-def score_vowels(target, actual):
+def score_vowels(target, actual, nan_policy="max", t_phone=None, a_phone=None, nan_events=None):
     """
     Calculates the accuracy of a single actual phone with resepct to its paired target phone
     
     Args:
         target (<Segment>): Phon segment of the target phone
         actual (<Segment>): Phon segment of the actual phone
+        nan_policy (str): Policy for handling unclassified articulations ('nan').
+            Supported values: 'max', 'mid', 'zero'
         
     Returns:
         score (float): The detailed score of accuracy
@@ -204,11 +297,31 @@ def score_vowels(target, actual):
         score -= 1
 
     # Check for height
-    score -= get_distance(hts, get_height, target, actual)
+    score -= get_distance(
+        hts,
+        get_height,
+        target,
+        actual,
+        nan_policy=nan_policy,
+        art_name="height",
+        t_phone=t_phone,
+        a_phone=a_phone,
+        nan_events=nan_events
+    )
 
     return score
 
-def get_distance(arts, get_art, t_seg, a_seg):
+def get_distance(
+    arts,
+    get_art,
+    t_seg,
+    a_seg,
+    nan_policy="max",
+    art_name=None,
+    t_phone=None,
+    a_phone=None,
+    nan_events=None
+):
     """
     Gets the distance between two different primary articulations
     
@@ -217,6 +330,8 @@ def get_distance(arts, get_art, t_seg, a_seg):
         get_art (method): Helper method used for getting the primary articulation
         t_seg (<Segment>): Phon segment of the target phone
         a_seg (<Segment>): Phon segment of the actual phone
+        nan_policy (str): Policy for handling unclassified articulations ('nan').
+            Supported values: 'max', 'mid', 'zero'
         
     Returns:
         dist (float): The distance between the two primary articulations
@@ -225,8 +340,32 @@ def get_distance(arts, get_art, t_seg, a_seg):
     t_art = get_art(t_seg)
     a_art = get_art(a_seg)
 
+    # Panphon frequently underspecifies some features as 0, which can make
+    # our categorical mapper return 'nan'. Use bounded penalties so
+    # substitutions still receive a graded score instead of being invalid.
     if t_art == 'nan' or a_art == 'nan':
-        return 100
+        max_dist = len(arts) - 1
+        if nan_policy == "zero":
+            penalty = 0
+        elif nan_policy == "mid":
+            penalty = max_dist / 2
+        else:
+            penalty = max_dist
+
+        if nan_events is not None:
+            nan_events.append({
+                "parameter": art_name,
+                "target_phone": t_phone,
+                "actual_phone": a_phone,
+                "target_articulation": t_art,
+                "actual_articulation": a_art,
+                "target_features": _feature_snapshot(t_seg, art_name),
+                "actual_features": _feature_snapshot(a_seg, art_name),
+                "penalty": penalty,
+                "nan_policy": nan_policy
+            })
+
+        return penalty
 
     dist = abs(arts.index(t_art) - arts.index(a_art))
         

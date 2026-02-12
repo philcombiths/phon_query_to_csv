@@ -8,13 +8,21 @@ from phon_query_to_csv.calculate_accuracy_helper import get_accuracy
 
 log = setup_logging(logging.INFO, __name__)
 
+def _format_feature_map(feature_map):
+    if not feature_map:
+        return "{}"
+
+    return ", ".join(f"{k}={v}" for k, v in feature_map.items())
+
 # Step 3: Create accuracy columns in dataframe
-def calculate_accuracy(filepath):
+def calculate_accuracy(filepath, nan_policy="max"):
     """
     Calculate accuracy metrics based on IPA Target and IPA Actual columns in a CSV file.
 
     Args:
         filepath (str): The path to the CSV file.
+        nan_policy (str): Policy for handling unclassified articulations ('nan').
+            Supported values: 'max', 'mid', 'zero'
 
     Returns:
         DataFrame: The updated DataFrame with accuracy metrics.
@@ -42,7 +50,38 @@ def calculate_accuracy(filepath):
 
     for idx in acc_check :
         print(idx, "/", len(df.index))
-        df.at[idx, "Accuracy"], msg = get_accuracy(df.at[idx, "Alignment"], df.at[idx, "Analysis"])
+        accuracy, msg, nan_events = get_accuracy(
+            df.at[idx, "Alignment"],
+            df.at[idx, "Analysis"],
+            nan_policy=nan_policy,
+            return_debug=True
+        )
+        df.at[idx, "Accuracy"] = accuracy
+
+        if nan_events:
+            error_log_entries.append(f"\nNAN feature mapping at entry {idx}\n")
+            error_log_entries.append(
+                f"\tTarget-Actual: {df.at[idx, 'IPA Target']} ↔ {df.at[idx, 'IPA Actual']}\n"
+            )
+            error_log_entries.append(
+                f"\tAlignment: {df.at[idx, 'Alignment']}\n"
+            )
+            error_log_entries.append(
+                f"\tAnalysis: {df.at[idx, 'Analysis']} | Accuracy: {accuracy}\n"
+            )
+
+            for event in nan_events:
+                error_log_entries.append(
+                    "\tNAN parameter: {parameter} | Pair: {target_phone} ↔ {actual_phone} | "
+                    "Mapped: {target_articulation} ↔ {actual_articulation} | "
+                    "Penalty: {penalty} | Policy: {nan_policy}\n".format(**event)
+                )
+                error_log_entries.append(
+                    f"\t\tTarget features: {_format_feature_map(event['target_features'])}\n"
+                )
+                error_log_entries.append(
+                    f"\t\tActual features: {_format_feature_map(event['actual_features'])}\n"
+                )
 
         if msg:
             error_log_entries.append("\nError at entry " + str(idx) + " : " + msg + "\n")
