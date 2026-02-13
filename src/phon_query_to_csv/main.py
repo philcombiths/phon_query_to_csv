@@ -60,8 +60,7 @@ if __name__ == "__main__":
     nan_policy = "max"
 
     # Set Parameters Here:
-    directory = r"/Users/pcombiths/Library/CloudStorage/OneDrive-UniversityofIowa/CLD Lab (Director)/projects/SSD Tx IV/Spanish Arm Prelim Analysis/phon_output/test"
-    query = "Queries_Target_v2"  # Write query name here: e.g., "Queries_Target_v2", "Queries_Actual_v2"
+    directory = directory
     flavor = "tx"  # Specify flavor (see options below)
     overwrite = False
 
