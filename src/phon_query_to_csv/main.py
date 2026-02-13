@@ -156,7 +156,7 @@ if __name__ == "__main__":
     directory = directory
     flavor = "tx"  # Specify flavor (see options below)
     overwrite = False
-    run_accuracy = False
+    run_accuracy = True
 
     if 'flavor' not in locals() or flavor is None:
         print("\n**********************************\n")
