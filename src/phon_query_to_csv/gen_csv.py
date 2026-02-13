@@ -50,7 +50,7 @@ def gen_csv(directory, query, phase_re, participant_re, overwrite=False):
         try:
             assert "Compiled" not in os.listdir(
                 directory
-            ), "Compiled directory already exists. Must be moved or remove before executing script."
+            ), "Compiled directory already exists."
         except AssertionError as e:
             print(e)
             response = input(
@@ -60,7 +60,7 @@ def gen_csv(directory, query, phase_re, participant_re, overwrite=False):
                 shutil.rmtree(os.path.join(directory, "Compiled"))
                 print("Existing 'Compiled' directory has been deleted.")
             else:
-                sys.exit("Exiting script.")
+                print("Keeping existing 'Compiled' directory. Continuing with existing compiled outputs.")
     else:
         shutil.rmtree(os.path.join(directory, "Compiled"))
         print("Existing 'Compiled' directory has been deleted.")    
