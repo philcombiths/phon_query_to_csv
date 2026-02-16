@@ -59,9 +59,12 @@ if __name__ == "__main__":
     actual = True
 
     # Set Parameters Here:
-    directory = None
-    query = "Queries_Target_v2"  # Write query name here: e.g., "Queries_Target_v2", "Queries_Actual_v2"
-    flavor = None  # Specify flavor (see options below)
+    directory = r"R:\admin\Philip\accuracy code test\test"
+    query = "Queries_Actual_v2"  # Write query name here: e.g., "Queries_Target_v2", "Queries_Actual_v2"
+    flavor = "tx"  # Specify flavor (see options below)
+    overwrite = False
+    target = True
+    actual = True
 
     if 'flavor' not in locals() or flavor is None:
         print("\n**********************************\n")
