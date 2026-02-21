@@ -140,7 +140,7 @@ def calculate_accuracy(filepath, nan_policy="max"):
 
     print(f"Saved {output_filename}")
 
-    errlog_filepath = "accuracy_error_log.txt"
+    errlog_filepath = "accuracy_error_log.log"
 
     with open(errlog_filepath, mode = 'w') as file:
         for error in error_log_entries:
