@@ -56,7 +56,8 @@ def phon_query_to_csv(
     run_merge=True,
     run_accuracy=True,
     run_expand=True,
-    run_pivot=True
+    run_pivot=True,
+    pivot_blank_repeated_labels=False
 ):
     """
     Wrapper for sequence of functions.
@@ -129,7 +130,10 @@ def phon_query_to_csv(
                 "pivot",
                 "Enable run_expand=True or provide existing full_annotated_dataset.csv."
             )
-        result = create_pivot_table(run_directory)
+        result = create_pivot_table(
+            run_directory,
+            blank_repeated_labels=pivot_blank_repeated_labels
+        )
         print("***** pivot_table_dataset.csv generated successfully. *****\n")
 
     if result is not None:
@@ -151,12 +155,18 @@ if __name__ == "__main__":
     run_accuracy = True
     run_expand = True
     run_pivot = True
+    pivot_blank_repeated_labels = False
 
     # Set Parameters Here:
-    directory = directory
+    directory = r"/Users/pcombiths/Library/CloudStorage/OneDrive-UniversityofIowa/CLD Lab (Director)/projects/SSD Tx IV/S418/phon_output/phone_listing"
     flavor = "tx"  # Specify flavor (see options below)
     overwrite = False
-    run_accuracy = True
+    run_gen_csv = False
+    run_merge = False
+    run_accuracy = False
+    run_expand = False
+    run_pivot = True
+    pivot_blank_repeated_labels = False
 
     if 'flavor' not in locals() or flavor is None:
         print("\n**********************************\n")
@@ -205,7 +215,8 @@ if __name__ == "__main__":
         f"directory: {directory}\nquery: {query}\nflavor: {flavor}\n"
         f"target: {target}\nactual: {actual}\nnan_policy: {nan_policy}\n"
         f"run_gen_csv: {run_gen_csv}\nrun_merge: {run_merge}\nrun_accuracy: {run_accuracy}\n"
-        f"run_expand: {run_expand}\nrun_pivot: {run_pivot}\noverwrite:{overwrite}"
+        f"run_expand: {run_expand}\nrun_pivot: {run_pivot}\n"
+        f"pivot_blank_repeated_labels: {pivot_blank_repeated_labels}\noverwrite:{overwrite}"
     )
     print("\n**********************************\n")
     input("Proceed? (y/n): ")
@@ -224,5 +235,6 @@ if __name__ == "__main__":
         run_merge=run_merge,
         run_accuracy=run_accuracy,
         run_expand=run_expand,
-        run_pivot=run_pivot
+        run_pivot=run_pivot,
+        pivot_blank_repeated_labels=pivot_blank_repeated_labels
     )

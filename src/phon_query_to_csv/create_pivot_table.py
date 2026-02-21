@@ -22,7 +22,8 @@ def create_pivot_table(
     aggfunc=None,
     subrow_filters=None,
     output_filename='pivot_table_dataset.csv',
-    show_preview=True
+    show_preview=True,
+    blank_repeated_labels=False
 ):
     in_fp = os.path.join(directory, 'Compiled', 'merged_files', 'full_annotated_dataset.csv')
     out_fp = os.path.join(directory, 'Compiled', 'merged_files', output_filename)
@@ -117,15 +118,16 @@ def create_pivot_table(
     # Prepare for output
     out_df = out_df.round(2).reset_index()
 
-    # Blank repeated labels
-    for col in rows:
-        last = None
-        for i in range(len(out_df)):
-            curr = out_df.at[i, col]
-            if curr == last:
-                out_df.at[i, col] = ''
-            else:
-                last = curr
+    if blank_repeated_labels:
+        # Blank repeated labels in row columns for readability.
+        for col in rows:
+            last = None
+            for i in range(len(out_df)):
+                curr = out_df.at[i, col]
+                if curr == last:
+                    out_df.at[i, col] = ''
+                else:
+                    last = curr
 
     # Save to CSV
     os.makedirs(os.path.dirname(out_fp), exist_ok=True)
@@ -144,7 +146,10 @@ def create_pivot_table(
     print(f"Value column: {value_column}")
     print(f"Aggregation function: {aggfunc}")
     print("Values rounded to 2 decimal places.")
-    print("Repeated row labels are blanked in the final CSV for readability.")
+    if blank_repeated_labels:
+        print("Repeated row labels are blanked in the final CSV for readability.")
+    else:
+        print("Repeated row labels are preserved in the final CSV.")
 
     if show_preview:
         print("\nPreview of pivot table:")
