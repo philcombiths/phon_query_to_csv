@@ -62,8 +62,12 @@ def gen_csv(directory, query, phase_re, participant_re, overwrite=False):
             else:
                 sys.exit("Exiting script.")
     else:
-        shutil.rmtree(os.path.join(directory, "Compiled"))
-        print("Existing 'Compiled' directory has been deleted.")    
+        compiled_dir = os.path.join(directory, "Compiled")
+        if os.path.isdir(compiled_dir):
+            shutil.rmtree(compiled_dir)
+            print("Existing 'Compiled' directory has been deleted.")
+        else:
+            print("No existing 'Compiled' directory found. Continuing.")
     with change_dir(os.path.normpath(directory)):
         for dirName, subdirList, fileList in os.walk(os.getcwd()):
             # Skip 'Compiled' or '.bak' directories if already present"
