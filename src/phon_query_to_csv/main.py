@@ -33,7 +33,7 @@ from phon_query_to_csv.create_pivot_table import create_pivot_table
 
 log = setup_logging(logging.INFO, __name__)
 
-def phon_query_to_csv(directory, query, phase_re, participant_re, overwrite=False, target=True, actual=True):
+def phon_query_to_csv(directory, query, phase_re, participant_re, overwrite=False, target=True, actual=True, nan_policy="max"):
     """
     Wrapper for sequence of functions.
     """
@@ -41,7 +41,7 @@ def phon_query_to_csv(directory, query, phase_re, participant_re, overwrite=Fals
     gen_csv_result = gen_csv(directory, query, phase_re, participant_re, overwrite=overwrite)
     filepath = merge_csv(gen_csv_result[0])
     if target:
-        filepath = calculate_accuracy(filepath)
+        filepath = calculate_accuracy(filepath, nan_policy=nan_policy)
     result = phone_data_expander(filepath, gen_csv_result[0], target=target, actual=actual)
     print("***** full_annotated_dataset.csv generated successfully. *****\n")
     result = create_pivot_table(gen_csv_result[0])
@@ -57,6 +57,7 @@ if __name__ == "__main__":
     overwrite = False
     target = True
     actual = True
+    nan_policy = "max"
 
     # Set Parameters Here:
     directory = r"R:\admin\Philip\accuracy code test\test"
@@ -109,7 +110,7 @@ if __name__ == "__main__":
 
     print("\n**********************************\n")
     print("Current parameters are:\n-----------------------")
-    print(f"directory: {directory}\nquery: {query}\nflavor: {flavor}\ntarget: {target}\nactual: {actual}\noverwrite:{overwrite}")
+    print(f"directory: {directory}\nquery: {query}\nflavor: {flavor}\ntarget: {target}\nactual: {actual}\nnan_policy: {nan_policy}\noverwrite:{overwrite}")
     print("\n**********************************\n")
     input("Proceed? (y/n): ")
     
@@ -121,5 +122,6 @@ if __name__ == "__main__":
         participant_re=participant_re,
         overwrite=overwrite, 
         target=target, 
-        actual=actual
+        actual=actual,
+        nan_policy=nan_policy
     )
