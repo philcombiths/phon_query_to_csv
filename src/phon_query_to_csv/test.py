@@ -341,9 +341,3 @@ if __name__ == "__main__":
     sketch(stage, start, parameters, None)
 
     root.mainloop()  # Keeps the window open
-
-"""
-
-[Program Status Log]
-
-"""
