@@ -48,7 +48,7 @@ def labelblank_set(stage, parameters, selection):
     if selection == "No":
         updates.append(["Blank Repeated Labels", False])
 
-    sketch(stage, test, parameters, updates)
+    sketch(stage, proceed, parameters, updates)
 
 def labelblank(stage, parameters):
     prompt = Label(stage, text = "Would you like to blank repeated labels in the final pivot table?")
@@ -211,7 +211,7 @@ def flavor(stage, parameters):
     custom = Button(stage, text = "Custom", width = 20)
     custom.place(relx = 0.5, x = 0, y = 180, anchor = "n")
 
-    custom.config(command = lambda : sketch(stage, test, parameters, None))
+    custom.config(command = lambda : sketch(stage, customflavor, parameters, None))
 
 def defvals_set(stage, parameters):
     updates = []
@@ -341,3 +341,12 @@ if __name__ == "__main__":
     sketch(stage, start, parameters, None)
 
     root.mainloop()  # Keeps the window open
+
+"""
+
+Notes for improvemenet:
+- Specify technical details (e.g. what "regex" means, what files to look for in a directory)
+- Specify what the default values are when being given the option
+- End goal: give user multiple ways to determine accuracy
+
+"""
