@@ -17,28 +17,6 @@ def test(stage, parameters):
 
     print(parameters)
 
-def proceed(stage, parameters):
-    prompt = Label(stage, text = "Would you like to proceed with the following parameters?")
-    prompt.place(relx = 0.5, x = 0, y = 20, anchor = "n")
-
-    line = 1
-
-    for parameter in parameters.keys():
-        line += 1
-        
-        partext = Label(stage, text = parameter + " : " + str(parameters[parameter]))
-        partext.place(relx = 0, x = 20, y = line * 30, anchor = "nw")
-
-    yes = Button(stage, text = "Yes", width = 5)
-    yes.place(relx = 1, rely = 0.5, x = -40, y = -22, anchor = "ne")
-
-    yes.config(command = lambda : sketch(stage, test, parameters, None))
-
-    no = Button(stage, text = "No", width = 5)
-    no.place(relx = 1, rely = 0.5, x = -40, y = 22, anchor = "ne")
-
-    no.config(command = lambda : sketch(stage, fp, parameters, None))
-
 def labelblank_set(stage, parameters, selection):
     updates = []
 
@@ -48,7 +26,7 @@ def labelblank_set(stage, parameters, selection):
     if selection == "No":
         updates.append(["Blank Repeated Labels", False])
 
-    sketch(stage, proceed, parameters, updates)
+    sketch(stage, check, parameters, updates)
 
 def labelblank(stage, parameters):
     prompt = Label(stage, text = "Would you like to blank repeated labels in the final pivot table?")
@@ -213,38 +191,46 @@ def flavor(stage, parameters):
 
     custom.config(command = lambda : sketch(stage, customflavor, parameters, None))
 
-def defvals_set(stage, parameters):
-    updates = []
-
-    updates.append(["Phase Regex", r"BL-\d{1,2}|Post-\dmo|Pre|Post|Mid|Tx-\d{1,2}"])
-    updates.append(["Participant Regex", r"\w\d\d\d"])
-    updates.append(["Target", True])
-    updates.append(["Actual", True])
-    updates.append(["Overwrite", True])
-    updates.append(["Blank Repeated Labels", True])
-
-    sketch(stage, proceed, parameters, updates)
-
-def defvals(stage, parameters):
-    prompt = Label(stage, text = "Would you like to run the default values?")
+def check(stage, parameters):
+    prompt = Label(stage, text = "Would you like to proceed with the following parameters?")
     prompt.place(relx = 0.5, x = 0, y = 20, anchor = "n")
 
-    yes = Button(stage, text = "Yes", width = 5)
-    yes.place(relx = 0.5, x = -40, y = 60, anchor = "n")
+    line = 1
 
-    yes.config(command = lambda : defvals_set(stage, parameters))
+    for parameter in parameters.keys():
+        line += 1
+        
+        partext = Label(stage, text = parameter + " : " + str(parameters[parameter]))
+        partext.place(relx = 0, x = 20, y = line * 30, anchor = "nw")
+
+    yes = Button(stage, text = "Yes", width = 5)
+    yes.place(relx = 1, rely = 0.5, x = -40, y = -22, anchor = "ne")
+
+    yes.config(command = lambda : sketch(stage, test, parameters, None))
 
     no = Button(stage, text = "No", width = 5)
-    no.place(relx = 0.5, x = 40, y = 60, anchor = "n")
+    no.place(relx = 1, rely = 0.5, x = -40, y = 22, anchor = "ne")
 
-    no.config(command = lambda : sketch(stage, flavor, parameters, None))
+    no.config(command = lambda : sketch(stage, fp, parameters, None))
+
+    restart = Button(stage, text = "Change Directory and Query", width = 5)
+    restart.place(relx = 1, rely = 0.5, x = -40, y = 22, anchor = "ne")
+
+    restart.config(command = lambda : sketch(stage, fp, parameters, None))
 
 def query_input(stage, parameters, entry):
     updates = []
 
     if entry:
         updates.append(["Query", entry])
-        sketch(stage, defvals, parameters, updates)
+        updates.append(["Phase Regex", r"BL-\d{1,2}|Post-\dmo|Pre|Post|Mid|Tx-\d{1,2}"])
+        updates.append(["Participant Regex", r"\w\d\d\d"])
+        updates.append(["Target", True])
+        updates.append(["Actual", True])
+        updates.append(["Overwrite", True])
+        updates.append(["Blank Repeated Labels", True])
+
+        sketch(stage, check, parameters, updates)
     else:
         sketch(stage, query, parameters, updates)
 
