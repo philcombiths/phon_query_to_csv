@@ -5,6 +5,9 @@ from tkinter import Label
 from tkinter import Button
 from tkinter import Entry
 from tkinter import Checkbutton
+
+from tkinter import scrolledtext as st
+from tkinter import INSERT
 from tkinter import font
 
 from tkinter import StringVar
@@ -192,29 +195,35 @@ def flavor(stage, parameters):
     custom.config(command = lambda : sketch(stage, customflavor, parameters, None))
 
 def check(stage, parameters):
-    prompt = Label(stage, text = "Would you like to proceed with the following parameters?")
+    prompt = Label(stage, text = "Proceed with the following parameters, modify ")
     prompt.place(relx = 0.5, x = 0, y = 20, anchor = "n")
 
-    line = 1
+    partext = st.ScrolledText(stage, width = 55, height = 13)
+    partext.place(relx = 0, x = 40, y = 60, anchor = "nw")
+
+    body = ""
 
     for parameter in parameters.keys():
-        line += 1
-        
-        partext = Label(stage, text = parameter + " : " + str(parameters[parameter]))
-        partext.place(relx = 0, x = 20, y = line * 30, anchor = "nw")
+        if body:
+            body += "\n\n"
 
-    yes = Button(stage, text = "Yes", width = 5)
-    yes.place(relx = 1, rely = 0.5, x = -40, y = -22, anchor = "ne")
+        body += parameter + " : " + str(parameters[parameter])
 
-    yes.config(command = lambda : sketch(stage, test, parameters, None))
+    partext.insert(INSERT, body)
+    partext.configure(state = "disabled")
 
-    no = Button(stage, text = "No", width = 5)
-    no.place(relx = 1, rely = 0.5, x = -40, y = 22, anchor = "ne")
+    proceed = Button(stage, text = "Proceed", width = 5)
+    proceed.place(relx = 1, rely = 0.5, x = -40, y = -44, anchor = "ne")
 
-    no.config(command = lambda : sketch(stage, fp, parameters, None))
+    proceed.config(command = lambda : sketch(stage, test, parameters, None))
 
-    restart = Button(stage, text = "Change Directory and Query", width = 5)
-    restart.place(relx = 1, rely = 0.5, x = -40, y = 22, anchor = "ne")
+    modify = Button(stage, text = "Modify", width = 5)
+    modify.place(relx = 1, rely = 0.5, x = -40, y = 0, anchor = "ne")
+
+    modify.config(command = lambda : sketch(stage, flavor, parameters, None))
+
+    restart = Button(stage, text = "Restart", width = 5)
+    restart.place(relx = 1, rely = 0.5, x = -40, y = 44, anchor = "ne")
 
     restart.config(command = lambda : sketch(stage, fp, parameters, None))
 
