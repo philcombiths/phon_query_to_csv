@@ -1,17 +1,16 @@
+import tkinter as tk
+
 from tkinter import Tk
 
-from tkinter import Frame
-from tkinter import Label
-from tkinter import Button
-from tkinter import Entry
-from tkinter import Checkbutton
+from tkinter.ttk import Frame
+from tkinter.ttk import Label
+from tkinter.ttk import Button
+from tkinter.ttk import Entry
+from tkinter.ttk import Combobox
+from tkinter.ttk import Scrollbar
+from tkinter.ttk import Checkbutton
 
-from tkinter import scrolledtext as st
-from tkinter import INSERT
 from tkinter import font
-
-from tkinter import StringVar
-from tkinter import IntVar
 from tkinter import filedialog as dialog
 
 def test(stage, parameters):
@@ -20,283 +19,133 @@ def test(stage, parameters):
 
     print(parameters)
 
-def labelblank_set(stage, parameters, selection):
-    updates = []
+def flavorcheck(layers, parameters, setting):
+    canvas = tk.Canvas(setting)
+    v_scroll = Scrollbar(setting, orient = "vertical", command = canvas.yview)
 
-    if selection == "Yes":
-        updates.append(["Blank Repeated Labels", True])
+    canvas.configure(yscrollcommand = v_scroll.set)
 
-    if selection == "No":
-        updates.append(["Blank Repeated Labels", False])
-
-    sketch(stage, check, parameters, updates)
-
-def labelblank(stage, parameters):
-    prompt = Label(stage, text = "Would you like to blank repeated labels in the final pivot table?")
-    prompt.place(relx = 0.5, x = 0, y = 20, anchor = "n")
-
-    yes = Button(stage, text = "Yes", width = 5)
-    yes.place(relx = 0.5, x = -40, y = 60, anchor = "n")
-
-    yes.config(command = lambda : labelblank_set(stage, parameters, "Yes"))
-
-    no = Button(stage, text = "No", width = 5)
-    no.place(relx = 0.5, x = 40, y = 60, anchor = "n")
-
-    no.config(command = lambda : labelblank_set(stage, parameters, "No"))
-
-def fileow_set(stage, parameters, selection):
-    updates = []
-
-    if selection == "Yes":
-        updates.append(["Overwrite", True])
-
-    if selection == "No":
-        updates.append(["Overwrite", False])
-
-    sketch(stage, labelblank, parameters, updates)
-
-def fileow(stage, parameters):
-    prompt = Label(stage, text = "Would you like to overwrite existing files?")
-    prompt.place(relx = 0.5, x = 0, y = 20, anchor = "n")
-
-    yes = Button(stage, text = "Yes", width = 5)
-    yes.place(relx = 0.5, x = -40, y = 60, anchor = "n")
-
-    yes.config(command = lambda : fileow_set(stage, parameters, "Yes"))
-
-    no = Button(stage, text = "No", width = 5)
-    no.place(relx = 0.5, x = 40, y = 60, anchor = "n")
-
-    no.config(command = lambda : fileow_set(stage, parameters, "No"))
-
-def customflavor_set(stage, parameters, pha_re, par_re, target, actual):
-    updates = []
-
-    if pha_re and par_re:
-        updates.append(["Phase Regex", pha_re])
-        updates.append(["Participant Regex", par_re])
-        updates.append(["Target", target == 1])
-        updates.append(["Actual", actual == 1])
-        sketch(stage, fileow, parameters, updates)
-    else:
-        sketch(stage, customflavor, parameters, updates)
-
-def customflavor(stage, parameters):
-    pha_re = StringVar()
-    par_re = StringVar()
-    target = IntVar()
-    actual = IntVar()
-
-    prompt_pha = Label(stage, text = "Please input the Phase Regex")
+    canvas.pack(side = "left", fill = "both", expand = True)
+    v_scroll.pack(side = "right", fill = "y")
+    
+    prompt_pha = Label(canvas, text = parameters["Phase Regex"])
     prompt_pha.place(relx = 0.5, x = 0, y = 20, anchor = "n")
 
-    entry_pha = Entry(stage, textvariable = pha_re)
-    entry_pha.place(relx = 0.5, x = 0, y = 50, anchor = "n")
-
-    prompt_par = Label(stage, text = "Please input the Participant Regex")
+    prompt_par = Label(canvas, text = parameters["Participant Regex"])
     prompt_par.place(relx = 0.5, x = 0, y = 100, anchor = "n")
 
-    entry_par = Entry(stage, textvariable = par_re)
-    entry_par.place(relx = 0.5, x = 0, y = 130, anchor = "n")
+    prompt_act = Label(canvas, text = parameters["Target"])
+    prompt_act.place(relx = 0.5, x = 0, y = 180, anchor = "n")
 
-    prompt_tar_act = Label(stage, text = "Please select if Target and Actual are enabled")
-    prompt_tar_act.place(relx = 0.5, x = 0, y = 180, anchor = "n")
+    prompt_tar = Label(canvas, text = parameters["Actual"])
+    prompt_tar.place(relx = 0.5, x = 0, y = 300, anchor = "n")
 
-    check_tar = Checkbutton(stage, text = "Target", variable = target)
-    check_tar.place(relx = 0.5, x = -80, y = 210, anchor = "n")
-
-    check_act = Checkbutton(stage, text = "Actual", variable = actual)
-    check_act.place(relx = 0.5, x = 80, y = 210, anchor = "n")
-
-    submit = Button(stage, text = "Submit", width = 5)
-    submit.place(relx = 0.5, x = 0, y = 320, anchor = "s")
-    
-    submit.config(command = lambda : customflavor_set(stage, parameters, pha_re.get(), par_re.get(), target.get(), actual.get()))
-
-def flavor_set(stage, parameters, flavor):
-    updates = []
-
-    if flavor == "TX":
-        updates.append(["Phase Regex", r"BL-\d{1,2}|Post-\dmo|Pre|Post|Mid|Tx-\d{1,2}"])
-        updates.append(["Participant Regex", r"\w\d\d\d"])
-        updates.append(["Target", True])
-        updates.append(["Actual", True])
-
-    if flavor == "TX Blind":
-        updates.append(["Phase Regex", r"\w{1}\d{4}"])
-        updates.append(["Participant Regex", r"\w(?=\d{4})"])
-        updates.append(["Target", True])
-        updates.append(["Actual", True])
-
-    if flavor == "Typology":
-        updates.append(["Phase Regex", r"p[IVX]+"])
-        updates.append(["Participant Regex", r"\d\d\d"])
-        updates.append(["Target", False])
-        updates.append(["Actual", True])
-
-    if flavor == "New Typology":
-        updates.append(["Phase Regex", r"no phases"])
-        updates.append(["Participant Regex", r"\w{3,4}\d\d"])
-        updates.append(["Target", False])
-        updates.append(["Actual", True])
-
-    if flavor == "ITOLD":
-        updates.append(["Phase Regex", r"no phases"])
-        updates.append(["Participant Regex", r"\w{4}\d{2}"])
-        updates.append(["Target", True])
-        updates.append(["Actual", True])
-
-    if flavor == "NCJC":
-        updates.append(["Phase Regex", r"Timepoint\d|Pre|Post|Fall|Spring|Winter|Summer"])
-        updates.append(["Participant Regex", r"\w{1}\d{4}"])
-        updates.append(["Target", True])
-        updates.append(["Actual", True])
-
-    sketch(stage, fileow, parameters, updates)
-
-def flavor(stage, parameters):
-    prompt = Label(stage, text = "Which flavor would you like to employ?")
-    prompt.place(relx = 0.5, x = 0, y = 20, anchor = "n")
-
-    tx = Button(stage, text = "TX", width = 10)
-    tx.place(relx = 0.5, x = -62, y = 60, anchor = "n")
-
-    tx.config(command = lambda : flavor_set(stage, parameters, "TX"))
-
-    tx_blind = Button(stage, text = "TX Blind", width = 10)
-    tx_blind.place(relx = 0.5, x = 62, y = 60, anchor = "n")
-
-    tx_blind.config(command = lambda : flavor_set(stage, parameters, "TX Blind"))
-
-    typology = Button(stage, text = "Typology", width = 10)
-    typology.place(relx = 0.5, x = -62, y = 100, anchor = "n")
-
-    typology.config(command = lambda : flavor_set(stage, parameters, "Typology"))
-
-    new_typology = Button(stage, text = "New Typology", width = 10)
-    new_typology.place(relx = 0.5, x = 62, y = 100, anchor = "n")
-
-    new_typology.config(command = lambda : flavor_set(stage, parameters, "New Typology"))
-
-    itold = Button(stage, text = "ITOLD", width = 10)
-    itold.place(relx = 0.5, x = -62, y = 140, anchor = "n")
-
-    itold.config(command = lambda : flavor_set(stage, parameters, "ITOLD"))
-
-    ncjc = Button(stage, text = "NCJC", width = 10)
-    ncjc.place(relx = 0.5, x = 62, y = 140, anchor = "n")
-
-    ncjc.config(command = lambda : flavor_set(stage, parameters, "NCJC"))
-
-    custom = Button(stage, text = "Custom", width = 20)
-    custom.place(relx = 0.5, x = 0, y = 180, anchor = "n")
-
-    custom.config(command = lambda : sketch(stage, customflavor, parameters, None))
-
-def check(stage, parameters):
-    prompt = Label(stage, text = "Proceed with the following parameters, modify ")
-    prompt.place(relx = 0.5, x = 0, y = 20, anchor = "n")
-
-    partext = st.ScrolledText(stage, width = 55, height = 13)
-    partext.place(relx = 0, x = 40, y = 60, anchor = "nw")
-
-    body = ""
-
-    for parameter in parameters.keys():
-        if body:
-            body += "\n\n"
-
-        body += parameter + " : " + str(parameters[parameter])
-
-    partext.insert(INSERT, body)
-    partext.configure(state = "disabled")
-
-    proceed = Button(stage, text = "Proceed", width = 5)
-    proceed.place(relx = 1, rely = 0.5, x = -40, y = -44, anchor = "ne")
-
-    proceed.config(command = lambda : sketch(stage, test, parameters, None))
-
-    modify = Button(stage, text = "Modify", width = 5)
-    modify.place(relx = 1, rely = 0.5, x = -40, y = 0, anchor = "ne")
-
-    modify.config(command = lambda : sketch(stage, flavor, parameters, None))
-
-    restart = Button(stage, text = "Restart", width = 5)
-    restart.place(relx = 1, rely = 0.5, x = -40, y = 44, anchor = "ne")
-
-    restart.config(command = lambda : sketch(stage, fp, parameters, None))
-
-def query_input(stage, parameters, entry):
-    updates = []
-
-    if entry:
-        updates.append(["Query", entry])
-        updates.append(["Phase Regex", r"BL-\d{1,2}|Post-\dmo|Pre|Post|Mid|Tx-\d{1,2}"])
-        updates.append(["Participant Regex", r"\w\d\d\d"])
-        updates.append(["Target", True])
-        updates.append(["Actual", True])
-        updates.append(["Overwrite", True])
-        updates.append(["Blank Repeated Labels", True])
-
-        sketch(stage, check, parameters, updates)
-    else:
-        sketch(stage, query, parameters, updates)
-
-def query(stage, parameters):
-    querytext = StringVar()
-
-    prompt = Label(stage, text = "Please input the name of the query")
-    prompt.place(relx = 0.5, x = 0, y = 20, anchor = "n")
-
-    entry = Entry(stage, textvariable = querytext)
-    entry.place(relx = 0.5, x = 0, y = 50, anchor = "n")
-
-    submit = Button(stage, text = "Submit", width = 5)
-    submit.place(relx = 0.5, x = 0, y = 90, anchor = "n")
-
-    submit.config(command = lambda : query_input(stage, parameters, querytext.get()))
-
-def fp_select(stage, parameters):
-    updates = []
-
+def query_setdir(parameters, entry):
     dir = dialog.askdirectory(initialdir = "/", title = "Select a Directory")
 
     if dir:
-        updates.append(["Directory", dir])
-        sketch(stage, query, parameters, updates)
-    else:
-        sketch(stage, fp, parameters, updates)
+        entry.delete(0, "end")
+        entry.insert(0, dir)
 
-def fp(stage, parameters):
-    prompt = Label(stage, text = "Please choose the directory of analysis")
-    prompt.place(relx = 0.5, x = 0, y = 20, anchor = "n")
+def query(layers, parameters, setting):
+    flavors = ("TX", "TX Blind", "Typology", "New Typology", "ITOLD", "NCJC")
 
-    browse = Button(stage, text = "Browse Directories", width = 20)
-    browse.place(relx = 0.5, x = 0, y = 60, anchor = "n")
+    name_prompt = Label(setting, text = "Please specify the name of the query below")
+    name_prompt.place(relx = 0.5, x = 0, y = 0, anchor = "n")
 
-    browse.config(command = lambda : fp_select(stage, parameters))
+    name = Entry(setting, width = 25)
+    name.place(relx = 0.5, x = 0, y = 40, anchor = "n")
 
-def start(stage, parameters):
-    start = Button(stage, text = "Start", width = 5)
-    start.place(relx = 0.5, x = 0, y = 320, anchor = "s")
+    directory_prompt = Label(setting, text = "Please specify the directory of the query below")
+    directory_prompt.place(relx = 0.5, x = 0, y = 100, anchor = "n")
+
+    directory = Entry(setting, width = 25)
+    directory.place(relx = 0.5, x = 0, y = 140, anchor = "n")
+
+    browser = Button(setting, text = "󰝰 ", width = 3)
+    browser.place(relx = 0.5, x = 130, y = 134, anchor = "n")
+
+    browser.config(command = lambda : query_setdir(parameters, directory))
+
+    flavor_prompt = Label(setting, text = "Please specify the flavor of the query below")
+    flavor_prompt.place(relx = 0.5, x = 0, y = 200, anchor = "n")
+
+    flavor = Combobox(setting, values = flavors, width = 23)
+    flavor.place(relx = 0.5, x = 0, y = 240, anchor = "n")
+
+    details = Button(setting, text = "󰋼 ", width = 3)
+    details.place(relx = 0.5, x = 130, y = 234, anchor = "n")
+
+    details.config(command = lambda : sketch(layers, "None > Prop", flavorcheck, parameters, None))
+
+    proceed = Button(setting, text = "Proceed")
+    proceed.place(relx = 0.5, x = 0, y = 332, anchor = "s")
+
+    proceed.config(command = lambda : sketch(layers, "None > Prop", flavorcheck, parameters, None))
+
+def backdrop_transition(layers, parameters, button):
+    button.destroy()
+
+    sketch(layers, "None > Scene", query, parameters, None)
+
+def backdrop(layers, parameters, setting):
+    root = layers["Root"]
+
+    title = Label(setting, text = "Phon Query to CSV")
+    title.place(relx = 0.5, x = 0, y = 60, anchor = "n")
+
+    title.configure(font = font.Font(size = 32, weight = font.BOLD, underline = 1))
+
+    subtitle = Label(setting, text = "A Visual Interface Assistance")
+    subtitle.place(relx = 0.5, x = 0, y = 120, anchor = "n")
+
+    subtitle.configure(font = font.Font(size = 20, weight = font.BOLD))
+
+    start = Button(setting, text = "Start", width = 5)
+    start.place(relx = 0.5, x = 0, y = 478, anchor = "n")
     
-    start.config(command = lambda : sketch(stage, fp, parameters, None))
+    start.config(command = lambda : backdrop_transition(layers, parameters, start))
 
-def sketch(stage, scene, parameters, updates):
+    quit = Button(setting, text = "Quit", width = 5)
+    quit.place(relx = 0.5, x = 0, y = 520, anchor = "n")
+
+    quit.configure(command = lambda : root.destroy())
+
+def sketch(layers, transition, scene, parameters, updates):
+    prev, next = transition.split(" > ")
+
     if updates:
         for update in updates:
             parameters[update[0]] = update[1]
 
-    for widget in stage.winfo_children():
-        widget.destroy()
+    if prev in layers.keys():
+        setting = layers[prev]
 
-    scene(stage, parameters)
+        for widget in setting.winfo_children():
+            widget.place_forget()
+
+    if next in layers.keys():
+        setting = layers[next]
+
+        if next == "Stage":
+            setting.place(relx = 0.5, rely = 0, x = 0, y = 0, anchor = "n")
+            setting.lift()
+
+        if next == "Scene":
+            setting.place(relx = 0.5, rely = 0, x = 0, y = 180, anchor = "n")
+            setting.lift()
+
+        if next == "Prop":
+            setting.place(relx = 0.5, rely = 0, x = 0, y = 20, anchor = "n")
+            setting.lift()
+
+        scene(layers, parameters, setting)
 
 if __name__ == "__main__":
     parameters = {
-        "Directory" : None,
         "Query" : None,
+        "Directory" : None,
+        "Flavor" : None,
         "Phase Regex" : None,
         "Participant Regex" : None,
         "Target" : None,
@@ -310,38 +159,29 @@ if __name__ == "__main__":
     root.title("Phon Query to CSV")
     root.geometry("800x600")
 
-    debug = Frame(root, width = 800, height = 600, highlightbackground = "red", highlightthickness = 1)
-    debug.place(relx = 0.5, rely = 0, x = 0, y = 0, anchor = "n")
+    stage = Frame(root, width = 800, height = 600, borderwidth = 1, relief = "solid")
+    scene = Frame(stage, width = 680, height = 332, borderwidth = 1, relief = "solid")
+    prop = Frame(scene, width = 600, height = 280, borderwidth = 5, relief = "solid")
+
+    layers = {
+        "Root" : root,
+        "Stage" : stage,
+        "Scene" : scene,
+        "Prop" : prop
+    }
 
     font.nametofont("TkDefaultFont").configure(size = 12)
 
-    title = Label(root, text = "Phon Query to CSV")
-    title.place(relx = 0.5, x = 0, y = 60, anchor = "n")
-
-    title.configure(font = font.Font(size = 32, weight = font.BOLD, underline = 1))
-
-    subtitle = Label(root, text = "A Visual Interface Assistance")
-    subtitle.place(relx = 0.5, x = 0, y = 120, anchor = "n")
-
-    subtitle.configure(font = font.Font(size = 20, weight = font.BOLD))
-
-    quit = Button(root, text = "Quit", width = 5)
-    quit.place(relx = 0.5, x = 0, y = 500, anchor = "n")
-
-    quit.configure(command = lambda : root.destroy())
-
-    stage = Frame(root, width = 650, height = 320, highlightbackground = "red", highlightthickness = 1)
-    stage.place(relx = 0.5, rely = 0, x = 0, y = 330, anchor = "center")
-
-    sketch(stage, start, parameters, None)
+    sketch(layers, "None > Stage", backdrop, parameters, None)
 
     root.mainloop()  # Keeps the window open
+
+    print(parameters)
 
 """
 
 Notes for improvemenet:
 - Specify technical details (e.g. what "regex" means, what files to look for in a directory)
-- Specify what the default values are when being given the option
 - End goal: give user multiple ways to determine accuracy
 
 """
