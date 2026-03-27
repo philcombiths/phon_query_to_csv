@@ -7,11 +7,11 @@ from tkinter.ttk import Label
 from tkinter.ttk import Button
 from tkinter.ttk import Entry
 from tkinter.ttk import Combobox
-from tkinter.ttk import Scrollbar
 from tkinter.ttk import Checkbutton
 
 from tkinter import font
 from tkinter import filedialog as dialog
+from tkinter import messagebox as mbox
 
 def test(stage, parameters):
     text = Label(stage, text = "Test!")
@@ -19,104 +19,169 @@ def test(stage, parameters):
 
     print(parameters)
 
-def flavorcheck(layers, parameters, setting):
-    canvas = tk.Canvas(setting)
-    v_scroll = Scrollbar(setting, orient = "vertical", command = canvas.yview)
+def prop_flavor(layers, setting):
 
-    canvas.configure(yscrollcommand = v_scroll.set)
+    """
+    What is a Flavor?
 
-    canvas.pack(side = "left", fill = "both", expand = True)
-    v_scroll.pack(side = "right", fill = "y")
-    
-    prompt_pha = Label(canvas, text = parameters["Phase Regex"])
-    prompt_pha.place(relx = 0.5, x = 0, y = 20, anchor = "n")
+    The flavor of analysis determines what kind of data is analyzed. A flavor is composed of four parts, 
+    namely two regex strings, one for the phase and another for the participant, and two booleans, one for
+    the target and another for the actual. A regex (regular expression) is a string of text that represents
+    a (usually recurring) pattern of text found with other strings of text it may refer to. A boolean is
+    a true-or-false value. In this case, the regex strings are meant for identifying the exact phase and
+    participant to analyze, and the booleans are meant for specifying which sets of phonetic data are of
+    concern.
 
-    prompt_par = Label(canvas, text = parameters["Participant Regex"])
-    prompt_par.place(relx = 0.5, x = 0, y = 100, anchor = "n")
+    [IF NOT A CUSTOM FLAVOR]
+    The following details specifications of the currently selected flavor:
 
-    prompt_act = Label(canvas, text = parameters["Target"])
-    prompt_act.place(relx = 0.5, x = 0, y = 180, anchor = "n")
+    - Name: [Name]
+    - Phase Regex: [Phase Regex]
+    - Participant Regex: [Participant Regex]
+    - Target: [Target]
+    - Actual: [Actual]
+    """
 
-    prompt_tar = Label(canvas, text = parameters["Actual"])
-    prompt_tar.place(relx = 0.5, x = 0, y = 300, anchor = "n")
+def scene_query_getinfo(layers, setting, flavor):
+    specs = {
+        "Phase Regex" : None,
+        "Participant Regex" : None,
+        "Target" : None,
+        "Actual" : None
+    }
 
-def query_setdir(parameters, entry):
+    if flavor == "TX":
+        specs["Phase Regex"] = r"BL-\d{1,2}|Post-\dmo|Pre|Post|Mid|Tx-\d{1,2}"
+        specs["Participant Regex"] = r"\w\d\d\d"
+        specs["Target"] = True
+        specs["Actual"] = True
+
+    if flavor == "TX Blind":
+        specs["Phase Regex"] = r"\w{1}\d{4}"
+        specs["Participant Regex"] = r"\w(?=\d{4})"
+        specs["Target"] = True
+        specs["Actual"] = True
+
+    if flavor == "Typology":
+        specs["Phase Regex"] = r"p[IVX]+"
+        specs["Participant Regex"] = r"\d\d\d"
+        specs["Target"] = False
+        specs["Actual"] = True
+
+    if flavor == "New Typology":
+        specs["Phase Regex"] = r"no phases"
+        specs["Participant Regex"] = r"\w{3,4}\d\d"
+        specs["Target"] = False
+        specs["Actual"] = True
+
+    if flavor == "ITOLD":
+        specs["Phase Regex"] = r"no phases"
+        specs["Participant Regex"] = r"\w{4}\d{2}"
+        specs["Target"] = True
+        specs["Actual"] = True
+
+    if flavor == "NCJC":
+        specs["Phase Regex"] = r"Timepoint\d|Pre|Post|Fall|Spring|Winter|Summer"
+        specs["Participant Regex"] = r"\w{1}\d{4}"
+        specs["Target"] = True
+        specs["Actual"] = True
+
+    sketch(layers, "None > Prop", prop_flavor)
+
+def scene_query_setdir(entry):
     dir = dialog.askdirectory(initialdir = "/", title = "Select a Directory")
 
     if dir:
         entry.delete(0, "end")
         entry.insert(0, dir)
 
-def query(layers, parameters, setting):
-    flavors = ("TX", "TX Blind", "Typology", "New Typology", "ITOLD", "NCJC")
+def scene_query(layers, setting):
+    widgets = {
+        "Label" : {
+            "Name" : Label(setting, text = "Please specify the name of the query below"),
+            "Directory" : Label(setting, text = "Please specify the directory of the query below"),
+            "Flavor" : Label(setting, text = "Please specify the flavor of the query below")
+        },
+        "Button" : {
+            "Directory" : Button(setting, text = "󰝰 ", width = 3),
+            "Flavor" : Button(setting, text = "󰋼 ", width = 3),
+            "Proceed" : Button(setting, text = "Proceed")
+        },
+        "Entry" : {
+            "Name" : Entry(setting, width = 25),
+            "Directory" : Entry(setting, width = 25)
+        },
+        "Combobox" : {
+            "Flavor" : Combobox(setting, values = ("TX", "TX Blind", "Typology", "New Typology", "ITOLD", "NCJC"), width = 23)
+        },
+        "Checkbutton" : {
+            "Overwrite" : Checkbutton(setting, text = "Overwrite existing files"),
+            "Blanking" : Checkbutton(setting, text = "Blank out repeated labels")
+        }
+    }
 
-    name_prompt = Label(setting, text = "Please specify the name of the query below")
-    name_prompt.place(relx = 0.5, x = 0, y = 0, anchor = "n")
+    infotext = ("What is a Flavor?\n\n"
+                "The flavor of analysis determines what kind of data is analyzed. "
+                "A flavor is composed of four parts, namely two regex strings, one for the phase and another for the participant, "
+                "and two booleans, one for the target and another for the actual. "
+                "A regex (regular expression) is a string of text that represents a (usually recurring) pattern of text found with other strings of text it may refer to. "
+                "A boolean is a true-or-false value.\n\n"
+                "In this case, the regex strings are meant for identifying the exact phase and participant to analyze, "
+                "and the booleans are meant for specifying which sets of phonetic data are of concern.")
 
-    name = Entry(setting, width = 25)
-    name.place(relx = 0.5, x = 0, y = 40, anchor = "n")
+    widgets["Label"]["Name"].place(relx = 0.5, x = 0, y = 0, anchor = "n")
+    widgets["Label"]["Directory"].place(relx = 0.5, x = 0, y = 80, anchor = "n")
+    widgets["Label"]["Flavor"].place(relx = 0.5, x = 0, y = 160, anchor = "n")
 
-    directory_prompt = Label(setting, text = "Please specify the directory of the query below")
-    directory_prompt.place(relx = 0.5, x = 0, y = 100, anchor = "n")
+    widgets["Button"]["Directory"].place(relx = 0.5, x = 130, y = 109, anchor = "n")
+    widgets["Button"]["Flavor"].place(relx = 0.5, x = 130, y = 189, anchor = "n")
+    widgets["Button"]["Proceed"].place(relx = 0.5, x = 0, y = 332, anchor = "s")
 
-    directory = Entry(setting, width = 25)
-    directory.place(relx = 0.5, x = 0, y = 140, anchor = "n")
+    widgets["Button"]["Directory"].config(command = lambda : scene_query_setdir(widgets["Entry"]["Directory"]))
+    widgets["Button"]["Flavor"].config(command = lambda : mbox.showinfo(title = "Helpful Information", message = infotext))
+    widgets["Button"]["Proceed"].config(command = lambda : sketch(layers, "None > Prop", test))
 
-    browser = Button(setting, text = "󰝰 ", width = 3)
-    browser.place(relx = 0.5, x = 130, y = 134, anchor = "n")
+    widgets["Entry"]["Name"].place(relx = 0.5, x = 0, y = 35, anchor = "n")
+    widgets["Entry"]["Directory"].place(relx = 0.5, x = 0, y = 115, anchor = "n")
 
-    browser.config(command = lambda : query_setdir(parameters, directory))
+    widgets["Combobox"]["Flavor"].place(relx = 0.5, x = 0, y = 195, anchor = "n")
 
-    flavor_prompt = Label(setting, text = "Please specify the flavor of the query below")
-    flavor_prompt.place(relx = 0.5, x = 0, y = 200, anchor = "n")
+    widgets["Checkbutton"]["Overwrite"].place(relx = 0.5, x = 40, y = 240, anchor = "nw")
+    widgets["Checkbutton"]["Blanking"].place(relx = 0.5, x = -40, y = 240, anchor = "ne")   
 
-    flavor = Combobox(setting, values = flavors, width = 23)
-    flavor.place(relx = 0.5, x = 0, y = 240, anchor = "n")
-
-    details = Button(setting, text = "󰋼 ", width = 3)
-    details.place(relx = 0.5, x = 130, y = 234, anchor = "n")
-
-    details.config(command = lambda : sketch(layers, "None > Prop", flavorcheck, parameters, None))
-
-    proceed = Button(setting, text = "Proceed")
-    proceed.place(relx = 0.5, x = 0, y = 332, anchor = "s")
-
-    proceed.config(command = lambda : sketch(layers, "None > Prop", flavorcheck, parameters, None))
-
-def backdrop_transition(layers, parameters, button):
+def stage_backdrop_transition(layers, button):
     button.destroy()
 
-    sketch(layers, "None > Scene", query, parameters, None)
+    sketch(layers, "None > Scene", scene_query)
 
-def backdrop(layers, parameters, setting):
+def stage_backdrop(layers, setting):
+    widgets = {
+        "Label" : {
+            "Title" : Label(setting, text = "Phon Query to CSV"),
+            "Subtitle" : Label(setting, text = "A Visual Interface Assistance")
+        },
+        "Button" : {
+            "Start" : Button(setting, text = "Start", width = 5),
+            "Quit" : Button(setting, text = "Quit", width = 5)
+        }
+    }
+
     root = layers["Root"]
 
-    title = Label(setting, text = "Phon Query to CSV")
-    title.place(relx = 0.5, x = 0, y = 60, anchor = "n")
+    widgets["Label"]["Title"].place(relx = 0.5, x = 0, y = 60, anchor = "n")
+    widgets["Label"]["Subtitle"].place(relx = 0.5, x = 0, y = 120, anchor = "n")
 
-    title.configure(font = font.Font(size = 32, weight = font.BOLD, underline = 1))
+    widgets["Label"]["Title"].configure(font = font.Font(size = 32, weight = font.BOLD, underline = 1))
+    widgets["Label"]["Subtitle"].configure(font = font.Font(size = 20, weight = font.BOLD))
 
-    subtitle = Label(setting, text = "A Visual Interface Assistance")
-    subtitle.place(relx = 0.5, x = 0, y = 120, anchor = "n")
-
-    subtitle.configure(font = font.Font(size = 20, weight = font.BOLD))
-
-    start = Button(setting, text = "Start", width = 5)
-    start.place(relx = 0.5, x = 0, y = 478, anchor = "n")
+    widgets["Button"]["Start"].place(relx = 0.5, x = 0, y = 478, anchor = "n")
+    widgets["Button"]["Quit"].place(relx = 0.5, x = 0, y = 520, anchor = "n")
     
-    start.config(command = lambda : backdrop_transition(layers, parameters, start))
+    widgets["Button"]["Start"].config(command = lambda : stage_backdrop_transition(layers, widgets["Button"]["Start"]))
+    widgets["Button"]["Quit"].configure(command = lambda : root.destroy())
 
-    quit = Button(setting, text = "Quit", width = 5)
-    quit.place(relx = 0.5, x = 0, y = 520, anchor = "n")
-
-    quit.configure(command = lambda : root.destroy())
-
-def sketch(layers, transition, scene, parameters, updates):
+def sketch(layers, transition, structure):
     prev, next = transition.split(" > ")
-
-    if updates:
-        for update in updates:
-            parameters[update[0]] = update[1]
 
     if prev in layers.keys():
         setting = layers[prev]
@@ -139,17 +204,19 @@ def sketch(layers, transition, scene, parameters, updates):
             setting.place(relx = 0.5, rely = 0, x = 0, y = 20, anchor = "n")
             setting.lift()
 
-        scene(layers, parameters, setting)
+        structure(layers, setting)
 
 if __name__ == "__main__":
     parameters = {
         "Query" : None,
         "Directory" : None,
-        "Flavor" : None,
-        "Phase Regex" : None,
-        "Participant Regex" : None,
-        "Target" : None,
-        "Actual" : None,
+        "Flavor" : {
+            "Name" : None,
+            "Phase Regex" : None,
+            "Participant Regex" : None,
+            "Target" : None,
+            "Actual" : None
+        },
         "Overwrite" : None,
         "Blank Repeated Labels" : None
     }
@@ -172,7 +239,7 @@ if __name__ == "__main__":
 
     font.nametofont("TkDefaultFont").configure(size = 12)
 
-    sketch(layers, "None > Stage", backdrop, parameters, None)
+    sketch(layers, "None > Stage", stage_backdrop)
 
     root.mainloop()  # Keeps the window open
 
