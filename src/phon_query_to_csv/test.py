@@ -19,74 +19,89 @@ def test(stage, parameters):
 
     print(parameters)
 
-def prop_flavor(layers, setting):
+def scene_query_getinfo(flavor):
+    presets = ("TX", "TX Blind", "Typology", "New Typology", "ITOLD", "NCJC")
+    
+    infotext = ("What is a Flavor?"
+                "\n\n"
+                "The flavor of analysis is determined according to two regex strings (for the phase and for the participant) and two booleans (for the target and for the actual). "
+                "Regex strings are strings of text representative of a pattern of text, while booleans are true-or-false values. "
+                "In this case, the regex strings match the exact phase and participant to search for, and the booleans specify which sets of phonetic data are of concern."
+                "\n\n")
+    
+    if flavor in presets:
+        infotext += "An example is provided for the currently selected flavor "
 
-    """
-    What is a Flavor?
+        if flavor == "TX":
+            infotext += "(TX) below:"
+            infotext += "\n\n"
+            infotext += "- Phase: " + r"BL-\d{1,2}|Post-\dmo|Pre|Post|Mid|Tx-\d{1,2}"
+            infotext += "\n"
+            infotext += "- Participant: " + r"\w\d\d\d"
+            infotext += "\n"
+            infotext += "- Target: True"
+            infotext += "\n"
+            infotext += "- Actual: False"
 
-    The flavor of analysis determines what kind of data is analyzed. A flavor is composed of four parts, 
-    namely two regex strings, one for the phase and another for the participant, and two booleans, one for
-    the target and another for the actual. A regex (regular expression) is a string of text that represents
-    a (usually recurring) pattern of text found with other strings of text it may refer to. A boolean is
-    a true-or-false value. In this case, the regex strings are meant for identifying the exact phase and
-    participant to analyze, and the booleans are meant for specifying which sets of phonetic data are of
-    concern.
+        if flavor == "TX Blind":
+            infotext += "(TX Blind) below:"
+            infotext += "\n\n"
+            infotext += "- Phase: " + r"\w{1}\d{4}"
+            infotext += "\n"
+            infotext += "- Participant: " + r"\w(?=\d{4})"
+            infotext += "\n"
+            infotext += "- Target: True"
+            infotext += "\n"
+            infotext += "- Actual: True"
 
-    [IF NOT A CUSTOM FLAVOR]
-    The following details specifications of the currently selected flavor:
+        if flavor == "Typology":
+            infotext += "(Typology) below:"
+            infotext += "\n\n"
+            infotext += "- Phase: " + r"p[IVX]+"
+            infotext += "\n"
+            infotext += "- Participant: " + r"\d\d\d"
+            infotext += "\n"
+            infotext += "- Target: False"
+            infotext += "\n"
+            infotext += "- Actual: True"
 
-    - Name: [Name]
-    - Phase Regex: [Phase Regex]
-    - Participant Regex: [Participant Regex]
-    - Target: [Target]
-    - Actual: [Actual]
-    """
+        if flavor == "New Typology":
+            infotext += "(New Typology) below:"
+            infotext += "\n\n"
+            infotext += "- Phase: " + r"no phases"
+            infotext += "\n"
+            infotext += "- Participant: " + r"\w{3,4}\d\d"
+            infotext += "\n"
+            infotext += "- Target: False"
+            infotext += "\n"
+            infotext += "- Actual: True"
 
-def scene_query_getinfo(layers, setting, flavor):
-    specs = {
-        "Phase Regex" : None,
-        "Participant Regex" : None,
-        "Target" : None,
-        "Actual" : None
-    }
+        if flavor == "ITOLD":
+            infotext += "(ITOLD) below:"
+            infotext += "\n\n"
+            infotext += "- Phase: " + r"no phases"
+            infotext += "\n"
+            infotext += "- Participant: " + r"\w{4}\d{2}"
+            infotext += "\n"
+            infotext += "- Target: True"
+            infotext += "\n"
+            infotext += "- Actual: True"
 
-    if flavor == "TX":
-        specs["Phase Regex"] = r"BL-\d{1,2}|Post-\dmo|Pre|Post|Mid|Tx-\d{1,2}"
-        specs["Participant Regex"] = r"\w\d\d\d"
-        specs["Target"] = True
-        specs["Actual"] = True
+        if flavor == "NCJC":
+            infotext += "(NCJC) below:"
+            infotext += "\n\n"
+            infotext += "- Phase: " + r"Timepoint\d|Pre|Post|Fall|Spring|Winter|Summer"
+            infotext += "\n"
+            infotext += "- Participant: " + r"\w{1}\d{4}"
+            infotext += "\n"
+            infotext += "- Target: True"
+            infotext += "\n"
+            infotext += "- Actual: True"
 
-    if flavor == "TX Blind":
-        specs["Phase Regex"] = r"\w{1}\d{4}"
-        specs["Participant Regex"] = r"\w(?=\d{4})"
-        specs["Target"] = True
-        specs["Actual"] = True
+    else:
+        infotext += "To see an example, select one of the preset flavors in the dropdown box."
 
-    if flavor == "Typology":
-        specs["Phase Regex"] = r"p[IVX]+"
-        specs["Participant Regex"] = r"\d\d\d"
-        specs["Target"] = False
-        specs["Actual"] = True
-
-    if flavor == "New Typology":
-        specs["Phase Regex"] = r"no phases"
-        specs["Participant Regex"] = r"\w{3,4}\d\d"
-        specs["Target"] = False
-        specs["Actual"] = True
-
-    if flavor == "ITOLD":
-        specs["Phase Regex"] = r"no phases"
-        specs["Participant Regex"] = r"\w{4}\d{2}"
-        specs["Target"] = True
-        specs["Actual"] = True
-
-    if flavor == "NCJC":
-        specs["Phase Regex"] = r"Timepoint\d|Pre|Post|Fall|Spring|Winter|Summer"
-        specs["Participant Regex"] = r"\w{1}\d{4}"
-        specs["Target"] = True
-        specs["Actual"] = True
-
-    sketch(layers, "None > Prop", prop_flavor)
+    mbox.showinfo(title = "Helpful Information", message = infotext)
 
 def scene_query_setdir(entry):
     dir = dialog.askdirectory(initialdir = "/", title = "Select a Directory")
@@ -120,15 +135,6 @@ def scene_query(layers, setting):
         }
     }
 
-    infotext = ("What is a Flavor?\n\n"
-                "The flavor of analysis determines what kind of data is analyzed. "
-                "A flavor is composed of four parts, namely two regex strings, one for the phase and another for the participant, "
-                "and two booleans, one for the target and another for the actual. "
-                "A regex (regular expression) is a string of text that represents a (usually recurring) pattern of text found with other strings of text it may refer to. "
-                "A boolean is a true-or-false value.\n\n"
-                "In this case, the regex strings are meant for identifying the exact phase and participant to analyze, "
-                "and the booleans are meant for specifying which sets of phonetic data are of concern.")
-
     widgets["Label"]["Name"].place(relx = 0.5, x = 0, y = 0, anchor = "n")
     widgets["Label"]["Directory"].place(relx = 0.5, x = 0, y = 80, anchor = "n")
     widgets["Label"]["Flavor"].place(relx = 0.5, x = 0, y = 160, anchor = "n")
@@ -138,7 +144,7 @@ def scene_query(layers, setting):
     widgets["Button"]["Proceed"].place(relx = 0.5, x = 0, y = 332, anchor = "s")
 
     widgets["Button"]["Directory"].config(command = lambda : scene_query_setdir(widgets["Entry"]["Directory"]))
-    widgets["Button"]["Flavor"].config(command = lambda : mbox.showinfo(title = "Helpful Information", message = infotext))
+    widgets["Button"]["Flavor"].config(command = lambda : scene_query_getinfo(widgets["Combobox"]["Flavor"].get()))
     widgets["Button"]["Proceed"].config(command = lambda : sketch(layers, "None > Prop", test))
 
     widgets["Entry"]["Name"].place(relx = 0.5, x = 0, y = 35, anchor = "n")
