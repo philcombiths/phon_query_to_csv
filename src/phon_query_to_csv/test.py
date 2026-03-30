@@ -13,13 +13,83 @@ from tkinter import font
 from tkinter import filedialog as dialog
 from tkinter import messagebox as mbox
 
-def test(stage, parameters):
-    text = Label(stage, text = "Test!")
-    text.place(relx = 0.5, x = 0, y = 20, anchor = "center")
+from tkinter import StringVar
+from tkinter import BooleanVar
 
-    print(parameters)
+def check(layers, parameters, setting):
+    return
+    
+def specify(layers, parameters, setting):
+    return
 
-def scene_query_getinfo(flavor):
+def query_getspecs(flavor):
+    specs = {
+        "Phase" : None,
+        "Participant" : None,
+        "Target" : None,
+        "Actual" : None
+    }
+
+    if flavor == "TX":
+        specs["Phase"] = r"BL-\d{1,2}|Post-\dmo|Pre|Post|Mid|Tx-\d{1,2}"
+        specs["Participant"] = r"\w\d\d\d"
+        specs["Target"] = True
+        specs["Actual"] = False
+
+    if flavor == "TX Blind":
+        specs["Phase"] = r"\w{1}\d{4}"
+        specs["Participant"] = r"\w(?=\d{4})"
+        specs["Target"] = True
+        specs["Actual"] = True
+
+    if flavor == "Typology":
+        specs["Phase"] = r"p[IVX]+"
+        specs["Participant"] = r"\d\d\d"
+        specs["Target"] = False
+        specs["Actual"] = True
+
+    if flavor == "New Typology":
+        specs["Phase"] = r"no phases"
+        specs["Participant"] = r"\w{3,4}\d\d"
+        specs["Target"] = False
+        specs["Actual"] = True
+
+    if flavor == "ITOLD":
+        specs["Phase"] = r"no phases"
+        specs["Participant"] = r"\w{4}\d{2}"
+        specs["Target"] = True
+        specs["Actual"] = True
+
+    if flavor == "NCJC":
+        specs["Phase"] = r"Timepoint\d|Pre|Post|Fall|Spring|Winter|Summer"
+        specs["Participant"] = r"\w{1}\d{4}"
+        specs["Target"] = True
+        specs["Actual"] = True
+
+    return specs
+
+def query_transition(layers, parameters, updates):
+    parameters["Query"] = updates[0].get()
+    parameters["Directory"] = updates[1].get()
+    parameters["Flavor"]["Name"] = updates[2].get()
+    parameters["Overwrite"] = updates[3].get()
+    parameters["Blanking"] = updates[4].get()
+
+    presets = ("TX", "TX Blind", "Typology", "New Typology", "ITOLD", "NCJC")
+
+    if parameters["Flavor"]["Name"] in presets:
+        specs = query_getspecs(parameters["Flavor"]["Name"])
+
+        parameters["Flavor"]["Phase"] = specs["Phase"]
+        parameters["Flavor"]["Participant"] = specs["Participant"]
+        parameters["Flavor"]["Target"] = specs["Target"]
+        parameters["Flavor"]["Actual"] = specs["Actual"]
+
+        sketch(layers, parameters, "Scene", check)
+    else:
+        sketch(layers, parameters, "Scene", specify)
+
+def query_getinfo(flavor):
     presets = ("TX", "TX Blind", "Typology", "New Typology", "ITOLD", "NCJC")
     
     infotext = ("What is a Flavor?"
@@ -30,87 +100,36 @@ def scene_query_getinfo(flavor):
                 "\n\n")
     
     if flavor in presets:
-        infotext += "An example is provided for the currently selected flavor "
+        specs = query_getspecs(flavor)
 
-        if flavor == "TX":
-            infotext += "(TX) below:"
-            infotext += "\n\n"
-            infotext += "- Phase: " + r"BL-\d{1,2}|Post-\dmo|Pre|Post|Mid|Tx-\d{1,2}"
-            infotext += "\n"
-            infotext += "- Participant: " + r"\w\d\d\d"
-            infotext += "\n"
-            infotext += "- Target: True"
-            infotext += "\n"
-            infotext += "- Actual: False"
-
-        if flavor == "TX Blind":
-            infotext += "(TX Blind) below:"
-            infotext += "\n\n"
-            infotext += "- Phase: " + r"\w{1}\d{4}"
-            infotext += "\n"
-            infotext += "- Participant: " + r"\w(?=\d{4})"
-            infotext += "\n"
-            infotext += "- Target: True"
-            infotext += "\n"
-            infotext += "- Actual: True"
-
-        if flavor == "Typology":
-            infotext += "(Typology) below:"
-            infotext += "\n\n"
-            infotext += "- Phase: " + r"p[IVX]+"
-            infotext += "\n"
-            infotext += "- Participant: " + r"\d\d\d"
-            infotext += "\n"
-            infotext += "- Target: False"
-            infotext += "\n"
-            infotext += "- Actual: True"
-
-        if flavor == "New Typology":
-            infotext += "(New Typology) below:"
-            infotext += "\n\n"
-            infotext += "- Phase: " + r"no phases"
-            infotext += "\n"
-            infotext += "- Participant: " + r"\w{3,4}\d\d"
-            infotext += "\n"
-            infotext += "- Target: False"
-            infotext += "\n"
-            infotext += "- Actual: True"
-
-        if flavor == "ITOLD":
-            infotext += "(ITOLD) below:"
-            infotext += "\n\n"
-            infotext += "- Phase: " + r"no phases"
-            infotext += "\n"
-            infotext += "- Participant: " + r"\w{4}\d{2}"
-            infotext += "\n"
-            infotext += "- Target: True"
-            infotext += "\n"
-            infotext += "- Actual: True"
-
-        if flavor == "NCJC":
-            infotext += "(NCJC) below:"
-            infotext += "\n\n"
-            infotext += "- Phase: " + r"Timepoint\d|Pre|Post|Fall|Spring|Winter|Summer"
-            infotext += "\n"
-            infotext += "- Participant: " + r"\w{1}\d{4}"
-            infotext += "\n"
-            infotext += "- Target: True"
-            infotext += "\n"
-            infotext += "- Actual: True"
-
+        infotext += "An example is provided for the currently selected flavor (" + flavor + ") below:"
+        infotext += "\n\n"
+        infotext += "- Phase: " + str(specs["Phase"])
+        infotext += "\n"
+        infotext += "- Participant: " + str(specs["Participant"])
+        infotext += "\n"
+        infotext += "- Target: " + str(specs["Target"])
+        infotext += "\n"
+        infotext += "- Actual: " + str(specs["Actual"])
     else:
         infotext += "To see an example, select one of the preset flavors in the dropdown box."
 
     mbox.showinfo(title = "Helpful Information", message = infotext)
 
-def scene_query_setdir(entry):
+def query_setdir(entry):
     dir = dialog.askdirectory(initialdir = "/", title = "Select a Directory")
 
     if dir:
         entry.delete(0, "end")
         entry.insert(0, dir)
 
-def scene_query(layers, setting):
+def query(layers, parameters, setting):
+    name = StringVar()
+    directory = StringVar()
+    flavor = StringVar()
+    overwrite = BooleanVar()
+    blanking = BooleanVar()
+
     widgets = {
         "Label" : {
             "Name" : Label(setting, text = "Please specify the name of the query below"),
@@ -123,15 +142,15 @@ def scene_query(layers, setting):
             "Proceed" : Button(setting, text = "Proceed")
         },
         "Entry" : {
-            "Name" : Entry(setting, width = 25),
-            "Directory" : Entry(setting, width = 25)
+            "Name" : Entry(setting, textvariable = name, width = 25),
+            "Directory" : Entry(setting, textvariable = directory, width = 25)
         },
         "Combobox" : {
-            "Flavor" : Combobox(setting, values = ("TX", "TX Blind", "Typology", "New Typology", "ITOLD", "NCJC"), width = 23)
+            "Flavor" : Combobox(setting, textvariable = flavor, values = ("TX", "TX Blind", "Typology", "New Typology", "ITOLD", "NCJC"), width = 23)
         },
         "Checkbutton" : {
-            "Overwrite" : Checkbutton(setting, text = "Overwrite existing files"),
-            "Blanking" : Checkbutton(setting, text = "Blank out repeated labels")
+            "Overwrite" : Checkbutton(setting, variable = overwrite, text = "Overwrite existing files"),
+            "Blanking" : Checkbutton(setting, variable = blanking, text = "Blank out repeated labels")
         }
     }
 
@@ -143,9 +162,9 @@ def scene_query(layers, setting):
     widgets["Button"]["Flavor"].place(relx = 0.5, x = 130, y = 189, anchor = "n")
     widgets["Button"]["Proceed"].place(relx = 0.5, x = 0, y = 332, anchor = "s")
 
-    widgets["Button"]["Directory"].config(command = lambda : scene_query_setdir(widgets["Entry"]["Directory"]))
-    widgets["Button"]["Flavor"].config(command = lambda : scene_query_getinfo(widgets["Combobox"]["Flavor"].get()))
-    widgets["Button"]["Proceed"].config(command = lambda : sketch(layers, "None > Prop", test))
+    widgets["Button"]["Directory"].config(command = lambda : query_setdir(widgets["Entry"]["Directory"]))
+    widgets["Button"]["Flavor"].config(command = lambda : query_getinfo(flavor))
+    widgets["Button"]["Proceed"].config(command = lambda : query_transition(layers, parameters, [name, directory, flavor, overwrite, blanking]))
 
     widgets["Entry"]["Name"].place(relx = 0.5, x = 0, y = 35, anchor = "n")
     widgets["Entry"]["Directory"].place(relx = 0.5, x = 0, y = 115, anchor = "n")
@@ -155,12 +174,12 @@ def scene_query(layers, setting):
     widgets["Checkbutton"]["Overwrite"].place(relx = 0.5, x = 40, y = 240, anchor = "nw")
     widgets["Checkbutton"]["Blanking"].place(relx = 0.5, x = -40, y = 240, anchor = "ne")   
 
-def stage_backdrop_transition(layers, button):
+def backdrop_transition(layers, parameters, button):
     button.destroy()
 
-    sketch(layers, "None > Scene", scene_query)
+    sketch(layers, parameters, "Scene", query)
 
-def stage_backdrop(layers, setting):
+def backdrop(layers, parameters, setting):
     widgets = {
         "Label" : {
             "Title" : Label(setting, text = "Phon Query to CSV"),
@@ -183,34 +202,25 @@ def stage_backdrop(layers, setting):
     widgets["Button"]["Start"].place(relx = 0.5, x = 0, y = 478, anchor = "n")
     widgets["Button"]["Quit"].place(relx = 0.5, x = 0, y = 520, anchor = "n")
     
-    widgets["Button"]["Start"].config(command = lambda : stage_backdrop_transition(layers, widgets["Button"]["Start"]))
+    widgets["Button"]["Start"].config(command = lambda : backdrop_transition(layers, parameters, widgets["Button"]["Start"]))
     widgets["Button"]["Quit"].configure(command = lambda : root.destroy())
 
-def sketch(layers, transition, structure):
-    prev, next = transition.split(" > ")
-
-    if prev in layers.keys():
-        setting = layers[prev]
+def sketch(layers, parameters, transition, structure):
+    if transition in layers.keys():
+        setting = layers[transition]
 
         for widget in setting.winfo_children():
             widget.place_forget()
 
-    if next in layers.keys():
-        setting = layers[next]
-
-        if next == "Stage":
+        if transition == "Stage":
             setting.place(relx = 0.5, rely = 0, x = 0, y = 0, anchor = "n")
-            setting.lift()
 
-        if next == "Scene":
+        if transition == "Scene":
             setting.place(relx = 0.5, rely = 0, x = 0, y = 180, anchor = "n")
-            setting.lift()
+            
+        setting.lift()
 
-        if next == "Prop":
-            setting.place(relx = 0.5, rely = 0, x = 0, y = 20, anchor = "n")
-            setting.lift()
-
-        structure(layers, setting)
+        structure(layers, parameters, setting)
 
 if __name__ == "__main__":
     parameters = {
@@ -218,8 +228,8 @@ if __name__ == "__main__":
         "Directory" : None,
         "Flavor" : {
             "Name" : None,
-            "Phase Regex" : None,
-            "Participant Regex" : None,
+            "Phase" : None,
+            "Participant" : None,
             "Target" : None,
             "Actual" : None
         },
@@ -234,18 +244,16 @@ if __name__ == "__main__":
 
     stage = Frame(root, width = 800, height = 600, borderwidth = 1, relief = "solid")
     scene = Frame(stage, width = 680, height = 332, borderwidth = 1, relief = "solid")
-    prop = Frame(scene, width = 600, height = 280, borderwidth = 5, relief = "solid")
 
     layers = {
         "Root" : root,
         "Stage" : stage,
-        "Scene" : scene,
-        "Prop" : prop
+        "Scene" : scene
     }
 
     font.nametofont("TkDefaultFont").configure(size = 12)
 
-    sketch(layers, "None > Stage", stage_backdrop)
+    sketch(layers, parameters, "Stage", backdrop)
 
     root.mainloop()  # Keeps the window open
 
@@ -254,7 +262,6 @@ if __name__ == "__main__":
 """
 
 Notes for improvemenet:
-- Specify technical details (e.g. what "regex" means, what files to look for in a directory)
 - End goal: give user multiple ways to determine accuracy
 
 """
