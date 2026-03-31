@@ -18,9 +18,60 @@ from tkinter import BooleanVar
 
 def check(layers, parameters, setting):
     return
+
+def specify_transition(layers, parameters, updates):
+    if updates[2].get() or updates[3].get():
+        parameters["Flavor"]["Phase"] = updates[0].get()
+        parameters["Flavor"]["Participant"] = updates[1].get()
+        parameters["Flavor"]["Target"] = updates[2].get()
+        parameters["Flavor"]["Actual"] = updates[3].get()
+
+        sketch(layers, parameters, "Scene", check)
+    else:
+        mbox.showerror(title = "Unable to proceed", message = "Please select at least one of Target and Actual.")
     
 def specify(layers, parameters, setting):
-    return
+    phase = StringVar()
+    participant = StringVar()
+    target = BooleanVar()
+    actual = BooleanVar()
+
+    widgets = {
+        "Label" : {
+            "Name" : Label(setting, text = ("Custom Flavor: " + parameters["Flavor"]["Name"])),
+            "Regex" : Label(setting, text = "Please specify the regex strings"),
+            "Phase" : Label(setting, text = "Phase"),
+            "Participant" : Label(setting, text = "Participant"),
+            "Booleans" : Label(setting, text = "Please specify if Target and / or Actual should be analyzed")
+        },
+        "Button" : {
+            "Proceed" : Button(setting, text = "Proceed")
+        },
+        "Entry" : {
+            "Phase" : Entry(setting, textvariable = phase, width = 25),
+            "Participant" : Entry(setting, textvariable = participant, width = 25)
+        },
+        "Checkbutton" : {
+            "Target" : Checkbutton(setting, variable = target, text = "Analyze Target"),
+            "Actual" : Checkbutton(setting, variable = actual, text = "Analyze Actual")
+        }
+    }
+
+    widgets["Label"]["Name"].place(relx = 0.5, x = 0, y = 0, anchor = "n")
+    widgets["Label"]["Regex"].place(relx = 0.5, x = 0, y = 55, anchor = "n")
+    widgets["Label"]["Phase"].place(relx = 0.5, x = -125, y = 90, anchor = "n")
+    widgets["Label"]["Participant"].place(relx = 0.5, x = 125, y = 90, anchor = "n")
+    widgets["Label"]["Booleans"].place(relx = 0.5, x = 0, y = 190, anchor = "n")
+
+    widgets["Button"]["Proceed"].place(relx = 0.5, x = 0, y = 332, anchor = "s")
+
+    widgets["Button"]["Proceed"].config(command = lambda : specify_transition(layers, parameters, [phase, participant, target, actual]))
+
+    widgets["Entry"]["Phase"].place(relx = 0.5, x = -125, y = 125, anchor = "n")
+    widgets["Entry"]["Participant"].place(relx = 0.5, x = 125, y = 125, anchor = "n")
+
+    widgets["Checkbutton"]["Target"].place(relx = 0.5, x = 60, y = 225, anchor = "nw")
+    widgets["Checkbutton"]["Actual"].place(relx = 0.5, x = -60, y = 225, anchor = "ne")
 
 def query_getspecs(flavor):
     specs = {
@@ -163,7 +214,7 @@ def query(layers, parameters, setting):
     widgets["Button"]["Proceed"].place(relx = 0.5, x = 0, y = 332, anchor = "s")
 
     widgets["Button"]["Directory"].config(command = lambda : query_setdir(widgets["Entry"]["Directory"]))
-    widgets["Button"]["Flavor"].config(command = lambda : query_getinfo(flavor))
+    widgets["Button"]["Flavor"].config(command = lambda : query_getinfo(flavor.get()))
     widgets["Button"]["Proceed"].config(command = lambda : query_transition(layers, parameters, [name, directory, flavor, overwrite, blanking]))
 
     widgets["Entry"]["Name"].place(relx = 0.5, x = 0, y = 35, anchor = "n")
@@ -172,7 +223,7 @@ def query(layers, parameters, setting):
     widgets["Combobox"]["Flavor"].place(relx = 0.5, x = 0, y = 195, anchor = "n")
 
     widgets["Checkbutton"]["Overwrite"].place(relx = 0.5, x = 40, y = 240, anchor = "nw")
-    widgets["Checkbutton"]["Blanking"].place(relx = 0.5, x = -40, y = 240, anchor = "ne")   
+    widgets["Checkbutton"]["Blanking"].place(relx = 0.5, x = -40, y = 240, anchor = "ne")
 
 def backdrop_transition(layers, parameters, button):
     button.destroy()
@@ -234,7 +285,7 @@ if __name__ == "__main__":
             "Actual" : None
         },
         "Overwrite" : None,
-        "Blank Repeated Labels" : None
+        "Blanking" : None
     }
 
     root = Tk()
