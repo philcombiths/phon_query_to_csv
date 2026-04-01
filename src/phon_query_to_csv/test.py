@@ -16,8 +16,59 @@ from tkinter import messagebox as mbox
 from tkinter import StringVar
 from tkinter import BooleanVar
 
+def check_transition(layers, parameters, proceed):
+    if proceed:
+        print(parameters)
+    else:
+        for parameter in parameters.keys():
+            if isinstance(parameters[parameter], dict):
+                for subparameter in parameters[parameter].keys():
+                    parameters[parameter][subparameter] = None
+            else:
+                parameters[parameter] = None
+
+        sketch(layers, parameters, "Scene", query)
+
 def check(layers, parameters, setting):
-    return
+    widgets = {
+        "Label" : {
+            "Name" : Label(setting, text = parameters["Query"]),
+            "Flavor" : Label(setting, text = "Please specify the flavor of the query below")
+        },
+        "Button" : {
+            "Specs" : Button(setting, text = "Specifications", width = 25),
+            "Restart" : Button(setting, text = "Go Back"),
+            "Run" : Button(setting, text = "Proceed")
+        },
+        "Entry" : {
+            "Phase" : Entry(setting, textvariable = phase, width = 25),
+            "Participant" : Entry(setting, textvariable = participant, width = 25)
+        },
+        "Checkbutton" : {
+            "Target" : Checkbutton(setting, variable = target, text = "Analyze Target"),
+            "Actual" : Checkbutton(setting, variable = actual, text = "Analyze Actual")
+        }
+    }
+
+    widgets["Label"]["Name"].place(relx = 0.5, x = 0, y = 0, anchor = "n")
+    widgets["Label"]["Regex"].place(relx = 0.5, x = 0, y = 55, anchor = "n")
+    widgets["Label"]["Phase"].place(relx = 0.5, x = -125, y = 90, anchor = "n")
+    widgets["Label"]["Participant"].place(relx = 0.5, x = 125, y = 90, anchor = "n")
+    widgets["Label"]["Booleans"].place(relx = 0.5, x = 0, y = 190, anchor = "n")
+
+    widgets["Button"]["Help"].place(relx = 0.5, x = 145, y = 52, anchor = "n")
+    widgets["Button"]["Back"].place(relx = 0.5, x = -50, y = 332, anchor = "s")
+    widgets["Button"]["Proceed"].place(relx = 0.5, x = 50, y = 332, anchor = "s")
+
+    widgets["Button"]["Help"].config(command = lambda : mbox.showinfo(title = "Helpful Information", message = helptext))
+    widgets["Button"]["Back"].config(command = lambda : check_transition(layers, parameters, False))
+    widgets["Button"]["Proceed"].config(command = lambda : check_transition(layers, parameters, True))
+
+    widgets["Entry"]["Phase"].place(relx = 0.5, x = -125, y = 125, anchor = "n")
+    widgets["Entry"]["Participant"].place(relx = 0.5, x = 125, y = 125, anchor = "n")
+
+    widgets["Checkbutton"]["Target"].place(relx = 0.5, x = 60, y = 225, anchor = "nw")
+    widgets["Checkbutton"]["Actual"].place(relx = 0.5, x = -60, y = 225, anchor = "ne")
 
 def specify_transition(layers, parameters, updates):
     if updates[0].get() and updates[1].get():
