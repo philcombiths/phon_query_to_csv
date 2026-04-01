@@ -20,21 +20,31 @@ def check(layers, parameters, setting):
     return
 
 def specify_transition(layers, parameters, updates):
-    if updates[2].get() or updates[3].get():
-        parameters["Flavor"]["Phase"] = updates[0].get()
-        parameters["Flavor"]["Participant"] = updates[1].get()
-        parameters["Flavor"]["Target"] = updates[2].get()
-        parameters["Flavor"]["Actual"] = updates[3].get()
+    if updates[0].get() and updates[1].get():
+        if updates[2].get() or updates[3].get():
+            parameters["Flavor"]["Phase"] = updates[0].get()
+            parameters["Flavor"]["Participant"] = updates[1].get()
+            parameters["Flavor"]["Target"] = updates[2].get()
+            parameters["Flavor"]["Actual"] = updates[3].get()
 
-        sketch(layers, parameters, "Scene", check)
+            sketch(layers, parameters, "Scene", check)
+        else:
+            mbox.showerror(title = "Unable to proceed", message = "Please make sure at least one of Target and Actual is selected.")
     else:
-        mbox.showerror(title = "Unable to proceed", message = "Please select at least one of Target and Actual.")
+        mbox.showerror(title = "Unable to proceed", message = "Please make sure the phase and participant regex strings are both specified.")
     
 def specify(layers, parameters, setting):
     phase = StringVar()
     participant = StringVar()
     target = BooleanVar()
     actual = BooleanVar()
+
+    helptext = ("What is a regex?"
+                "\n\n"
+                "Regex strings are strings of text representative of a pattern of text. "
+                "In this case, the regex strings match the exact phase and participant to search for."
+                "\n\n"
+                "As an example, the string \"" + r"\w(?=\d{4})" + "\" would match to any string beginning with a word character followed by four digits.")
 
     widgets = {
         "Label" : {
@@ -45,6 +55,7 @@ def specify(layers, parameters, setting):
             "Booleans" : Label(setting, text = "Please specify if Target and / or Actual should be analyzed")
         },
         "Button" : {
+            "Help" : Button(setting, text = "󰋼 ", width = 3),
             "Proceed" : Button(setting, text = "Proceed")
         },
         "Entry" : {
@@ -63,8 +74,10 @@ def specify(layers, parameters, setting):
     widgets["Label"]["Participant"].place(relx = 0.5, x = 125, y = 90, anchor = "n")
     widgets["Label"]["Booleans"].place(relx = 0.5, x = 0, y = 190, anchor = "n")
 
+    widgets["Button"]["Help"].place(relx = 0.5, x = 145, y = 52, anchor = "n")
     widgets["Button"]["Proceed"].place(relx = 0.5, x = 0, y = 332, anchor = "s")
 
+    widgets["Button"]["Help"].config(command = lambda : mbox.showinfo(title = "Helpful Information", message = helptext))
     widgets["Button"]["Proceed"].config(command = lambda : specify_transition(layers, parameters, [phase, participant, target, actual]))
 
     widgets["Entry"]["Phase"].place(relx = 0.5, x = -125, y = 125, anchor = "n")
@@ -120,25 +133,28 @@ def query_getspecs(flavor):
     return specs
 
 def query_transition(layers, parameters, updates):
-    parameters["Query"] = updates[0].get()
-    parameters["Directory"] = updates[1].get()
-    parameters["Flavor"]["Name"] = updates[2].get()
-    parameters["Overwrite"] = updates[3].get()
-    parameters["Blanking"] = updates[4].get()
-
     presets = ("TX", "TX Blind", "Typology", "New Typology", "ITOLD", "NCJC")
 
-    if parameters["Flavor"]["Name"] in presets:
-        specs = query_getspecs(parameters["Flavor"]["Name"])
+    if updates[0].get() and updates[1].get() and updates[2].get():
+        parameters["Query"] = updates[0].get()
+        parameters["Directory"] = updates[1].get()
+        parameters["Flavor"]["Name"] = updates[2].get()
+        parameters["Overwrite"] = updates[3].get()
+        parameters["Blanking"] = updates[4].get()
 
-        parameters["Flavor"]["Phase"] = specs["Phase"]
-        parameters["Flavor"]["Participant"] = specs["Participant"]
-        parameters["Flavor"]["Target"] = specs["Target"]
-        parameters["Flavor"]["Actual"] = specs["Actual"]
+        if parameters["Flavor"]["Name"] in presets:
+            specs = query_getspecs(parameters["Flavor"]["Name"])
 
-        sketch(layers, parameters, "Scene", check)
+            parameters["Flavor"]["Phase"] = specs["Phase"]
+            parameters["Flavor"]["Participant"] = specs["Participant"]
+            parameters["Flavor"]["Target"] = specs["Target"]
+            parameters["Flavor"]["Actual"] = specs["Actual"]
+
+            sketch(layers, parameters, "Scene", check)
+        else:
+            sketch(layers, parameters, "Scene", specify)
     else:
-        sketch(layers, parameters, "Scene", specify)
+        mbox.showerror(title = "Unable to proceed", message = "Please make sure the query name, directory, and flavor are all specified.")
 
 def query_getinfo(flavor):
     presets = ("TX", "TX Blind", "Typology", "New Typology", "ITOLD", "NCJC")
@@ -148,12 +164,14 @@ def query_getinfo(flavor):
                 "The flavor of analysis is determined according to two regex strings (for the phase and for the participant) and two booleans (for the target and for the actual). "
                 "Regex strings are strings of text representative of a pattern of text, while booleans are true-or-false values. "
                 "In this case, the regex strings match the exact phase and participant to search for, and the booleans specify which sets of phonetic data are of concern."
+                "\n\n"
+                "As an example of a regex, the string \"" + r"\w(?=\d{4})" + "\" would match to any string beginning with a word character followed by four digits."
                 "\n\n")
     
     if flavor in presets:
         specs = query_getspecs(flavor)
 
-        infotext += "An example is provided for the currently selected flavor (" + flavor + ") below:"
+        infotext += "A full example is provided for the currently selected flavor (" + flavor + ") below:"
         infotext += "\n\n"
         infotext += "- Phase: " + str(specs["Phase"])
         infotext += "\n"
@@ -163,7 +181,7 @@ def query_getinfo(flavor):
         infotext += "\n"
         infotext += "- Actual: " + str(specs["Actual"])
     else:
-        infotext += "To see an example, select one of the preset flavors in the dropdown box."
+        infotext += "To see a full example, select one of the preset flavors in the dropdown box."
 
     mbox.showinfo(title = "Helpful Information", message = infotext)
 
