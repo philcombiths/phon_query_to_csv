@@ -16,46 +16,158 @@ from tkinter import messagebox as mbox
 
 from tkinter import StringVar
 from tkinter import BooleanVar
-from tkinter import IntVar
 
 from os.path import isdir
 
-import time
+import threading
+import queue
+import logging
+import time  # TEMP
 
-def run_progress(setting, status, progress):
-    if progress["value"] == 25:
-        status["text"] = "It's going..."
+from phon_query_to_csv.logging_config import setup_logging
+from phon_query_to_csv.gen_csv import gen_csv
+from phon_query_to_csv.merge_csv import merge_csv
+from phon_query_to_csv.calculate_accuracy import calculate_accuracy
+from phon_query_to_csv.phone_data_expander import phone_data_expander
+from phon_query_to_csv.create_pivot_table import create_pivot_table
+# from phon_query_to_csv.column_match import column_match # Optional
 
-    if progress["value"] == 50:
-        status["text"] = "We're halfway..."
+log = setup_logging(logging.INFO, __name__)
 
-    if progress["value"] == 75:
-        status["text"] = "Almost there..."
+"""
+Analysis Progress
 
-    if progress["value"] == 100:
-        status["text"] = "Complete!"
+create_pivot_table {
+    Selections
 
-    if progress["value"] < 100:
-        progress["value"] += 1
-        setting.after(250, run_progress, setting, status, progress)
+    Which variable do you want to group by? (Multiple selections) {
+        Date, Record, Group, Tier, Range, IPA Target, IPA Actual, Alignment, Result, filename, Query Source, Analysis, Phase, Language, Participant, Speaker, Probe, Probe Type, IPA Alignment, Tiers, Notes, Orthography, IPA Target Words, IPA Actual Words, IPA Alignment Words, Accuracy, Deletion, Substitution, ID-Actual-Lang, Actual Num Segs, A1, A1_Base, A1_voice, A1_place, A1_manner, A1_sonority, A1_EML, A2, A2_Base, A2_voice, A2_place, A2_manner, A2_sonority, A2_EML, A3, A3_Base, A3_voice, A3_place, A3_manner, A3_sonority, A3_EML, ID-Target-Lang, Target Type, Target Num Segs, T1, T1_Base, T1_voice, T1_place, T1_manner, T1_sonority, T1_EML, T2, T2_Base, T2_voice, T2_place, T2_manner, T2_sonority, T2_EML, T3, T3_Base, T3_voice, T3_place, T3_manner, T3_sonority, T3_EML
+    
+        Default : Participant, Phase, Language, Analysis, IPA Target
+    }
+
+    Which value(s) do you want to filter [VARIABLE] by? (N times for every variable; multiple selections) {
+        Varies
+    }
+
+    Which would you like to be your values? (Only one) {
+        Date, Record, Group, Tier, Range, IPA Actual, Alignment, Result, filename, Query Source, Speaker, Probe, Probe Type, IPA Alignment, Tiers, Notes, Orthography, IPA Target Words, IPA Actual Words, IPA Alignment Words, Accuracy, Deletion, Substitution, ID-Actual-Lang, Actual Num Segs, A1, A1_Base, A1_voice, A1_place, A1_manner, A1_sonority, A1_EML, A2, A2_Base, A2_voice, A2_place, A2_manner, A2_sonority, A2_EML, A3, A3_Base, A3_voice, A3_place, A3_manner, A3_sonority, A3_EML, ID-Target-Lang, Target Type, Target Num Segs, T1, T1_Base, T1_voice, T1_place, T1_manner, T1_sonority, T1_EML, T2, T2_Base, T2_voice, T2_place, T2_manner, T2_sonority, T2_EML, T3, T3_Base, T3_voice, T3_place, T3_manner, T3_sonority, T3_EML
+    }
+
+    Which aggregation function would you like to apply? (If value numerical) {
+        mean, sum, count, min, max, median, std
+
+        Default : mean
+    }
+}
+
+Program completion message {
+    Pivot Table Created
+    
+    The output file is located at the following directory:
+    [DIRECTORY]
+    
+    Below is a preview of the pivot table:
+    [SLICE]
+
+    You may now quit the program.
+}
+
+"""
+
+def worker(progress_queue, parameters, results):
+    def send_progress(start, end, percent, label):
+        absolute = start + (end - start) * percent / 100
+        progress_queue.put((absolute, label))
+
+    start, end = 10, 20
+    send_progress(start, end, 0, "Generating CSV files...")
+    results["gen_csv"] = gen_csv(parameters["Directory"],
+                                 parameters["Query"],
+                                 parameters["Flavor"]["Phase"],
+                                 parameters["Flavor"]["Participant"],
+                                 overwrite = True)
+    send_progress(start, end, 100, "Generating CSV files...")
+
+    start, end = 20, 50
+    send_progress(start, end, 0, "Merging CSV files...")
+    results["filepath"] = merge_csv(results["gen_csv"][0])
+    send_progress(start, end, 100, "Merging CSV files...")
+
+    if parameters["Flavor"]["Target"]:
+        start, end = 50, 85
+        send_progress(start, end, 0, "Calculating accuracy...")
+        results["filepath"] = calculate_accuracy(results["filepath"])
+        send_progress(start, end, 100, "Calculating accuracy...")
+
+    start, end = 85, 90
+    send_progress(start, end, 0, "Expanding phone data...")
+    results["final"] = phone_data_expander(results["filepath"],
+                                           results["gen_csv"][0],
+                                           target = parameters["Flavor"]["Target"],
+                                           actual = parameters["Flavor"]["Actual"])
+    send_progress(start, end, 100, "Expanding phone data...")
+
+    start, end = 90, 100
+    send_progress(start, end, 0, "Creating pivot table...")
+    time.sleep(0.5) # PLACEHOLDER UNTIL PIVOT TABLE CREATION CODE COMPLETE
+    send_progress(start, end, 100, "Complete!")
+
+def update_ui(setting, status, progress, progress_queue, state):
+    try:
+        while True:
+            value, label = progress_queue.get_nowait()
+            state["target"] = value
+            state["label"] = label
+    except queue.Empty:
+        pass
+
+    current = progress["value"]
+    target = state["target"]
+
+    distance = target - current
+
+    if distance > 0.5:
+        step = distance * 0.1
+        progress["value"] = current + step
+    else:
+        progress["value"] = target
+
+    status["text"] = state.get("label", status["text"])
+
+    setting.after(30, update_ui, setting, status, progress, progress_queue, state)
 
 def run(layers, parameters, setting):
+    results = {
+        "gen_csv" : None,
+        "filepath" : None,
+        "final" : None
+    }
+
     widgets = {
         "Label" : {
             "Process" : Label(setting, text = ("Running Query: " + parameters["Query"])),
-            "Status" : Label(setting, text = "", font = font.Font(size = 10))
+            "Status" : Label(setting, text = "Initializing data...", font = font.Font(size = 10))
         },
         "Progressbar" : {
-            "Progress" : Progressbar(setting, orient = "horizontal", mode = "determinate", length = 280)
+            "Progress" : Progressbar(setting, orient = "horizontal", mode = "determinate", length = 320)
         }
     }
 
-    widgets["Label"]["Process"].place(relx = 0.5, x = 0, y = 0, anchor = "n")
-    widgets["Label"]["Status"].place(relx = 0.5, x = 0, y = 70, anchor = "n")
+    widgets["Label"]["Process"].place(relx = 0.5, y = 0, anchor = "n")
+    widgets["Label"]["Status"].place(relx = 0.5, y = 70, anchor = "n")
+    widgets["Progressbar"]["Progress"].place(relx = 0.5, y = 45, anchor = "n")
 
-    widgets["Progressbar"]["Progress"].place(relx = 0.5, x = 0, y = 45, anchor = "n")
+    progress_queue = queue.Queue()
+    state = {
+        "target" : 0,
+        "label" : "Initializing data..."
+    }
 
-    run_progress(setting, widgets["Label"]["Status"], widgets["Progressbar"]["Progress"])
+    thread = threading.Thread(target = worker, args = (progress_queue, parameters, results), daemon = True)
+    thread.start()
+
+    update_ui(setting, widgets["Label"]["Status"], widgets["Progressbar"]["Progress"], progress_queue, state)
 
 def flavor_transition(layers, parameters, updates):
     presets = ("TX", "TX Blind", "Typology", "New Typology", "ITOLD", "NCJC")
@@ -200,7 +312,7 @@ def query_check(parameters):
         errormessage += "\n- Flavor"
 
     if errormessage == "The following faulty inputs were identified:":
-        confirmation = mbox.askyesno(title = "Confirmation", message = "Are you sure you want to run the analysis?")
+        confirmation = mbox.askyesno(title = "Confirmation", message = "Are you sure you want to run the analysis? Any existing files in the 'Compiled' directory will be overwritten")
     else:
         errormessage += "\n\nPlease ensure that a query name is specified, an existing directory is specified, and a flavor is selected and properly defined."
         errormessage += " You can search for an existing directory with the button next to its entry and specify a flavor with the button next to its selection."
@@ -225,8 +337,7 @@ def query_transition(layers, parameters, updates, specify):
         parameters["Flavor"]["Target"] = specs["Target"]
         parameters["Flavor"]["Actual"] = specs["Actual"]
 
-    parameters["Overwrite"] = updates[3].get()
-    parameters["Blanking"] = updates[4].get()
+    parameters["Blanking"] = updates[3].get()
 
     if specify:
         sketch(layers, parameters, "Scene", flavor)
@@ -240,13 +351,11 @@ def query(layers, parameters, setting):
     name = StringVar()
     directory = StringVar()
     flavor = StringVar()
-    overwrite = BooleanVar()
     blanking = BooleanVar()
 
     name.set(parameters["Query"])
     directory.set(parameters["Directory"])
     flavor.set(parameters["Flavor"]["Name"])
-    overwrite.set(parameters["Overwrite"])
     blanking.set(parameters["Blanking"])
 
     widgets = {
@@ -268,7 +377,6 @@ def query(layers, parameters, setting):
             "Flavor" : Combobox(setting, textvariable = flavor, values = boxoptions, state = "readonly", width = 23)
         },
         "Checkbutton" : {
-            "Overwrite" : Checkbutton(setting, variable = overwrite, text = "Overwrite existing files"),
             "Blanking" : Checkbutton(setting, variable = blanking, text = "Blank out repeated labels")
         }
     }
@@ -282,16 +390,15 @@ def query(layers, parameters, setting):
     widgets["Button"]["Run"].place(relx = 0.5, x = 0, y = 332, anchor = "s")
 
     widgets["Button"]["Directory"].config(command = lambda : directory.set(dialog.askdirectory(initialdir = "/", title = "Select a Directory")))
-    widgets["Button"]["Flavor"].config(command = lambda : query_transition(layers, parameters, [name, directory, flavor, overwrite, blanking], True))
-    widgets["Button"]["Run"].config(command = lambda : query_transition(layers, parameters, [name, directory, flavor, overwrite, blanking], False))
+    widgets["Button"]["Flavor"].config(command = lambda : query_transition(layers, parameters, [name, directory, flavor, blanking], True))
+    widgets["Button"]["Run"].config(command = lambda : query_transition(layers, parameters, [name, directory, flavor, blanking], False))
 
     widgets["Entry"]["Name"].place(relx = 0.5, x = 0, y = 35, anchor = "n")
     widgets["Entry"]["Directory"].place(relx = 0.5, x = 0, y = 115, anchor = "n")
 
     widgets["Combobox"]["Flavor"].place(relx = 0.5, x = 0, y = 195, anchor = "n")
 
-    widgets["Checkbutton"]["Overwrite"].place(relx = 0.5, x = 40, y = 240, anchor = "nw")
-    widgets["Checkbutton"]["Blanking"].place(relx = 0.5, x = -40, y = 240, anchor = "ne")
+    widgets["Checkbutton"]["Blanking"].place(relx = 0.5, x = 0, y = 240, anchor = "n")
 
 def backdrop_transition(layers, parameters, button):
     button.destroy()
@@ -343,16 +450,15 @@ def sketch(layers, parameters, transition, structure):
 
 if __name__ == "__main__":
     parameters = {
-        "Query" : "Test",
-        "Directory" : "/media/fzvial",
+        "Query" : "Queries_Actual_v2",
+        "Directory" : r"/home/fzvial/Documents/Work/CLD Lab/Phon Query Testing/Testing/full",
         "Flavor" : {
-            "Name" : "Custom",
-            "Phase" : "Test",
-            "Participant" : "Test",
-            "Target" : False,
-            "Actual" : False
+            "Name" : "TX",
+            "Phase" : r"BL-\d{1,2}|Post-\dmo|Pre|Post|Mid|Tx-\d{1,2}",
+            "Participant" : r"\w\d\d\d",
+            "Target" : True,
+            "Actual" : True
         },
-        "Overwrite" : True,
         "Blanking" : True
     }
 
@@ -361,8 +467,8 @@ if __name__ == "__main__":
     root.title("Phon Query to CSV")
     root.geometry("800x600")
 
-    stage = Frame(root, width = 800, height = 600, borderwidth = 1, relief = "solid")
-    scene = Frame(stage, width = 680, height = 332)#, borderwidth = 1, relief = "solid")
+    stage = Frame(root, width = 800, height = 600)
+    scene = Frame(stage, width = 680, height = 332)
 
     layers = {
         "Root" : root,
