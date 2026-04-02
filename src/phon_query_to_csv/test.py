@@ -8,6 +8,7 @@ from tkinter.ttk import Button
 from tkinter.ttk import Entry
 from tkinter.ttk import Combobox
 from tkinter.ttk import Checkbutton
+from tkinter.ttk import Progressbar
 
 from tkinter import font
 from tkinter import filedialog as dialog
@@ -15,8 +16,46 @@ from tkinter import messagebox as mbox
 
 from tkinter import StringVar
 from tkinter import BooleanVar
+from tkinter import IntVar
 
 from os.path import isdir
+
+import time
+
+def run_progress(setting, status, progress):
+    if progress["value"] == 25:
+        status["text"] = "It's going..."
+
+    if progress["value"] == 50:
+        status["text"] = "We're halfway..."
+
+    if progress["value"] == 75:
+        status["text"] = "Almost there..."
+
+    if progress["value"] == 100:
+        status["text"] = "Complete!"
+
+    if progress["value"] < 100:
+        progress["value"] += 1
+        setting.after(250, run_progress, setting, status, progress)
+
+def run(layers, parameters, setting):
+    widgets = {
+        "Label" : {
+            "Process" : Label(setting, text = ("Running Query: " + parameters["Query"])),
+            "Status" : Label(setting, text = "", font = font.Font(size = 10))
+        },
+        "Progressbar" : {
+            "Progress" : Progressbar(setting, orient = "horizontal", mode = "determinate", length = 280)
+        }
+    }
+
+    widgets["Label"]["Process"].place(relx = 0.5, x = 0, y = 0, anchor = "n")
+    widgets["Label"]["Status"].place(relx = 0.5, x = 0, y = 70, anchor = "n")
+
+    widgets["Progressbar"]["Progress"].place(relx = 0.5, x = 0, y = 45, anchor = "n")
+
+    run_progress(setting, widgets["Label"]["Status"], widgets["Progressbar"]["Progress"])
 
 def flavor_transition(layers, parameters, updates):
     presets = ("TX", "TX Blind", "Typology", "New Typology", "ITOLD", "NCJC")
@@ -193,8 +232,7 @@ def query_transition(layers, parameters, updates, specify):
         sketch(layers, parameters, "Scene", flavor)
     else:
         if query_check(parameters):
-            layers["Root"].destroy()
-            #sketch(layers, parameters, "Scene", check)
+            sketch(layers, parameters, "Scene", run)
 
 def query(layers, parameters, setting):
     boxoptions = ("TX", "TX Blind", "Typology", "New Typology", "ITOLD", "NCJC", "Custom")
@@ -305,16 +343,16 @@ def sketch(layers, parameters, transition, structure):
 
 if __name__ == "__main__":
     parameters = {
-        "Query" : "test",
+        "Query" : "Test",
         "Directory" : "/media/fzvial",
         "Flavor" : {
-            "Name" : "test",
-            "Phase" : "",
-            "Participant" : "",
+            "Name" : "Custom",
+            "Phase" : "Test",
+            "Participant" : "Test",
             "Target" : False,
             "Actual" : False
         },
-        "Overwrite" : False,
+        "Overwrite" : True,
         "Blanking" : True
     }
 
@@ -324,7 +362,7 @@ if __name__ == "__main__":
     root.geometry("800x600")
 
     stage = Frame(root, width = 800, height = 600, borderwidth = 1, relief = "solid")
-    scene = Frame(stage, width = 680, height = 332, borderwidth = 1, relief = "solid")
+    scene = Frame(stage, width = 680, height = 332)#, borderwidth = 1, relief = "solid")
 
     layers = {
         "Root" : root,
