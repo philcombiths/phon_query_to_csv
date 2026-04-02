@@ -222,7 +222,7 @@ def flavor(layers, parameters, setting):
         },
         "Button" : {
             "Help" : Button(setting, text = "󰋼 ", width = 3),
-            "Save" : Button(setting, text = "Save")
+            "Save" : Button(setting, text = "Save", width = 5)
         },
         "Entry" : {
             "Phase" : Entry(setting, textvariable = phase, width = 25),
@@ -345,6 +345,12 @@ def query_transition(layers, parameters, updates, specify):
         if query_check(parameters):
             sketch(layers, parameters, "Scene", run)
 
+def query_setdir(directory):
+    dir = dialog.askdirectory(initialdir = "/", title = "Select a Directory")
+
+    if dir:
+        directory.set(dir)
+
 def query(layers, parameters, setting):
     boxoptions = ("TX", "TX Blind", "Typology", "New Typology", "ITOLD", "NCJC", "Custom")
 
@@ -367,7 +373,7 @@ def query(layers, parameters, setting):
         "Button" : {
             "Directory" : Button(setting, text = "󰥨 ", width = 3),
             "Flavor" : Button(setting, text = "󰝰 ", width = 3),
-            "Run" : Button(setting, text = "Run")
+            "Run" : Button(setting, text = "Run", width = 5)
         },
         "Entry" : {
             "Name" : Entry(setting, textvariable = name, width = 25),
@@ -389,7 +395,7 @@ def query(layers, parameters, setting):
     widgets["Button"]["Flavor"].place(relx = 0.5, x = 130, y = 189, anchor = "n")
     widgets["Button"]["Run"].place(relx = 0.5, x = 0, y = 332, anchor = "s")
 
-    widgets["Button"]["Directory"].config(command = lambda : directory.set(dialog.askdirectory(initialdir = "/", title = "Select a Directory")))
+    widgets["Button"]["Directory"].config(command = lambda : query_setdir(directory))
     widgets["Button"]["Flavor"].config(command = lambda : query_transition(layers, parameters, [name, directory, flavor, blanking], True))
     widgets["Button"]["Run"].config(command = lambda : query_transition(layers, parameters, [name, directory, flavor, blanking], False))
 
