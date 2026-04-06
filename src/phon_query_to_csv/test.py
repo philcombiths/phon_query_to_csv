@@ -76,42 +76,43 @@ Program completion message {
 """
 
 def worker(progress_queue, parameters, results):
-    def send_progress(start, end, percent, label):
-        absolute = start + (end - start) * percent / 100
-        progress_queue.put((absolute, label))
+    steps = [(10.0, "Generating CSV files..."), 
+             (20.0, "Merging CSV files..."), 
+             (30.0, "Handling accuracy calculation..."), 
+             (45.0, "Expanding phone data..."), 
+             (75.0, "Creating pivot table..."), 
+             (100.0, "Complete!")]
 
-    start, end = 10, 20
-    send_progress(start, end, 0, "Generating CSV files...")
-    results["gen_csv"] = gen_csv(parameters["Directory"],
-                                 parameters["Query"],
-                                 parameters["Flavor"]["Phase"],
-                                 parameters["Flavor"]["Participant"],
-                                 overwrite = True)
-    send_progress(start, end, 100, "Generating CSV files...")
+    for s in range(len(steps) - 1):
+        progress_queue.put(steps[s])
 
-    start, end = 20, 50
-    send_progress(start, end, 0, "Merging CSV files...")
-    results["filepath"] = merge_csv(results["gen_csv"][0])
-    send_progress(start, end, 100, "Merging CSV files...")
+        match steps[s][1]:
+            case "Generating CSV files...":
+                results["gen_csv"] = gen_csv(parameters["Directory"],
+                                    parameters["Query"],
+                                    parameters["Flavor"]["Phase"],
+                                    parameters["Flavor"]["Participant"],
+                                    overwrite = True)
+            
+            case "Merging CSV files...":
+                results["filepath"] = merge_csv(results["gen_csv"][0])
 
-    if parameters["Flavor"]["Target"]:
-        start, end = 50, 85
-        send_progress(start, end, 0, "Calculating accuracy...")
-        results["filepath"] = calculate_accuracy(results["filepath"])
-        send_progress(start, end, 100, "Calculating accuracy...")
+            case "Handling accuracy calculation...":
+                if parameters["Flavor"]["Target"]:
+                    results["filepath"] = calculate_accuracy(results["filepath"])
 
-    start, end = 85, 90
-    send_progress(start, end, 0, "Expanding phone data...")
-    results["final"] = phone_data_expander(results["filepath"],
-                                           results["gen_csv"][0],
-                                           target = parameters["Flavor"]["Target"],
-                                           actual = parameters["Flavor"]["Actual"])
-    send_progress(start, end, 100, "Expanding phone data...")
+            case "Expanding phone data...":
+                results["final"] = phone_data_expander(results["filepath"],
+                                                       results["gen_csv"][0],
+                                                       target = parameters["Flavor"]["Target"],
+                                                       actual = parameters["Flavor"]["Actual"])
+                
+            case "Creating pivot table...":
+                time.sleep(0.5) # PLACEHOLDER UNTIL PIVOT TABLE CREATION CODE COMPLETE
 
-    start, end = 90, 100
-    send_progress(start, end, 0, "Creating pivot table...")
-    time.sleep(0.5) # PLACEHOLDER UNTIL PIVOT TABLE CREATION CODE COMPLETE
-    send_progress(start, end, 100, "Complete!")
+        progress_queue.put((steps[s][0] + 1, steps[s][1]))
+
+    progress_queue.put(steps[-1])
 
 def update_ui(setting, status, progress, progress_queue, state):
     try:
