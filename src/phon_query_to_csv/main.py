@@ -1,3 +1,26 @@
+# -*- coding: utf-8 -*-
+# TODO: Incorporate an Error Score column
+# TODO: Clean up logging.
+# TODO: Remove created temporary files.
+# TODO: Make ID of columns more of a generic function.
+#           Else make robust to different filenames
+# TODO: Potentially fix Probe Type and Probe columns. 
+
+"""
+Series of functions to batch process Phon analysis 
+output csv files in a directory or subdirectories.
+
+Generates:
+- 'AllPart_AllLang_AllAnalyses_data.csv' : All data extracted from Phon csv input
+- 'data_accuracy.csv' : All data from above, plus Accuracy, Deletion, Substitution data
+- 'full_accuracy_dataset.csv': All data from above, plus phone characteristics from ipa_features.py
+
+Created on Thu Jul 30 18:18:01 2020
+@modified: 2026-04-06
+@author: Philip Combiths
+@contributors: Francesco Vial
+"""
+
 import logging
 
 from phon_query_to_csv.logging_config import setup_logging
