@@ -75,7 +75,33 @@ Program completion message {
 
 """
 
-def worker(progress_queue, parameters, results):
+def run_update(setting, status, bar, event_queue, state):
+    try:
+        while True:
+            value, label = event_queue.get_nowait()
+
+            state["target"] = value
+            state["label"] = label
+            
+    except queue.Empty:
+        pass
+
+    current = bar["value"]
+    target = state["target"]
+
+    distance = target - current
+
+    if distance > 0.5:
+        step = distance * 0.1
+        bar["value"] = current + step
+    else:
+        bar["value"] = target
+
+    status["text"] = state.get("label", status["text"])
+
+    setting.after(30, run_update, setting, status, bar, event_queue, state)
+
+def run_background(event_queue, parameters, results):
     steps = [(10.0, "Generating CSV files..."), 
              (20.0, "Merging CSV files..."), 
              (30.0, "Handling accuracy calculation..."), 
@@ -84,15 +110,15 @@ def worker(progress_queue, parameters, results):
              (100.0, "Complete!")]
 
     for s in range(len(steps) - 1):
-        progress_queue.put(steps[s])
+        event_queue.put(steps[s])
 
         match steps[s][1]:
             case "Generating CSV files...":
                 results["gen_csv"] = gen_csv(parameters["Directory"],
-                                    parameters["Query"],
-                                    parameters["Flavor"]["Phase"],
-                                    parameters["Flavor"]["Participant"],
-                                    overwrite = True)
+                                             parameters["Query"],
+                                             parameters["Flavor"]["Phase"],
+                                             parameters["Flavor"]["Participant"],
+                                             overwrite = True)
             
             case "Merging CSV files...":
                 results["filepath"] = merge_csv(results["gen_csv"][0])
@@ -110,33 +136,9 @@ def worker(progress_queue, parameters, results):
             case "Creating pivot table...":
                 time.sleep(0.5) # PLACEHOLDER UNTIL PIVOT TABLE CREATION CODE COMPLETE
 
-        progress_queue.put((steps[s][0] + 1, steps[s][1]))
+        event_queue.put((steps[s][0] + 1, steps[s][1]))
 
-    progress_queue.put(steps[-1])
-
-def update_ui(setting, status, progress, progress_queue, state):
-    try:
-        while True:
-            value, label = progress_queue.get_nowait()
-            state["target"] = value
-            state["label"] = label
-    except queue.Empty:
-        pass
-
-    current = progress["value"]
-    target = state["target"]
-
-    distance = target - current
-
-    if distance > 0.5:
-        step = distance * 0.1
-        progress["value"] = current + step
-    else:
-        progress["value"] = target
-
-    status["text"] = state.get("label", status["text"])
-
-    setting.after(30, update_ui, setting, status, progress, progress_queue, state)
+    event_queue.put(steps[-1])
 
 def run(layers, parameters, setting):
     results = {
@@ -159,16 +161,13 @@ def run(layers, parameters, setting):
     widgets["Label"]["Status"].place(relx = 0.5, y = 70, anchor = "n")
     widgets["Progressbar"]["Progress"].place(relx = 0.5, y = 45, anchor = "n")
 
-    progress_queue = queue.Queue()
-    state = {
-        "target" : 0,
-        "label" : "Initializing data..."
-    }
+    event_queue = queue.Queue()
+    state = {"target" : 0, "label" : "Initializing data..."}
 
-    thread = threading.Thread(target = worker, args = (progress_queue, parameters, results), daemon = True)
-    thread.start()
+    analysis = threading.Thread(target = run_background, args = (event_queue, parameters, results), daemon = True)
+    analysis.start()
 
-    update_ui(setting, widgets["Label"]["Status"], widgets["Progressbar"]["Progress"], progress_queue, state)
+    run_update(setting, widgets["Label"]["Status"], widgets["Progressbar"]["Progress"], event_queue, state)
 
 def flavor_transition(layers, parameters, updates):
     presets = ("TX", "TX Blind", "Typology", "New Typology", "ITOLD", "NCJC")
@@ -315,7 +314,7 @@ def query_check(parameters):
     if errormessage == "The following faulty inputs were identified:":
         confirmation = mbox.askyesno(title = "Confirmation", message = "Are you sure you want to run the analysis? Any existing files in the 'Compiled' directory will be overwritten")
     else:
-        errormessage += "\n\nPlease ensure that a query name is specified, an existing directory is specified, and a flavor is selected and properly defined."
+        errormessage += "\n\nPlease ensure that a source label is specified, an existing directory is specified, and a flavor is selected and properly defined."
         errormessage += " You can search for an existing directory with the button next to its entry and specify a flavor with the button next to its selection."
 
         mbox.showerror(title = "Unable to run", message = errormessage)
@@ -367,9 +366,9 @@ def query(layers, parameters, setting):
 
     widgets = {
         "Label" : {
-            "Name" : Label(setting, text = "Please specify the name of the query below"),
-            "Directory" : Label(setting, text = "Please specify the directory of the query below"),
-            "Flavor" : Label(setting, text = "Please specify the flavor of the query below")
+            "Name" : Label(setting, text = "Please specify a label for the source / source query below"),
+            "Directory" : Label(setting, text = "Please specify the directory of the source data below"),
+            "Flavor" : Label(setting, text = "Please specify the flavor of the source analysis below")
         },
         "Button" : {
             "Directory" : Button(setting, text = "󰥨 ", width = 3),
@@ -457,7 +456,7 @@ def sketch(layers, parameters, transition, structure):
 
 if __name__ == "__main__":
     parameters = {
-        "Query" : "Queries_Actual_v2",
+        "Query" : "Queries_Target_v2",
         "Directory" : r"/home/fzvial/Documents/Work/CLD Lab/Phon Query Testing/Testing/full",
         "Flavor" : {
             "Name" : "TX",
@@ -487,13 +486,14 @@ if __name__ == "__main__":
 
     sketch(layers, parameters, "Stage", backdrop)
 
-    root.mainloop()  # Keeps the window open
+    root.mainloop()
 
     print(parameters)
 
 """
 
 Notes for improvemenet:
+- Change query name to general "Please provide a label for the source / source query:"
 - End goal: give user multiple ways to determine accuracy
 
 """
