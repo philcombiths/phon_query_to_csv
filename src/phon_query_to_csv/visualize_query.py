@@ -1,5 +1,3 @@
-import tkinter as tk
-
 from tkinter import Tk
 
 from tkinter.ttk import Frame
@@ -21,18 +19,14 @@ from os.path import isdir
 
 import threading
 import queue
-import logging
 import time  # TEMP
 
-from phon_query_to_csv.logging_config import setup_logging
 from phon_query_to_csv.gen_csv import gen_csv
 from phon_query_to_csv.merge_csv import merge_csv
 from phon_query_to_csv.calculate_accuracy import calculate_accuracy
 from phon_query_to_csv.phone_data_expander import phone_data_expander
 from phon_query_to_csv.create_pivot_table import create_pivot_table
-# from phon_query_to_csv.column_match import column_match # Optional
 
-log = setup_logging(logging.INFO, __name__)
 
 """
 Analysis Progress
@@ -450,20 +444,7 @@ def sketch(layers, parameters, transition, structure):
 
         structure(layers, parameters, setting)
 
-if __name__ == "__main__":
-    parameters = {
-        "Query" : "Queries_Target_v2",
-        "Directory" : r"/home/fzvial/Documents/Work/CLD Lab/Phon Query Testing/Testing/full",
-        "Flavor" : {
-            "Name" : "TX",
-            "Phase" : r"BL-\d{1,2}|Post-\dmo|Pre|Post|Mid|Tx-\d{1,2}",
-            "Participant" : r"\w\d\d\d",
-            "Target" : True,
-            "Actual" : True
-        },
-        "Blanking" : True
-    }
-
+def visualize_query(parameters):
     root = Tk()
 
     root.title("Phon Query to CSV")
@@ -484,12 +465,11 @@ if __name__ == "__main__":
 
     root.mainloop()
 
-    print(parameters)
+    return
 
 """
 
 Notes for improvemenet:
-- Change query name to general "Please provide a label for the source / source query:"
 - End goal: give user multiple ways to determine accuracy
 
 """
