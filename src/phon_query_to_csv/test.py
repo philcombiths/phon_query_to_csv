@@ -75,72 +75,72 @@ Program completion message {
 
 """
 
-def run_update(setting, status, bar, event_queue, state):
-    try:
-        while True:
-            value, label = event_queue.get_nowait()
-
-            state["target"] = value
-            state["label"] = label
-            
-    except queue.Empty:
-        pass
-
-    current = bar["value"]
-    target = state["target"]
-
-    distance = target - current
-
-    if distance > 0.5:
-        step = distance * 0.1
-        bar["value"] = current + step
-    else:
-        bar["value"] = target
-
-    status["text"] = state.get("label", status["text"])
-
-    setting.after(30, run_update, setting, status, bar, event_queue, state)
-
-def run_background(event_queue, parameters, results):
-    steps = [(10.0, "Generating CSV files..."), 
-             (20.0, "Merging CSV files..."), 
-             (30.0, "Handling accuracy calculation..."), 
-             (45.0, "Expanding phone data..."), 
-             (75.0, "Creating pivot table..."), 
-             (100.0, "Complete!")]
-
-    for s in range(len(steps) - 1):
-        event_queue.put(steps[s])
-
-        match steps[s][1]:
-            case "Generating CSV files...":
-                results["gen_csv"] = gen_csv(parameters["Directory"],
-                                             parameters["Query"],
-                                             parameters["Flavor"]["Phase"],
-                                             parameters["Flavor"]["Participant"],
-                                             overwrite = True)
-            
-            case "Merging CSV files...":
-                results["filepath"] = merge_csv(results["gen_csv"][0])
-
-            case "Handling accuracy calculation...":
-                if parameters["Flavor"]["Target"]:
-                    results["filepath"] = calculate_accuracy(results["filepath"])
-
-            case "Expanding phone data...":
-                results["final"] = phone_data_expander(results["filepath"],
-                                                       results["gen_csv"][0],
-                                                       target = parameters["Flavor"]["Target"],
-                                                       actual = parameters["Flavor"]["Actual"])
-                
-            case "Creating pivot table...":
-                time.sleep(0.5) # PLACEHOLDER UNTIL PIVOT TABLE CREATION CODE COMPLETE
-
-        event_queue.put((steps[s][0] + 1, steps[s][1]))
-
-    event_queue.put(steps[-1])
-
 def run(layers, parameters, setting):
+    def update():
+        try:
+            while True:
+                value, label = event_queue.get_nowait()
+
+                state["target"] = value
+                state["label"] = label
+                
+        except queue.Empty:
+            pass
+
+        current = widgets["Progressbar"]["Progress"]["value"]
+        target = state["target"]
+
+        distance = target - current
+
+        if distance > 0.5:
+            step = distance * 0.1
+            widgets["Progressbar"]["Progress"]["value"] = current + step
+        else:
+            widgets["Progressbar"]["Progress"]["value"] = target
+
+        widgets["Label"]["Status"]["text"] = state.get("label", widgets["Label"]["Status"]["text"])
+
+        setting.after(30, update)
+
+    def analyze():
+        steps = [(10.0, "Generating CSV files..."), 
+                (20.0, "Merging CSV files..."), 
+                (30.0, "Handling accuracy calculation..."), 
+                (45.0, "Expanding phone data..."), 
+                (75.0, "Creating pivot table..."), 
+                (100.0, "Complete!")]
+
+        for s in range(len(steps) - 1):
+            event_queue.put(steps[s])
+
+            match steps[s][1]:
+                case "Generating CSV files...":
+                    results["gen_csv"] = gen_csv(parameters["Directory"],
+                                                parameters["Query"],
+                                                parameters["Flavor"]["Phase"],
+                                                parameters["Flavor"]["Participant"],
+                                                overwrite = True)
+                
+                case "Merging CSV files...":
+                    results["filepath"] = merge_csv(results["gen_csv"][0])
+
+                case "Handling accuracy calculation...":
+                    if parameters["Flavor"]["Target"]:
+                        results["filepath"] = calculate_accuracy(results["filepath"])
+
+                case "Expanding phone data...":
+                    results["final"] = phone_data_expander(results["filepath"],
+                                                        results["gen_csv"][0],
+                                                        target = parameters["Flavor"]["Target"],
+                                                        actual = parameters["Flavor"]["Actual"])
+                    
+                case "Creating pivot table...":
+                    time.sleep(0.5) # PLACEHOLDER UNTIL PIVOT TABLE CREATION CODE COMPLETE
+
+            event_queue.put((steps[s][0] + 1, steps[s][1]))
+
+        event_queue.put(steps[-1])
+
     results = {
         "gen_csv" : None,
         "filepath" : None,
@@ -164,37 +164,47 @@ def run(layers, parameters, setting):
     event_queue = queue.Queue()
     state = {"target" : 0, "label" : "Initializing data..."}
 
-    analysis = threading.Thread(target = run_background, args = (event_queue, parameters, results), daemon = True)
+    analysis = threading.Thread(target = analyze, daemon = True)
     analysis.start()
 
-    run_update(setting, widgets["Label"]["Status"], widgets["Progressbar"]["Progress"], event_queue, state)
-
-def flavor_transition(layers, parameters, updates):
-    presets = ("TX", "TX Blind", "Typology", "New Typology", "ITOLD", "NCJC")
-
-    parameters["Flavor"]["Phase"] = updates[0].get()
-    parameters["Flavor"]["Participant"] = updates[1].get()
-    parameters["Flavor"]["Target"] = updates[2].get()
-    parameters["Flavor"]["Actual"] = updates[3].get()
-
-    if parameters["Flavor"]["Name"] in presets:
-        preset = query_getspecs(parameters["Flavor"]["Name"])
-
-        matches = [parameters["Flavor"]["Phase"] == preset["Phase"], 
-                   parameters["Flavor"]["Participant"] == preset["Participant"], 
-                   parameters["Flavor"]["Target"] == preset["Target"], 
-                   parameters["Flavor"]["Actual"] == preset["Actual"]]
-
-        for match in matches:
-            if not match:
-                mbox.showwarning(title = "Modification of preset flavor", message = "Because you modified a preset flavor, the flavor name will be changed to \"Custom\".")
-                parameters["Flavor"]["Name"] = "Custom"
-
-                break
-
-    sketch(layers, parameters, "Scene", query)
+    update()
     
 def flavor(layers, parameters, setting):
+    def transition():
+        presets = ("TX", "TX Blind", "Typology", "New Typology", "ITOLD", "NCJC")
+
+        parameters["Flavor"]["Phase"] = phase.get()
+        parameters["Flavor"]["Participant"] = participant.get()
+        parameters["Flavor"]["Target"] = target.get()
+        parameters["Flavor"]["Actual"] = actual.get()
+
+        if parameters["Flavor"]["Name"] in presets:
+            preset = preset(parameters["Flavor"]["Name"])
+
+            matches = [parameters["Flavor"]["Phase"] == preset["Phase"], 
+                    parameters["Flavor"]["Participant"] == preset["Participant"], 
+                    parameters["Flavor"]["Target"] == preset["Target"], 
+                    parameters["Flavor"]["Actual"] == preset["Actual"]]
+
+            for match in matches:
+                if not match:
+                    mbox.showwarning(title = "Modification of preset flavor", message = "Because you modified a preset flavor, the flavor name will be changed to \"Custom\".")
+                    parameters["Flavor"]["Name"] = "Custom"
+
+                    break
+
+        sketch(layers, parameters, "Scene", query)
+
+    def inform():
+        helptext = ("What is a regex?"
+                "\n\n"
+                "Regex strings are strings of text representative of a pattern of text. "
+                "In this case, the regex strings match the exact phase and participant for which to search."
+                "\n\n"
+                "As an example, the string \"" + r"\w(?=\d{4})" + "\" would match to any string beginning with a word character followed by four digits.")
+        
+        mbox.showinfo(title = "Helpful Information", message = helptext)
+
     phase = StringVar()
     participant = StringVar()
     target = BooleanVar()
@@ -204,13 +214,6 @@ def flavor(layers, parameters, setting):
     participant.set(parameters["Flavor"]["Participant"])
     target.set(parameters["Flavor"]["Target"])
     actual.set(parameters["Flavor"]["Actual"])
-
-    helptext = ("What is a regex?"
-                "\n\n"
-                "Regex strings are strings of text representative of a pattern of text. "
-                "In this case, the regex strings match the exact phase and participant for which to search."
-                "\n\n"
-                "As an example, the string \"" + r"\w(?=\d{4})" + "\" would match to any string beginning with a word character followed by four digits.")
 
     widgets = {
         "Label" : {
@@ -243,8 +246,8 @@ def flavor(layers, parameters, setting):
     widgets["Button"]["Help"].place(relx = 0.5, x = 145, y = 52, anchor = "n")
     widgets["Button"]["Save"].place(relx = 0.5, x = 0, y = 332, anchor = "s")
 
-    widgets["Button"]["Help"].config(command = lambda : mbox.showinfo(title = "Helpful Information", message = helptext))
-    widgets["Button"]["Save"].config(command = lambda : flavor_transition(layers, parameters, [phase, participant, target, actual]))
+    widgets["Button"]["Help"].config(command = lambda : inform())
+    widgets["Button"]["Save"].config(command = lambda : transition())
 
     widgets["Entry"]["Phase"].place(relx = 0.5, x = -125, y = 125, anchor = "n")
     widgets["Entry"]["Participant"].place(relx = 0.5, x = 125, y = 125, anchor = "n")
@@ -252,7 +255,139 @@ def flavor(layers, parameters, setting):
     widgets["Checkbutton"]["Target"].place(relx = 0.5, x = 60, y = 225, anchor = "nw")
     widgets["Checkbutton"]["Actual"].place(relx = 0.5, x = -60, y = 225, anchor = "ne")
 
-def query_getspecs(flavor):
+def query(layers, parameters, setting):
+    def transition(specify):
+        presets = ("TX", "TX Blind", "Typology", "New Typology", "ITOLD", "NCJC")
+
+        parameters["Query"] = name.get()
+        parameters["Directory"] = directory.get()
+        parameters["Flavor"]["Name"] = flavor.get()
+
+        if (parameters["Flavor"]["Name"] in presets):
+            specs = preset(parameters["Flavor"]["Name"])
+            
+            parameters["Flavor"]["Phase"] = specs["Phase"]
+            parameters["Flavor"]["Participant"] = specs["Participant"]
+            parameters["Flavor"]["Target"] = specs["Target"]
+            parameters["Flavor"]["Actual"] = specs["Actual"]
+
+        parameters["Blanking"] = blanking.get()
+
+        if specify:
+            sketch(layers, parameters, "Scene", flavor)
+        else:
+            errormessage = "The following faulty inputs were identified:"
+
+            if not parameters["Query"]:
+                errormessage += "\n- Name"
+
+            if not isdir(parameters["Directory"]):
+                errormessage += "\n- Directory"
+
+            if not parameters["Flavor"]["Name"] or not parameters["Flavor"]["Phase"] or not parameters["Flavor"]["Participant"]:
+                errormessage += "\n- Flavor"
+
+            if errormessage == "The following faulty inputs were identified:":
+                if mbox.askyesno(title = "Confirmation", message = "Are you sure you want to run the analysis? Any existing files in the 'Compiled' directory will be overwritten"):
+                    sketch(layers, parameters, "Scene", run)
+            else:
+                errormessage += "\n\nPlease ensure that a source label is specified, an existing directory is specified, and a flavor is selected and properly defined."
+                errormessage += " You can search for an existing directory with the button next to its entry and specify a flavor with the button next to its selection."
+
+                mbox.showerror(title = "Unable to run", message = errormessage)
+
+    def browse():
+        dir = dialog.askdirectory(initialdir = "/", title = "Select a Directory")
+
+        if dir:
+            directory.set(dir)
+
+    boxoptions = ("TX", "TX Blind", "Typology", "New Typology", "ITOLD", "NCJC", "Custom")
+
+    name = StringVar()
+    directory = StringVar()
+    flavor = StringVar()
+    blanking = BooleanVar()
+
+    name.set(parameters["Query"])
+    directory.set(parameters["Directory"])
+    flavor.set(parameters["Flavor"]["Name"])
+    blanking.set(parameters["Blanking"])
+
+    widgets = {
+        "Label" : {
+            "Name" : Label(setting, text = "Please specify a label for the source / source query below"),
+            "Directory" : Label(setting, text = "Please specify the directory of the source data below"),
+            "Flavor" : Label(setting, text = "Please specify the flavor of the source analysis below")
+        },
+        "Button" : {
+            "Directory" : Button(setting, text = "󰥨 ", width = 3),
+            "Flavor" : Button(setting, text = "󰝰 ", width = 3),
+            "Run" : Button(setting, text = "Run", width = 5)
+        },
+        "Entry" : {
+            "Name" : Entry(setting, textvariable = name, width = 25),
+            "Directory" : Entry(setting, textvariable = directory, width = 25)
+        },
+        "Combobox" : {
+            "Flavor" : Combobox(setting, textvariable = flavor, values = boxoptions, state = "readonly", width = 23)
+        },
+        "Checkbutton" : {
+            "Blanking" : Checkbutton(setting, variable = blanking, text = "Blank out repeated labels")
+        }
+    }
+
+    widgets["Label"]["Name"].place(relx = 0.5, x = 0, y = 0, anchor = "n")
+    widgets["Label"]["Directory"].place(relx = 0.5, x = 0, y = 80, anchor = "n")
+    widgets["Label"]["Flavor"].place(relx = 0.5, x = 0, y = 160, anchor = "n")
+
+    widgets["Button"]["Directory"].place(relx = 0.5, x = 130, y = 109, anchor = "n")
+    widgets["Button"]["Flavor"].place(relx = 0.5, x = 130, y = 189, anchor = "n")
+    widgets["Button"]["Run"].place(relx = 0.5, x = 0, y = 332, anchor = "s")
+
+    widgets["Button"]["Directory"].config(command = lambda : browse())
+    widgets["Button"]["Flavor"].config(command = lambda : transition(True))
+    widgets["Button"]["Run"].config(command = lambda : transition(False))
+
+    widgets["Entry"]["Name"].place(relx = 0.5, x = 0, y = 35, anchor = "n")
+    widgets["Entry"]["Directory"].place(relx = 0.5, x = 0, y = 115, anchor = "n")
+
+    widgets["Combobox"]["Flavor"].place(relx = 0.5, x = 0, y = 195, anchor = "n")
+
+    widgets["Checkbutton"]["Blanking"].place(relx = 0.5, x = 0, y = 240, anchor = "n")
+
+def backdrop(layers, parameters, setting):
+    def transition():
+        widgets["Button"]["Start"].destroy()
+
+        sketch(layers, parameters, "Scene", query)
+
+    widgets = {
+        "Label" : {
+            "Title" : Label(setting, text = "Phon Query to CSV"),
+            "Subtitle" : Label(setting, text = "A Visual Interface Assistance")
+        },
+        "Button" : {
+            "Start" : Button(setting, text = "Start", width = 5),
+            "Quit" : Button(setting, text = "Quit", width = 5)
+        }
+    }
+
+    root = layers["Root"]
+
+    widgets["Label"]["Title"].place(relx = 0.5, x = 0, y = 60, anchor = "n")
+    widgets["Label"]["Subtitle"].place(relx = 0.5, x = 0, y = 120, anchor = "n")
+
+    widgets["Label"]["Title"].configure(font = font.Font(size = 32, weight = font.BOLD, underline = 1))
+    widgets["Label"]["Subtitle"].configure(font = font.Font(size = 20, weight = font.BOLD))
+
+    widgets["Button"]["Start"].place(relx = 0.5, x = 0, y = 478, anchor = "n")
+    widgets["Button"]["Quit"].place(relx = 0.5, x = 0, y = 520, anchor = "n")
+    
+    widgets["Button"]["Start"].configure(command = lambda : transition())
+    widgets["Button"]["Quit"].configure(command = lambda : root.destroy())
+
+def preset(flavor):
     specs = {
         "Phase" : "",
         "Participant" : "",
@@ -297,145 +432,6 @@ def query_getspecs(flavor):
         specs["Actual"] = True
 
     return specs
-
-def query_check(parameters):
-    errormessage = "The following faulty inputs were identified:"
-    confirmation = False
-
-    if not parameters["Query"]:
-        errormessage += "\n- Name"
-
-    if not isdir(parameters["Directory"]):
-        errormessage += "\n- Directory"
-
-    if not parameters["Flavor"]["Name"] or not parameters["Flavor"]["Phase"] or not parameters["Flavor"]["Participant"]:
-        errormessage += "\n- Flavor"
-
-    if errormessage == "The following faulty inputs were identified:":
-        confirmation = mbox.askyesno(title = "Confirmation", message = "Are you sure you want to run the analysis? Any existing files in the 'Compiled' directory will be overwritten")
-    else:
-        errormessage += "\n\nPlease ensure that a source label is specified, an existing directory is specified, and a flavor is selected and properly defined."
-        errormessage += " You can search for an existing directory with the button next to its entry and specify a flavor with the button next to its selection."
-
-        mbox.showerror(title = "Unable to run", message = errormessage)
-
-    return confirmation
-
-def query_transition(layers, parameters, updates, specify):
-    presets = ("TX", "TX Blind", "Typology", "New Typology", "ITOLD", "NCJC")
-
-    parameters["Query"] = updates[0].get()
-    parameters["Directory"] = updates[1].get()
-
-    parameters["Flavor"]["Name"] = updates[2].get()
-
-    if (parameters["Flavor"]["Name"] in presets):
-        specs = query_getspecs(parameters["Flavor"]["Name"])
-        
-        parameters["Flavor"]["Phase"] = specs["Phase"]
-        parameters["Flavor"]["Participant"] = specs["Participant"]
-        parameters["Flavor"]["Target"] = specs["Target"]
-        parameters["Flavor"]["Actual"] = specs["Actual"]
-
-    parameters["Blanking"] = updates[3].get()
-
-    if specify:
-        sketch(layers, parameters, "Scene", flavor)
-    else:
-        if query_check(parameters):
-            sketch(layers, parameters, "Scene", run)
-
-def query_setdir(directory):
-    dir = dialog.askdirectory(initialdir = "/", title = "Select a Directory")
-
-    if dir:
-        directory.set(dir)
-
-def query(layers, parameters, setting):
-    boxoptions = ("TX", "TX Blind", "Typology", "New Typology", "ITOLD", "NCJC", "Custom")
-
-    name = StringVar()
-    directory = StringVar()
-    flavor = StringVar()
-    blanking = BooleanVar()
-
-    name.set(parameters["Query"])
-    directory.set(parameters["Directory"])
-    flavor.set(parameters["Flavor"]["Name"])
-    blanking.set(parameters["Blanking"])
-
-    widgets = {
-        "Label" : {
-            "Name" : Label(setting, text = "Please specify a label for the source / source query below"),
-            "Directory" : Label(setting, text = "Please specify the directory of the source data below"),
-            "Flavor" : Label(setting, text = "Please specify the flavor of the source analysis below")
-        },
-        "Button" : {
-            "Directory" : Button(setting, text = "󰥨 ", width = 3),
-            "Flavor" : Button(setting, text = "󰝰 ", width = 3),
-            "Run" : Button(setting, text = "Run", width = 5)
-        },
-        "Entry" : {
-            "Name" : Entry(setting, textvariable = name, width = 25),
-            "Directory" : Entry(setting, textvariable = directory, width = 25)
-        },
-        "Combobox" : {
-            "Flavor" : Combobox(setting, textvariable = flavor, values = boxoptions, state = "readonly", width = 23)
-        },
-        "Checkbutton" : {
-            "Blanking" : Checkbutton(setting, variable = blanking, text = "Blank out repeated labels")
-        }
-    }
-
-    widgets["Label"]["Name"].place(relx = 0.5, x = 0, y = 0, anchor = "n")
-    widgets["Label"]["Directory"].place(relx = 0.5, x = 0, y = 80, anchor = "n")
-    widgets["Label"]["Flavor"].place(relx = 0.5, x = 0, y = 160, anchor = "n")
-
-    widgets["Button"]["Directory"].place(relx = 0.5, x = 130, y = 109, anchor = "n")
-    widgets["Button"]["Flavor"].place(relx = 0.5, x = 130, y = 189, anchor = "n")
-    widgets["Button"]["Run"].place(relx = 0.5, x = 0, y = 332, anchor = "s")
-
-    widgets["Button"]["Directory"].config(command = lambda : query_setdir(directory))
-    widgets["Button"]["Flavor"].config(command = lambda : query_transition(layers, parameters, [name, directory, flavor, blanking], True))
-    widgets["Button"]["Run"].config(command = lambda : query_transition(layers, parameters, [name, directory, flavor, blanking], False))
-
-    widgets["Entry"]["Name"].place(relx = 0.5, x = 0, y = 35, anchor = "n")
-    widgets["Entry"]["Directory"].place(relx = 0.5, x = 0, y = 115, anchor = "n")
-
-    widgets["Combobox"]["Flavor"].place(relx = 0.5, x = 0, y = 195, anchor = "n")
-
-    widgets["Checkbutton"]["Blanking"].place(relx = 0.5, x = 0, y = 240, anchor = "n")
-
-def backdrop_transition(layers, parameters, button):
-    button.destroy()
-
-    sketch(layers, parameters, "Scene", query)
-
-def backdrop(layers, parameters, setting):
-    widgets = {
-        "Label" : {
-            "Title" : Label(setting, text = "Phon Query to CSV"),
-            "Subtitle" : Label(setting, text = "A Visual Interface Assistance")
-        },
-        "Button" : {
-            "Start" : Button(setting, text = "Start", width = 5),
-            "Quit" : Button(setting, text = "Quit", width = 5)
-        }
-    }
-
-    root = layers["Root"]
-
-    widgets["Label"]["Title"].place(relx = 0.5, x = 0, y = 60, anchor = "n")
-    widgets["Label"]["Subtitle"].place(relx = 0.5, x = 0, y = 120, anchor = "n")
-
-    widgets["Label"]["Title"].configure(font = font.Font(size = 32, weight = font.BOLD, underline = 1))
-    widgets["Label"]["Subtitle"].configure(font = font.Font(size = 20, weight = font.BOLD))
-
-    widgets["Button"]["Start"].place(relx = 0.5, x = 0, y = 478, anchor = "n")
-    widgets["Button"]["Quit"].place(relx = 0.5, x = 0, y = 520, anchor = "n")
-    
-    widgets["Button"]["Start"].config(command = lambda : backdrop_transition(layers, parameters, widgets["Button"]["Start"]))
-    widgets["Button"]["Quit"].configure(command = lambda : root.destroy())
 
 def sketch(layers, parameters, transition, structure):
     if transition in layers.keys():
