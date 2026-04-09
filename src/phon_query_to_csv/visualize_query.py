@@ -32,26 +32,30 @@ from phon_query_to_csv.create_pivot_table import create_pivot_table
 Analysis Progress
 
 create_pivot_table {
-    Selections
+    In filepath : gen_csv_result[0] + 'Compiled/merged_files/full_annotated_dataset.csv'
+    Out filepath : gen_csv_result[0] + 'Compiled/merged_files/pivot_table_dataset.csv'
 
-    Which variable do you want to group by? (Multiple selections) {
-        Date, Record, Group, Tier, Range, IPA Target, IPA Actual, Alignment, Result, filename, Query Source, Analysis, Phase, Language, Participant, Speaker, Probe, Probe Type, IPA Alignment, Tiers, Notes, Orthography, IPA Target Words, IPA Actual Words, IPA Alignment Words, Accuracy, Deletion, Substitution, ID-Actual-Lang, Actual Num Segs, A1, A1_Base, A1_voice, A1_place, A1_manner, A1_sonority, A1_EML, A2, A2_Base, A2_voice, A2_place, A2_manner, A2_sonority, A2_EML, A3, A3_Base, A3_voice, A3_place, A3_manner, A3_sonority, A3_EML, ID-Target-Lang, Target Type, Target Num Segs, T1, T1_Base, T1_voice, T1_place, T1_manner, T1_sonority, T1_EML, T2, T2_Base, T2_voice, T2_place, T2_manner, T2_sonority, T2_EML, T3, T3_Base, T3_voice, T3_place, T3_manner, T3_sonority, T3_EML
+    Dataframe : Read from the in filepath
     
-        Default : Participant, Phase, Language, Analysis, IPA Target
+    Display rows selection with rows listbox {
+        Get rows from dataframe.columns
+        Set default selected rows to Participant, Phase, Language, Analysis, IPA Target in listbox
+    }
+    
+    Apply filters for rows {
+        [METHOD]
+    }
+ 
+    Display column selection with column combobox {
+        Get columns from col for col in dataframe.columns if col not in rows
+        Set no default selection
     }
 
-    Which value(s) do you want to filter [VARIABLE] by? (N times for every variable; multiple selections) {
-        Varies
-    }
-
-    Which would you like to be your values? (Only one) {
-        Date, Record, Group, Tier, Range, IPA Actual, Alignment, Result, filename, Query Source, Speaker, Probe, Probe Type, IPA Alignment, Tiers, Notes, Orthography, IPA Target Words, IPA Actual Words, IPA Alignment Words, Accuracy, Deletion, Substitution, ID-Actual-Lang, Actual Num Segs, A1, A1_Base, A1_voice, A1_place, A1_manner, A1_sonority, A1_EML, A2, A2_Base, A2_voice, A2_place, A2_manner, A2_sonority, A2_EML, A3, A3_Base, A3_voice, A3_place, A3_manner, A3_sonority, A3_EML, ID-Target-Lang, Target Type, Target Num Segs, T1, T1_Base, T1_voice, T1_place, T1_manner, T1_sonority, T1_EML, T2, T2_Base, T2_voice, T2_place, T2_manner, T2_sonority, T2_EML, T3, T3_Base, T3_voice, T3_place, T3_manner, T3_sonority, T3_EML
-    }
-
-    Which aggregation function would you like to apply? (If value numerical) {
-        mean, sum, count, min, max, median, std
-
-        Default : mean
+    If column numeric (use pd.api.types.is_numeric_dtype(dataframe[column])) {
+        Display aggregation selection with aggfunc combobox {
+            Get aggfuncs from mean, sum, count, min, max, median, std
+            Set default selection to mean
+        }
     }
 }
 
@@ -471,5 +475,39 @@ def visualize_query(parameters):
 
 Notes for improvemenet:
 - End goal: give user multiple ways to determine accuracy
+
+New create_pivot_table
+
+    in_fp = os.path.join(directory, 'Compiled', 'merged_files', 'full_annotated_dataset.csv')
+    out_fp = os.path.join(directory, 'Compiled', 'merged_files', output_filename)
+
+    # Load dataset
+    try:
+        in_df = pd.read_csv(in_fp, encoding='utf-8')
+    except FileNotFoundError:
+        print(f"Error: File not found at {in_fp}")
+        return
+
+    # Prompt for rows or set default
+    # default_rows : ['Participant', 'Phase', 'Language', 'Analysis', 'IPA Target']
+    rows = in_df.columns
+
+    # Initialize subrow filters
+    if subrow_filters is None:
+        subrow_filters = {}
+        for row in rows:
+            unique_vals = [str(v) for v in sorted(in_df[row].dropna().unique())]
+            print(f"\nPossible values for {row}: {', '.join(unique_vals)}")
+
+    # Select value column
+    columns = [l for l in in_df.columns if l not in rows]
+    
+    # Check if value column is numeric
+    if not pd.api.types.is_numeric_dtype(in_df[value_column]):
+        print(f"Error: Column '{value_column}' is not numeric and cannot be aggregated.")
+        return
+
+    # Select aggregation function
+    aggfuncs = ['mean', 'sum', 'count', 'min', 'max', 'median', 'std']
 
 """
