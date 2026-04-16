@@ -8,18 +8,22 @@ from tkinter.ttk import Combobox
 from tkinter.ttk import Checkbutton
 from tkinter.ttk import Progressbar
 
+from tkinter import Listbox
+
 from tkinter import font
 from tkinter import filedialog as dialog
 from tkinter import messagebox as mbox
 
 from tkinter import StringVar
 from tkinter import BooleanVar
+from tkinter import Variable
 
 from os.path import isdir
 
 import threading
 import queue
-import time  # TEMP
+import os
+import pandas as pd
 
 from phon_query_to_csv.gen_csv import gen_csv
 from phon_query_to_csv.merge_csv import merge_csv
@@ -58,6 +62,40 @@ create_pivot_table {
         }
     }
 }
+
+New create_pivot_table
+
+    in_fp = os.path.join(directory, 'Compiled', 'merged_files', 'full_annotated_dataset.csv')
+    out_fp = os.path.join(directory, 'Compiled', 'merged_files', output_filename)
+
+    # Load dataset
+    try:
+        in_df = pd.read_csv(in_fp, encoding='utf-8')
+    except FileNotFoundError:
+        print(f"Error: File not found at {in_fp}")
+        return
+
+    # Prompt for rows or set default
+    # default_rows : ['Participant', 'Phase', 'Language', 'Analysis', 'IPA Target']
+    rows = in_df.columns
+
+    # Initialize subrow filters
+    if subrow_filters is None:
+        subrow_filters = {}
+        for row in rows:
+            unique_vals = [str(v) for v in sorted(in_df[row].dropna().unique())]
+            print(f"\nPossible values for {row}: {', '.join(unique_vals)}")
+
+    # Select value column
+    columns = [l for l in in_df.columns if l not in rows]
+    
+    # Check if value column is numeric
+    if not pd.api.types.is_numeric_dtype(in_df[value_column]):
+        print(f"Error: Column '{value_column}' is not numeric and cannot be aggregated.")
+        return
+
+    # Select aggregation function
+    aggfuncs = ['mean', 'sum', 'count', 'min', 'max', 'median', 'std']
 
 Program completion message {
     Pivot Table Created
@@ -111,29 +149,39 @@ def run(layers, parameters, setting):
         for s in range(len(steps) - 1):
             event_queue.put(steps[s])
 
-            match steps[s][1]:
-                case "Generating CSV files...":
-                    results["gen_csv"] = gen_csv(parameters["Directory"],
-                                                parameters["Query"],
-                                                parameters["Flavor"]["Phase"],
-                                                parameters["Flavor"]["Participant"],
-                                                overwrite = True)
+            if steps[s][1] == "Generating CSV files...":
+                results["gen_csv"] = gen_csv(parameters["Directory"],
+                                             parameters["Query"],
+                                             parameters["Flavor"]["Phase"],
+                                             parameters["Flavor"]["Participant"],
+                                             overwrite = True)
                 
-                case "Merging CSV files...":
-                    results["filepath"] = merge_csv(results["gen_csv"][0])
+            if steps[s][1] ==  "Merging CSV files...":
+                results["filepath"] = merge_csv(results["gen_csv"][0])
 
-                case "Handling accuracy calculation...":
-                    if parameters["Flavor"]["Target"]:
-                        results["filepath"] = calculate_accuracy(results["filepath"])
+            if steps[s][1] ==  "Handling accuracy calculation...":
+                if parameters["Flavor"]["Target"]:
+                    results["filepath"] = calculate_accuracy(results["filepath"])
 
-                case "Expanding phone data...":
-                    results["final"] = phone_data_expander(results["filepath"],
-                                                        results["gen_csv"][0],
-                                                        target = parameters["Flavor"]["Target"],
-                                                        actual = parameters["Flavor"]["Actual"])
-                    
-                case "Creating pivot table...":
-                    time.sleep(0.5) # PLACEHOLDER UNTIL PIVOT TABLE CREATION CODE COMPLETE
+            if steps[s][1] ==  "Expanding phone data...":
+                results["final"] = phone_data_expander(results["filepath"],
+                                                       results["gen_csv"][0],
+                                                       target = parameters["Flavor"]["Target"],
+                                                       actual = parameters["Flavor"]["Actual"])
+                
+            if steps[s][1] ==  "Creating pivot table...":
+                # results["final"] = create_pivot_table(results["gen_csv"][0])
+                in_fp = os.path.join(results["gen_csv"][0], 'Compiled', 'merged_files', 'full_annotated_dataset.csv')
+                out_fp = os.path.join(results["gen_csv"][0], 'Compiled', 'merged_files', 'pivot_table_dataset.csv')
+
+                in_df = pd.read_csv(in_fp, encoding='utf-8')
+
+                variables = Variable(value = tuple([variable for variable in in_df.columns]))
+
+                widgets["Listbox"]["Variables"].place(relx = 0.5, x = -140, y = 165, anchor = "n")
+                widgets["Listbox"]["Variables"].configure(listvariable = variables)
+
+
 
             event_queue.put((steps[s][0] + 1, steps[s][1]))
 
@@ -152,6 +200,9 @@ def run(layers, parameters, setting):
         },
         "Progressbar" : {
             "Progress" : Progressbar(setting, orient = "horizontal", mode = "determinate", length = 320)
+        },
+        "Listbox" : {
+            "Variables" : Listbox(setting, width = 20, height = 5, selectmode = "multiple")
         }
     }
 
@@ -455,7 +506,7 @@ def visualize_query(parameters):
     root.geometry("800x600")
 
     stage = Frame(root, width = 800, height = 600)
-    scene = Frame(stage, width = 680, height = 332)
+    scene = Frame(stage, width = 680, height = 332, relief = "solid", borderwidth = 1)
 
     layers = {
         "Root" : root,
@@ -475,39 +526,5 @@ def visualize_query(parameters):
 
 Notes for improvemenet:
 - End goal: give user multiple ways to determine accuracy
-
-New create_pivot_table
-
-    in_fp = os.path.join(directory, 'Compiled', 'merged_files', 'full_annotated_dataset.csv')
-    out_fp = os.path.join(directory, 'Compiled', 'merged_files', output_filename)
-
-    # Load dataset
-    try:
-        in_df = pd.read_csv(in_fp, encoding='utf-8')
-    except FileNotFoundError:
-        print(f"Error: File not found at {in_fp}")
-        return
-
-    # Prompt for rows or set default
-    # default_rows : ['Participant', 'Phase', 'Language', 'Analysis', 'IPA Target']
-    rows = in_df.columns
-
-    # Initialize subrow filters
-    if subrow_filters is None:
-        subrow_filters = {}
-        for row in rows:
-            unique_vals = [str(v) for v in sorted(in_df[row].dropna().unique())]
-            print(f"\nPossible values for {row}: {', '.join(unique_vals)}")
-
-    # Select value column
-    columns = [l for l in in_df.columns if l not in rows]
-    
-    # Check if value column is numeric
-    if not pd.api.types.is_numeric_dtype(in_df[value_column]):
-        print(f"Error: Column '{value_column}' is not numeric and cannot be aggregated.")
-        return
-
-    # Select aggregation function
-    aggfuncs = ['mean', 'sum', 'count', 'min', 'max', 'median', 'std']
 
 """
