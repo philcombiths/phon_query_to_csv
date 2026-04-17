@@ -7,6 +7,7 @@ from tkinter.ttk import Entry
 from tkinter.ttk import Combobox
 from tkinter.ttk import Checkbutton
 from tkinter.ttk import Progressbar
+from tkinter.ttk import Scrollbar
 
 from tkinter import Listbox
 
@@ -75,6 +76,9 @@ Program completion message {
 """
 
 def pivot(layers, parameters, setting):
+    def handle_value(event):
+        value = widgets["Combobox"]["Value"].get()
+
     def handle_filters(event):
         selections = [widgets["Listbox"]["Filters"].get(s) for s in widgets["Listbox"]["Filters"].curselection()]
         variable = widgets["Combobox"]["Filterable"].get()
@@ -119,6 +123,17 @@ def pivot(layers, parameters, setting):
 
             widgets["Listbox"]["Filters"].delete(0, "end")
 
+        values = []
+
+        for value in in_df.columns:
+            if value not in selections and pd.api.types.is_numeric_dtype(in_df[value]):
+                values.append(value)
+
+        widgets["Combobox"]["Value"].configure(values = values)
+
+        if widgets["Combobox"]["Value"].get() in selections:
+            widgets["Combobox"]["Value"].set("")
+
     args = {
         "Index" : {},
         "Values" : None,
@@ -130,13 +145,27 @@ def pivot(layers, parameters, setting):
 
     in_df = pd.read_csv(in_fp, encoding='utf-8')
 
+    values = []
+
+    for value in in_df.columns:
+        if pd.api.types.is_numeric_dtype(in_df[value]):
+            values.append(value)
+
+    aggfuncs = ["Mean", "Sum", "Count", "Min", "Max", "Median", "STD"]
+
     widgets = {
         "Listbox" : {
             "Variables" : Listbox(setting, width = 20, height = 5, selectmode = "multiple", exportselection = False),
             "Filters" : Listbox(setting, width = 20, height = 3, selectmode = "multiple", exportselection = False)
         },
+        "Scrollbar" : {
+            "Variables" : Scrollbar(setting, orient = "vertical"),
+            "Filters" : Scrollbar(setting, orient = "vertical")
+        },
         "Combobox" : {
-            "Filterable" : Combobox(setting, width = 23)
+            "Filterable" : Combobox(setting, width = 23),
+            "Value" : Combobox(setting, width = 23, values = values),
+            "Aggregation" : Combobox(setting, width = 23, values = aggfuncs)
         }
     }
 
@@ -146,14 +175,33 @@ def pivot(layers, parameters, setting):
     for variable in in_df.columns:
         widgets["Listbox"]["Variables"].insert("end", variable)
 
+    widgets["Listbox"]["Variables"].configure(font = font.Font(size = 10))
+    widgets["Listbox"]["Filters"].configure(font = font.Font(size = 10))
+
+    widgets["Listbox"]["Variables"].configure(yscrollcommand = widgets["Scrollbar"]["Variables"].set)
+    widgets["Listbox"]["Filters"].configure(yscrollcommand = widgets["Scrollbar"]["Filters"].set)
+
     widgets["Listbox"]["Variables"].bind("<<ListboxSelect>>", handle_variables)
     widgets["Listbox"]["Filters"].bind("<<ListboxSelect>>", handle_filters)
 
+    widgets["Scrollbar"]["Variables"].place(relx = 0.5, x = -147, y = 167, anchor = "n", height = 100)
+    widgets["Scrollbar"]["Filters"].place(relx = 0.5, x = 73, y = 212, anchor = "n", height = 60)
+
+    widgets["Scrollbar"]["Variables"].configure(command = widgets["Listbox"]["Variables"].yview)
+    widgets["Scrollbar"]["Filters"].configure(command = widgets["Listbox"]["Filters"].yview)
+
     widgets["Combobox"]["Filterable"].place(relx = 0.5, y = 165, anchor = "n")
+    widgets["Combobox"]["Value"].place(relx = 0.5, x = 220, y = 165, anchor = "n")
+    widgets["Combobox"]["Aggregation"].place(relx = 0.5, x = 220, y = 210, anchor = "n")
 
     widgets["Combobox"]["Filterable"].configure(state = "readonly")
+    widgets["Combobox"]["Value"].configure(state = "readonly")
+    widgets["Combobox"]["Aggregation"].configure(state = "readonly")
 
     widgets["Combobox"]["Filterable"].bind("<<ComboboxSelected>>", handle_filterable)
+    widgets["Combobox"]["Value"].bind("<<ComboboxSelected>>", handle_value)
+
+    
 
 def run(layers, parameters, setting):
     def update():
