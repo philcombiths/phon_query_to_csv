@@ -111,6 +111,61 @@ Program completion message {
 
 """
 
+def pivot(layers, parameters, setting):
+    def update(event = None):
+        selections = [widgets["Listbox"]["Variables"].get(s) for s in widgets["Listbox"]["Variables"].curselection()]
+
+        for selection in selections:
+            if selection not in args["Index"].keys():
+                args["Index"][selection] = {}
+
+                for value in sorted(in_df[selection].dropna().unique()):
+                    args["Index"][selection][str(value)] = True
+
+        for variable in list(args["Index"].keys()):
+            if variable not in selections:
+                args["Index"].pop(variable, None)
+
+        widgets["Combobox"]["Variable"].configure(values = selections)
+
+        if to_filter.get() not in selections:
+            to_filter.set("")
+
+        print(args)
+
+    args = {
+        "Index" : {},
+        "Values" : None,
+        "Aggfunc" : None
+    }
+
+    in_fp = os.path.join(parameters["gen_csv"][0], 'Compiled', 'merged_files', 'full_annotated_dataset.csv')
+    out_fp = os.path.join(parameters["gen_csv"][0], 'Compiled', 'merged_files', 'pivot_table_dataset.csv')
+
+    in_df = pd.read_csv(in_fp, encoding='utf-8')
+
+    variables = Variable(value = tuple([variable for variable in in_df.columns]))
+
+    to_filter = StringVar()
+
+    widgets = {
+        "Listbox" : {
+            "Variables" : Listbox(setting, width = 20, height = 5, selectmode = "multiple", exportselection = False),
+            "Filters" : Listbox(setting)
+        },
+        "Combobox" : {
+            "Variable" : Combobox(setting, textvariable = to_filter, state = "readonly", width = 23)
+        }
+    }
+
+    widgets["Listbox"]["Variables"].place(relx = 0.5, x = -220, y = 165, anchor = "n")
+    widgets["Listbox"]["Variables"].configure(listvariable = variables)
+    widgets["Listbox"]["Variables"].bind("<<ListboxSelect>>", update)
+
+    widgets["Combobox"]["Variable"].place(relx = 0.5, y = 165, anchor = "n")
+
+    return
+
 def run(layers, parameters, setting):
     def update():
         try:
@@ -170,18 +225,8 @@ def run(layers, parameters, setting):
                                                        actual = parameters["Flavor"]["Actual"])
                 
             if steps[s][1] ==  "Creating pivot table...":
+                pivot(layers, results, setting)
                 # results["final"] = create_pivot_table(results["gen_csv"][0])
-                in_fp = os.path.join(results["gen_csv"][0], 'Compiled', 'merged_files', 'full_annotated_dataset.csv')
-                out_fp = os.path.join(results["gen_csv"][0], 'Compiled', 'merged_files', 'pivot_table_dataset.csv')
-
-                in_df = pd.read_csv(in_fp, encoding='utf-8')
-
-                variables = Variable(value = tuple([variable for variable in in_df.columns]))
-
-                widgets["Listbox"]["Variables"].place(relx = 0.5, x = -140, y = 165, anchor = "n")
-                widgets["Listbox"]["Variables"].configure(listvariable = variables)
-
-
 
             event_queue.put((steps[s][0] + 1, steps[s][1]))
 
@@ -200,9 +245,6 @@ def run(layers, parameters, setting):
         },
         "Progressbar" : {
             "Progress" : Progressbar(setting, orient = "horizontal", mode = "determinate", length = 320)
-        },
-        "Listbox" : {
-            "Variables" : Listbox(setting, width = 20, height = 5, selectmode = "multiple")
         }
     }
 
