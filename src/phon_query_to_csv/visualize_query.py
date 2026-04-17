@@ -16,7 +16,6 @@ from tkinter import messagebox as mbox
 
 from tkinter import StringVar
 from tkinter import BooleanVar
-from tkinter import Variable
 
 from os.path import isdir
 
@@ -76,52 +75,49 @@ Program completion message {
 """
 
 def pivot(layers, parameters, setting):
-    def update(event, spec):
-        if spec == "Get Variables":
-            selections = [widgets["Listbox"]["Variables"].get(s) for s in widgets["Listbox"]["Variables"].curselection()]
+    def handle_filters(event):
+        selections = [widgets["Listbox"]["Filters"].get(s) for s in widgets["Listbox"]["Filters"].curselection()]
+        variable = widgets["Combobox"]["Filterable"].get()
 
-            for selection in selections:
-                if selection not in args["Index"].keys():
-                    args["Index"][selection] = {}
+        for selection in selections:
+            args["Index"][variable][selection] = True
 
-                    for value in sorted(in_df[selection].dropna().unique()):
-                        args["Index"][selection][str(value)] = True
+        for filter in list(args["Index"][variable].keys()):
+            if filter not in selections:
+                args["Index"][variable][filter] = False
 
-            for variable in list(args["Index"].keys()):
-                if variable not in selections:
-                    args["Index"].pop(variable, None)
+    def handle_filterable(event):
+        variable = widgets["Combobox"]["Filterable"].get()
 
-            widgets["Combobox"]["Variable"].configure(values = selections)
+        widgets["Listbox"]["Filters"].delete(0, "end")
 
-            if to_filter.get() not in selections:
-                to_filter.set("")
+        if variable:
+            for value in args["Index"][variable].keys():
+                widgets["Listbox"]["Filters"].insert("end", value)
 
-                widgets["Listbox"]["Filters"].delete(0, "end")
+                if args["Index"][variable].get(value):
+                    widgets["Listbox"]["Filters"].selection_set("end")
 
-        if spec == "Get Filters":
-            variable = to_filter.get()
+    def handle_variables(event):
+        selections = [widgets["Listbox"]["Variables"].get(s) for s in widgets["Listbox"]["Variables"].curselection()]
+
+        for selection in selections:
+            if selection not in args["Index"].keys():
+                args["Index"][selection] = {}
+
+                for value in sorted(in_df[selection].dropna().unique()):
+                    args["Index"][selection][str(value)] = True
+
+        for variable in list(args["Index"].keys()):
+            if variable not in selections:
+                args["Index"].pop(variable, None)
+
+        widgets["Combobox"]["Filterable"].configure(values = selections)
+
+        if widgets["Combobox"]["Filterable"].get() not in selections:
+            widgets["Combobox"]["Filterable"].set("")
 
             widgets["Listbox"]["Filters"].delete(0, "end")
-
-            if variable:
-                for value in args["Index"][variable].keys():
-                    widgets["Listbox"]["Filters"].insert("end", value)
-
-                    if args["Index"][variable].get(value):
-                        widgets["Listbox"]["Filters"].selection_set("end")
-
-        if spec == "Filter":
-            selections = [widgets["Listbox"]["Filters"].get(s) for s in widgets["Listbox"]["Filters"].curselection()]
-            variable = to_filter.get()
-
-            for selection in selections:
-                args["Index"][variable][selection] = True
-
-            for filter in list(args["Index"][variable].keys()):
-                if filter not in selections:
-                    args["Index"][variable][filter] = False
-
-        print(args)
 
     args = {
         "Index" : {},
@@ -134,33 +130,30 @@ def pivot(layers, parameters, setting):
 
     in_df = pd.read_csv(in_fp, encoding='utf-8')
 
-    variables = Variable(value = tuple([variable for variable in in_df.columns]))
-
-    to_filter = StringVar()
-
     widgets = {
         "Listbox" : {
             "Variables" : Listbox(setting, width = 20, height = 5, selectmode = "multiple", exportselection = False),
             "Filters" : Listbox(setting, width = 20, height = 3, selectmode = "multiple", exportselection = False)
         },
         "Combobox" : {
-            "Variable" : Combobox(setting, textvariable = to_filter, state = "readonly", width = 23)
+            "Filterable" : Combobox(setting, width = 23)
         }
     }
 
     widgets["Listbox"]["Variables"].place(relx = 0.5, x = -220, y = 165, anchor = "n")
     widgets["Listbox"]["Filters"].place(relx = 0.5, y = 210, anchor = "n")
 
-    widgets["Listbox"]["Variables"].configure(listvariable = variables)
+    for variable in in_df.columns:
+        widgets["Listbox"]["Variables"].insert("end", variable)
 
-    widgets["Listbox"]["Variables"].bind("<<ListboxSelect>>", lambda event : update(event, "Get Variables"))
-    widgets["Listbox"]["Filters"].bind("<<ListboxSelect>>", lambda event : update(event, "Filter"))
+    widgets["Listbox"]["Variables"].bind("<<ListboxSelect>>", handle_variables)
+    widgets["Listbox"]["Filters"].bind("<<ListboxSelect>>", handle_filters)
 
-    widgets["Combobox"]["Variable"].place(relx = 0.5, y = 165, anchor = "n")
+    widgets["Combobox"]["Filterable"].place(relx = 0.5, y = 165, anchor = "n")
 
-    widgets["Combobox"]["Variable"].bind("<<ComboboxSelected>>", lambda event : update(event, "Get Filters"))
+    widgets["Combobox"]["Filterable"].configure(state = "readonly")
 
-    return
+    widgets["Combobox"]["Filterable"].bind("<<ComboboxSelected>>", handle_filterable)
 
 def run(layers, parameters, setting):
     def update():
