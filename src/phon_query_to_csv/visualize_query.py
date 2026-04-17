@@ -36,20 +36,6 @@ from phon_query_to_csv.create_pivot_table import create_pivot_table
 Analysis Progress
 
 create_pivot_table {
-    In filepath : gen_csv_result[0] + 'Compiled/merged_files/full_annotated_dataset.csv'
-    Out filepath : gen_csv_result[0] + 'Compiled/merged_files/pivot_table_dataset.csv'
-
-    Dataframe : Read from the in filepath
-    
-    Display rows selection with rows listbox {
-        Get rows from dataframe.columns
-        Set default selected rows to Participant, Phase, Language, Analysis, IPA Target in listbox
-    }
-    
-    Apply filters for rows {
-        [METHOD]
-    }
- 
     Display column selection with column combobox {
         Get columns from col for col in dataframe.columns if col not in rows
         Set no default selection
@@ -64,28 +50,6 @@ create_pivot_table {
 }
 
 New create_pivot_table
-
-    in_fp = os.path.join(directory, 'Compiled', 'merged_files', 'full_annotated_dataset.csv')
-    out_fp = os.path.join(directory, 'Compiled', 'merged_files', output_filename)
-
-    # Load dataset
-    try:
-        in_df = pd.read_csv(in_fp, encoding='utf-8')
-    except FileNotFoundError:
-        print(f"Error: File not found at {in_fp}")
-        return
-
-    # Prompt for rows or set default
-    # default_rows : ['Participant', 'Phase', 'Language', 'Analysis', 'IPA Target']
-    rows = in_df.columns
-
-    # Initialize subrow filters
-    if subrow_filters is None:
-        subrow_filters = {}
-        for row in rows:
-            unique_vals = [str(v) for v in sorted(in_df[row].dropna().unique())]
-            print(f"\nPossible values for {row}: {', '.join(unique_vals)}")
-
     # Select value column
     columns = [l for l in in_df.columns if l not in rows]
     
@@ -112,24 +76,50 @@ Program completion message {
 """
 
 def pivot(layers, parameters, setting):
-    def update(event = None):
-        selections = [widgets["Listbox"]["Variables"].get(s) for s in widgets["Listbox"]["Variables"].curselection()]
+    def update(event, spec):
+        if spec == "Get Variables":
+            selections = [widgets["Listbox"]["Variables"].get(s) for s in widgets["Listbox"]["Variables"].curselection()]
 
-        for selection in selections:
-            if selection not in args["Index"].keys():
-                args["Index"][selection] = {}
+            for selection in selections:
+                if selection not in args["Index"].keys():
+                    args["Index"][selection] = {}
 
-                for value in sorted(in_df[selection].dropna().unique()):
-                    args["Index"][selection][str(value)] = True
+                    for value in sorted(in_df[selection].dropna().unique()):
+                        args["Index"][selection][str(value)] = True
 
-        for variable in list(args["Index"].keys()):
-            if variable not in selections:
-                args["Index"].pop(variable, None)
+            for variable in list(args["Index"].keys()):
+                if variable not in selections:
+                    args["Index"].pop(variable, None)
 
-        widgets["Combobox"]["Variable"].configure(values = selections)
+            widgets["Combobox"]["Variable"].configure(values = selections)
 
-        if to_filter.get() not in selections:
-            to_filter.set("")
+            if to_filter.get() not in selections:
+                to_filter.set("")
+
+                widgets["Listbox"]["Filters"].delete(0, "end")
+
+        if spec == "Get Filters":
+            variable = to_filter.get()
+
+            widgets["Listbox"]["Filters"].delete(0, "end")
+
+            if variable:
+                for value in args["Index"][variable].keys():
+                    widgets["Listbox"]["Filters"].insert("end", value)
+
+                    if args["Index"][variable].get(value):
+                        widgets["Listbox"]["Filters"].selection_set("end")
+
+        if spec == "Filter":
+            selections = [widgets["Listbox"]["Filters"].get(s) for s in widgets["Listbox"]["Filters"].curselection()]
+            variable = to_filter.get()
+
+            for selection in selections:
+                args["Index"][variable][selection] = True
+
+            for filter in list(args["Index"][variable].keys()):
+                if filter not in selections:
+                    args["Index"][variable][filter] = False
 
         print(args)
 
@@ -151,7 +141,7 @@ def pivot(layers, parameters, setting):
     widgets = {
         "Listbox" : {
             "Variables" : Listbox(setting, width = 20, height = 5, selectmode = "multiple", exportselection = False),
-            "Filters" : Listbox(setting)
+            "Filters" : Listbox(setting, width = 20, height = 3, selectmode = "multiple", exportselection = False)
         },
         "Combobox" : {
             "Variable" : Combobox(setting, textvariable = to_filter, state = "readonly", width = 23)
@@ -159,10 +149,16 @@ def pivot(layers, parameters, setting):
     }
 
     widgets["Listbox"]["Variables"].place(relx = 0.5, x = -220, y = 165, anchor = "n")
+    widgets["Listbox"]["Filters"].place(relx = 0.5, y = 210, anchor = "n")
+
     widgets["Listbox"]["Variables"].configure(listvariable = variables)
-    widgets["Listbox"]["Variables"].bind("<<ListboxSelect>>", update)
+
+    widgets["Listbox"]["Variables"].bind("<<ListboxSelect>>", lambda event : update(event, "Get Variables"))
+    widgets["Listbox"]["Filters"].bind("<<ListboxSelect>>", lambda event : update(event, "Filter"))
 
     widgets["Combobox"]["Variable"].place(relx = 0.5, y = 165, anchor = "n")
+
+    widgets["Combobox"]["Variable"].bind("<<ComboboxSelected>>", lambda event : update(event, "Get Filters"))
 
     return
 
