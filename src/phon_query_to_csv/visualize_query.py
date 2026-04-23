@@ -31,25 +31,40 @@ from phon_query_to_csv.calculate_accuracy import calculate_accuracy
 from phon_query_to_csv.phone_data_expander import phone_data_expander
 from phon_query_to_csv.create_pivot_table import create_pivot_table
 
+def pivot(parameters, setting):
+    finished = BooleanVar(value = False)
 
-"""
-Analysis Progress
+    def transition():
+        errormessage = ("Please check that variables have been chosen and each have at least one allowed value, "
+                        "that there is a variable chosen for the table values, "
+                        "and that there is an aggregation function selected.")
 
-Program completion message {
-    Pivot Table Created
-    
-    The output file is located at the following directory:
-    [DIRECTORY]
-    
-    Below is a preview of the pivot table:
-    [SLICE]
+        args["Values"] = widgets["Combobox"]["Value"].get()
+        args["Aggfunc"] = widgets["Combobox"]["Aggregation"].get().lower()
 
-    You may now quit the program.
-}
+        valid = True
 
-"""
+        for variable in args["Index"].keys():
+            for unique in args["Index"][variable].keys():
+                valid = args["Index"][variable][unique]
 
-def pivot(layers, parameters, setting):
+                if valid:
+                    break
+
+            if not valid:
+                break
+
+        valid = valid and args["Values"] and args["Aggfunc"]
+        
+        if not valid:
+            mbox.showerror(title = "Unable to create the pivot table", message = errormessage)
+        else:
+            finished.set(True)
+
+            for category in widgets.keys():
+                for widget in widgets[category].keys():
+                    widgets[category][widget].place_forget()
+
     def inform():
         helptext = ("Creating the pivot table"
                     "\n\n"
@@ -93,7 +108,7 @@ def pivot(layers, parameters, setting):
             if selection not in args["Index"].keys():
                 args["Index"][selection] = {}
 
-                for value in sorted(in_df[selection].dropna().unique()):
+                for value in sorted(df[selection].dropna().unique()):
                     args["Index"][selection][str(value)] = True
 
         for variable in list(args["Index"].keys()):
@@ -109,8 +124,8 @@ def pivot(layers, parameters, setting):
 
         values = []
 
-        for value in in_df.columns:
-            if value not in selections and pd.api.types.is_numeric_dtype(in_df[value]):
+        for value in df.columns:
+            if value not in selections and pd.api.types.is_numeric_dtype(df[value]):
                 values.append(value)
 
         widgets["Combobox"]["Value"].configure(values = values)
@@ -124,16 +139,15 @@ def pivot(layers, parameters, setting):
         "Aggfunc" : None
     }
 
-    in_fp = os.path.join(parameters["gen_csv"][0], 'Compiled', 'merged_files', 'full_annotated_dataset.csv')
-    out_fp = os.path.join(parameters["gen_csv"][0], 'Compiled', 'merged_files', 'pivot_table_dataset.csv')
+    fp = os.path.join(parameters["gen_csv"][0], 'Compiled', 'merged_files', 'full_annotated_dataset.csv')
 
-    in_df = pd.read_csv(in_fp, encoding='utf-8')
+    df = pd.read_csv(fp, encoding = 'utf-8')
 
     values = []
     defaults = ['Participant', 'Phase', 'Language', 'Analysis', 'IPA Target']
 
-    for value in in_df.columns:
-        if pd.api.types.is_numeric_dtype(in_df[value]):
+    for value in df.columns:
+        if pd.api.types.is_numeric_dtype(df[value]):
             values.append(value)
 
     aggfuncs = ["Mean", "Sum", "Count", "Min", "Max", "Median", "STD"]
@@ -147,6 +161,7 @@ def pivot(layers, parameters, setting):
         },
         "Button" : {
             "Help" : Button(setting, text = "󰋼 ", width = 3),
+            "Finish" : Button(setting, text = "Finish", width = 5)
         },
         "Listbox" : {
             "Variables" : Listbox(setting, width = 20, height = 6, selectmode = "multiple", exportselection = False),
@@ -163,19 +178,21 @@ def pivot(layers, parameters, setting):
         }
     }
 
-    widgets["Label"]["Prompt"].place(relx = 0.5, y = 125, anchor = "n")
-    widgets["Label"]["ArrowOne"].place(relx = 0.5, x = -115, y = 163, anchor = "n")
-    widgets["Label"]["ArrowTwo"].place(relx = 0.5, x = 115, y = 163, anchor = "n")
-    widgets["Label"]["Divider"].place(relx = 0.5, y = 190, anchor = "n")
+    widgets["Label"]["Prompt"].place(relx = 0.5, y = 115, anchor = "n")
+    widgets["Label"]["ArrowOne"].place(relx = 0.5, x = -115, y = 153, anchor = "n")
+    widgets["Label"]["ArrowTwo"].place(relx = 0.5, x = 115, y = 153, anchor = "n")
+    widgets["Label"]["Divider"].place(relx = 0.5, y = 180, anchor = "n")
 
-    widgets["Button"]["Help"].place(relx = 0.5, x = 264, y = 121, anchor = "n")
+    widgets["Button"]["Help"].place(relx = 0.5, x = 264, y = 111, anchor = "n")
+    widgets["Button"]["Finish"].place(relx = 0.5, x = 0, y = 332, anchor = "s")
 
     widgets["Button"]["Help"].configure(command = lambda : inform())
+    widgets["Button"]["Finish"].configure(command = lambda : transition())
 
-    widgets["Listbox"]["Variables"].place(relx = 0.5, x = -220, y = 165, anchor = "n")
-    widgets["Listbox"]["Filters"].place(relx = 0.5, x = 220, y = 165, anchor = "n")
+    widgets["Listbox"]["Variables"].place(relx = 0.5, x = -220, y = 155, anchor = "n")
+    widgets["Listbox"]["Filters"].place(relx = 0.5, x = 220, y = 155, anchor = "n")
 
-    for variable in in_df.columns:
+    for variable in df.columns:
         widgets["Listbox"]["Variables"].insert("end", variable)
 
         if variable in defaults:
@@ -192,15 +209,15 @@ def pivot(layers, parameters, setting):
     widgets["Listbox"]["Variables"].bind("<<ListboxSelect>>", handle_variables)
     widgets["Listbox"]["Filters"].bind("<<ListboxSelect>>", handle_filters)
 
-    widgets["Scrollbar"]["Variables"].place(relx = 0.5, x = -147, y = 167, anchor = "n", height = 120)
-    widgets["Scrollbar"]["Filters"].place(relx = 0.5, x = 292, y = 167, anchor = "n", height = 120)
+    widgets["Scrollbar"]["Variables"].place(relx = 0.5, x = -147, y = 157, anchor = "n", height = 120)
+    widgets["Scrollbar"]["Filters"].place(relx = 0.5, x = 292, y = 157, anchor = "n", height = 120)
 
     widgets["Scrollbar"]["Variables"].configure(command = widgets["Listbox"]["Variables"].yview)
     widgets["Scrollbar"]["Filters"].configure(command = widgets["Listbox"]["Filters"].yview)
 
-    widgets["Combobox"]["Filterable"].place(relx = 0.5, y = 165, anchor = "n")
-    widgets["Combobox"]["Value"].place(relx = 0.5, y = 225, anchor = "n")
-    widgets["Combobox"]["Aggregation"].place(relx = 0.5, y = 265, anchor = "n")
+    widgets["Combobox"]["Filterable"].place(relx = 0.5, y = 155, anchor = "n")
+    widgets["Combobox"]["Value"].place(relx = 0.5, y = 215, anchor = "n")
+    widgets["Combobox"]["Aggregation"].place(relx = 0.5, y = 255, anchor = "n")
 
     widgets["Combobox"]["Filterable"].configure(state = "readonly")
     widgets["Combobox"]["Value"].configure(state = "readonly")
@@ -210,7 +227,17 @@ def pivot(layers, parameters, setting):
 
     inform()
 
+    while not finished.get():
+        continue
+
+    return df, args
+
 def run(layers, parameters, setting):
+    def finish():
+        widgets["Label"]["Close"].place(relx = 0.5, y = 165, anchor = "n")
+
+        widgets["Label"]["Close"].configure(font = font.Font(size = 16, weight = font.BOLD), justify = "center")
+
     def update():
         try:
             while True:
@@ -228,7 +255,7 @@ def run(layers, parameters, setting):
         distance = target - current
 
         if distance > 0.5:
-            step = distance * 0.1
+            step = distance * 0.05
             widgets["Progressbar"]["Progress"]["value"] = current + step
         else:
             widgets["Progressbar"]["Progress"]["value"] = target
@@ -239,11 +266,11 @@ def run(layers, parameters, setting):
 
     def analyze():
         steps = [(10.0, "Generating CSV files..."), 
-                (20.0, "Merging CSV files..."), 
-                (30.0, "Handling accuracy calculation..."), 
-                (45.0, "Expanding phone data..."), 
-                (75.0, "Creating pivot table..."), 
-                (100.0, "Complete!")]
+                 (20.0, "Merging CSV files..."), 
+                 (30.0, "Handling accuracy calculation..."), 
+                 (65.0, "Expanding phone data..."), 
+                 (95.0, "Creating pivot table..."), 
+                 (100.0, "Complete!")]
 
         for s in range(len(steps) - 1):
             event_queue.put(steps[s])
@@ -269,8 +296,11 @@ def run(layers, parameters, setting):
                                                        actual = parameters["Flavor"]["Actual"])
                 
             if steps[s][1] ==  "Creating pivot table...":
-                pivot(layers, results, setting)
-                # results["final"] = create_pivot_table(results["gen_csv"][0])
+                df, specs = pivot(results, setting)
+
+                results["final"] = create_pivot_table(results["gen_csv"][0], df, specs, parameters["Blanking"])
+
+                finish()
 
             event_queue.put((steps[s][0] + 1, steps[s][1]))
 
@@ -285,7 +315,8 @@ def run(layers, parameters, setting):
     widgets = {
         "Label" : {
             "Process" : Label(setting, text = ("Running Query: " + parameters["Query"])),
-            "Status" : Label(setting, text = "Initializing data...", font = font.Font(size = 10))
+            "Status" : Label(setting, text = "Initializing data...", font = font.Font(size = 10)),
+            "Close" : Label(setting, text = "All output files have been successfully created.\nYou may now quit the program.")
         },
         "Progressbar" : {
             "Progress" : Progressbar(setting, orient = "horizontal", mode = "determinate", length = 320)
