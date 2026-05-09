@@ -19,7 +19,7 @@ def create_pivot_table(
     directory,
     dataframe,
     specifications,
-    blanking = False,
+    blanking,
     output_filename = 'pivot_table_dataset.csv'
 ):
     """
@@ -51,7 +51,7 @@ def create_pivot_table(
 
     # Create pivot table
     try:
-        out_df = dataframe.pivot_table(index = specifications["Index"].keys(), values = specifications["Values"], aggfunc = specifications["Aggfunc"])
+        out_df = dataframe.pivot_table(index = list(specifications["Index"].keys()), values = specifications["Values"], aggfunc = specifications["Aggfunc"])
     except Exception as e:
         print(f"Error creating pivot table: {e}")
         return
@@ -77,8 +77,8 @@ def create_pivot_table(
                     last = curr
 
     # Save to CSV
-    os.makedirs(os.path.dirname(out_fp), exist_ok=True)
-    out_df.to_csv(out_fp, index=False)
+    os.makedirs(os.path.dirname(out_fp), exist_ok = True)
+    out_df.to_csv(out_fp, index = False)
 
     print("Generated", output_filename)
 

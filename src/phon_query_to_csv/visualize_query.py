@@ -78,9 +78,18 @@ def pivot(parameters, setting):
         
         mbox.showinfo(title = "Helpful Information", message = helptext)
 
+    def initialize():
+        for default in defaults:
+            args["Index"][default] = {}
+
+            for value in sorted(df[default].dropna().unique()):
+                    args["Index"][default][str(value)] = True
+
+        inform()
+
     def handle_filters(event):
         selections = [widgets["Listbox"]["Filters"].get(s) for s in widgets["Listbox"]["Filters"].curselection()]
-        variable = widgets["Combobox"]["Filterable"].get()
+        variable = widgets["Combobox"]["Selection"].get()
 
         for selection in selections:
             args["Index"][variable][selection] = True
@@ -88,18 +97,6 @@ def pivot(parameters, setting):
         for filter in list(args["Index"][variable].keys()):
             if filter not in selections:
                 args["Index"][variable][filter] = False
-
-    def handle_filterable(event):
-        variable = widgets["Combobox"]["Filterable"].get()
-
-        widgets["Listbox"]["Filters"].delete(0, "end")
-
-        if variable:
-            for value in args["Index"][variable].keys():
-                widgets["Listbox"]["Filters"].insert("end", value)
-
-                if args["Index"][variable].get(value):
-                    widgets["Listbox"]["Filters"].selection_set("end")
 
     def handle_variables(event):
         selections = [widgets["Listbox"]["Variables"].get(s) for s in widgets["Listbox"]["Variables"].curselection()]
@@ -115,10 +112,10 @@ def pivot(parameters, setting):
             if variable not in selections:
                 args["Index"].pop(variable, None)
 
-        widgets["Combobox"]["Filterable"].configure(values = selections)
+        widgets["Combobox"]["Selection"].configure(values = selections)
 
-        if widgets["Combobox"]["Filterable"].get() not in selections:
-            widgets["Combobox"]["Filterable"].set("")
+        if widgets["Combobox"]["Selection"].get() not in selections:
+            widgets["Combobox"]["Selection"].set("")
 
             widgets["Listbox"]["Filters"].delete(0, "end")
 
@@ -133,6 +130,72 @@ def pivot(parameters, setting):
         if widgets["Combobox"]["Value"].get() in selections:
             widgets["Combobox"]["Value"].set("")
 
+    def handle_var_dragging(event):
+        variables = event.widget
+
+        if event.y < 0:
+            variables.yview_scroll(-1, "units")
+        elif event.y > variables.winfo_height():
+            variables.yview_scroll(1, "units")
+
+        position = variables.nearest(event.y)
+
+        if position == variables.cur_index or variables.cur_index is None:
+            return
+
+        item = variables.get(variables.cur_index)
+
+        variables.delete(variables.cur_index)
+        variables.insert(position, item)
+
+        variables.selection_clear(0, "end")
+        variables.selection_set(position)
+
+        variables.cur_index = position
+
+    def handle_var_viewing(event):
+        variables = event.widget
+        selection = variables.get(variables.curselection()[0])
+
+        variables.cur_index = variables.nearest(event.y)
+
+        widgets["Listbox"]["Filters"].delete(0, "end")
+
+        if selection:
+            for value in args["Index"][selection].keys():
+                widgets["Listbox"]["Filters"].insert("end", value)
+
+                if args["Index"][selection].get(value):
+                    widgets["Listbox"]["Filters"].selection_set("end")
+
+        print(args, variables.get(0, "end"))
+
+    def handle_var_selection(event):
+        variable = event.widget
+        selection = variable.get()
+
+        selections = widgets["Listbox"]["Variables"].get(0, "end")
+
+        if selection in selections:
+            widgets["Listbox"]["Variables"].delete(selections.index(selection))
+            widgets["Listbox"]["Filters"].delete(0, "end")
+
+            args["Index"].pop(selection, None)
+        else:
+            widgets["Listbox"]["Variables"].insert("end", selection)
+
+            args["Index"][selection] = {}
+
+            for value in sorted(df[selection].dropna().unique()):
+                args["Index"][selection][str(value)] = True
+
+            widgets["Listbox"]["Variables"].selection_clear(0, "end")
+            widgets["Listbox"]["Variables"].selection_set("end")
+
+            widgets["Listbox"]["Filters"].selection_set(0, "end")
+
+        variable.set("")
+
     args = {
         "Index" : {},
         "Values" : None,
@@ -143,19 +206,22 @@ def pivot(parameters, setting):
 
     df = pd.read_csv(fp, encoding = 'utf-8')
 
+    variables = []
     values = []
+
+    for var in df.columns:
+        variables.append(var)
+
+        if pd.api.types.is_numeric_dtype(df[var]):
+            values.append(var)
+
     defaults = ['Participant', 'Phase', 'Language', 'Analysis', 'IPA Target']
-
-    for value in df.columns:
-        if pd.api.types.is_numeric_dtype(df[value]):
-            values.append(value)
-
     aggfuncs = ["Mean", "Sum", "Count", "Min", "Max", "Median", "STD"]
 
     widgets = {
         "Label" : {
             "Prompt" : Label(setting, text = "Select variables and their filters, and values and their aggregation     󰋼 "),
-            "ArrowOne" : Label(setting, text = "󰜴 ", font = font.Font(size = 14)),
+            "ArrowOne" : Label(setting, text = "󰜱 ", font = font.Font(size = 14)),
             "ArrowTwo" : Label(setting, text = "󰜴 ", font = font.Font(size = 14)),
             "Divider" : Label(setting, text = "󰇘 󰇘 󰇘 󰇘 󰇘 ", font = font.Font(size = 14))
         },
@@ -164,7 +230,7 @@ def pivot(parameters, setting):
             "Finish" : Button(setting, text = "Finish", width = 5)
         },
         "Listbox" : {
-            "Variables" : Listbox(setting, width = 20, height = 6, selectmode = "multiple", exportselection = False),
+            "Variables" : Listbox(setting, width = 20, height = 6, selectmode = "single", exportselection = False),
             "Filters" : Listbox(setting, width = 20, height = 6, selectmode = "multiple", exportselection = False)
         },
         "Scrollbar" : {
@@ -172,7 +238,7 @@ def pivot(parameters, setting):
             "Filters" : Scrollbar(setting, orient = "vertical")
         },
         "Combobox" : {
-            "Filterable" : Combobox(setting, width = 20),
+            "Variable" : Combobox(setting, width = 20, values = variables),
             "Value" : Combobox(setting, width = 20, values = values),
             "Aggregation" : Combobox(setting, width = 20, values = aggfuncs)
         }
@@ -192,22 +258,19 @@ def pivot(parameters, setting):
     widgets["Listbox"]["Variables"].place(relx = 0.5, x = -220, y = 155, anchor = "n")
     widgets["Listbox"]["Filters"].place(relx = 0.5, x = 220, y = 155, anchor = "n")
 
-    for variable in df.columns:
-        widgets["Listbox"]["Variables"].insert("end", variable)
-
-        if variable in defaults:
-            widgets["Listbox"]["Variables"].selection_set("end")
-
-    handle_variables(None)
-
     widgets["Listbox"]["Variables"].configure(font = font.Font(size = 10))
+
+    for default in defaults:
+        widgets["Listbox"]["Variables"].insert("end", default)
+
     widgets["Listbox"]["Filters"].configure(font = font.Font(size = 10))
 
     widgets["Listbox"]["Variables"].configure(yscrollcommand = widgets["Scrollbar"]["Variables"].set)
     widgets["Listbox"]["Filters"].configure(yscrollcommand = widgets["Scrollbar"]["Filters"].set)
 
-    widgets["Listbox"]["Variables"].bind("<<ListboxSelect>>", handle_variables)
-    widgets["Listbox"]["Filters"].bind("<<ListboxSelect>>", handle_filters)
+    widgets["Listbox"]["Variables"].bind("<Button-1>", handle_var_viewing)
+    widgets["Listbox"]["Variables"].bind("<B1-Motion>", handle_var_dragging)
+    #widgets["Listbox"]["Filters"].bind("<<ListboxSelect>>", handle_fil_selection)
 
     widgets["Scrollbar"]["Variables"].place(relx = 0.5, x = -147, y = 157, anchor = "n", height = 120)
     widgets["Scrollbar"]["Filters"].place(relx = 0.5, x = 292, y = 157, anchor = "n", height = 120)
@@ -215,17 +278,17 @@ def pivot(parameters, setting):
     widgets["Scrollbar"]["Variables"].configure(command = widgets["Listbox"]["Variables"].yview)
     widgets["Scrollbar"]["Filters"].configure(command = widgets["Listbox"]["Filters"].yview)
 
-    widgets["Combobox"]["Filterable"].place(relx = 0.5, y = 155, anchor = "n")
+    widgets["Combobox"]["Variable"].place(relx = 0.5, y = 155, anchor = "n")
     widgets["Combobox"]["Value"].place(relx = 0.5, y = 215, anchor = "n")
     widgets["Combobox"]["Aggregation"].place(relx = 0.5, y = 255, anchor = "n")
 
-    widgets["Combobox"]["Filterable"].configure(state = "readonly")
+    widgets["Combobox"]["Variable"].configure(state = "readonly")
     widgets["Combobox"]["Value"].configure(state = "readonly")
     widgets["Combobox"]["Aggregation"].configure(state = "readonly")
 
-    widgets["Combobox"]["Filterable"].bind("<<ComboboxSelected>>", handle_filterable)
+    widgets["Combobox"]["Variable"].bind("<<ComboboxSelected>>", handle_var_selection)
 
-    inform()
+    initialize()
 
     while not finished.get():
         continue
