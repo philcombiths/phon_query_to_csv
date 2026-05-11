@@ -66,69 +66,17 @@ def pivot(parameters, setting):
                     widgets[category][widget].place_forget()
 
     def inform():
-        helptext = ("Creating the pivot table"
-                    "\n\n"
-                    "The leftmost box contains options for possible variables. "
-                    "Those that are selected can have filters applied to them by choosing an individual variable in the center top drop-down box and selecting unique values in the rightmost box. "
-                    "\n\n"
-                    "Below the previously mentioned drop-down box, two other drop-down boxes contain options for the values of the pivot table as well as the aggregation funciton to apply. "
+        helptext = [("The leftmost box contains the currently selected variables, which can be reordered via drag-and-drop. "
+                    "Those that are selected can have filters applied to them by clicking on one of the selected and viewing the filters in the rightmost box. "),
+                    ("In between the two boxes is a drop-down menu with options for selections to add or remove from the leftmost box. "
+                    "Selecting any variable in the drop-down menu will add it to the list of the leftmost box if it is not already there or remove it if it is already there. "),
+                    ("Below the previously mentioned drop-down box, two other drop-down boxes contain options for the values of the pivot table as well as the aggregation funciton to apply. "
                     "Any values variable that is already selected in the leftmost box will not appear in the drop-down, so to select it for the values, you must deselect it from the leftmost box. "
                     "\n\n"
-                    "To see this helpful information again, click the info button next to the prompt.")
+                    "To view this information again, click the info icon next to the heading.")]
         
-        mbox.showinfo(title = "Helpful Information", message = helptext)
-
-    def initialize():
-        for default in defaults:
-            args["Index"][default] = {}
-
-            for value in sorted(df[default].dropna().unique()):
-                    args["Index"][default][str(value)] = True
-
-        inform()
-
-    def handle_filters(event):
-        selections = [widgets["Listbox"]["Filters"].get(s) for s in widgets["Listbox"]["Filters"].curselection()]
-        variable = widgets["Combobox"]["Selection"].get()
-
-        for selection in selections:
-            args["Index"][variable][selection] = True
-
-        for filter in list(args["Index"][variable].keys()):
-            if filter not in selections:
-                args["Index"][variable][filter] = False
-
-    def handle_variables(event):
-        selections = [widgets["Listbox"]["Variables"].get(s) for s in widgets["Listbox"]["Variables"].curselection()]
-
-        for selection in selections:
-            if selection not in args["Index"].keys():
-                args["Index"][selection] = {}
-
-                for value in sorted(df[selection].dropna().unique()):
-                    args["Index"][selection][str(value)] = True
-
-        for variable in list(args["Index"].keys()):
-            if variable not in selections:
-                args["Index"].pop(variable, None)
-
-        widgets["Combobox"]["Selection"].configure(values = selections)
-
-        if widgets["Combobox"]["Selection"].get() not in selections:
-            widgets["Combobox"]["Selection"].set("")
-
-            widgets["Listbox"]["Filters"].delete(0, "end")
-
-        values = []
-
-        for value in df.columns:
-            if value not in selections and pd.api.types.is_numeric_dtype(df[value]):
-                values.append(value)
-
-        widgets["Combobox"]["Value"].configure(values = values)
-
-        if widgets["Combobox"]["Value"].get() in selections:
-            widgets["Combobox"]["Value"].set("")
+        for text in helptext:
+            mbox.showinfo(title = "Helpful Information", message = "Creating the pivot table\n\n" + text)
 
     def handle_var_dragging(event):
         variables = event.widget
@@ -138,26 +86,28 @@ def pivot(parameters, setting):
         elif event.y > variables.winfo_height():
             variables.yview_scroll(1, "units")
 
-        position = variables.nearest(event.y)
+        index = variables.nearest(event.y)
 
-        if position == variables.cur_index or variables.cur_index is None:
+        if index == variables.cur_index or variables.cur_index is None:
             return
 
-        item = variables.get(variables.cur_index)
+        selection = variables.get(variables.cur_index)
 
         variables.delete(variables.cur_index)
-        variables.insert(position, item)
+        variables.insert(index, selection)
 
         variables.selection_clear(0, "end")
-        variables.selection_set(position)
+        variables.selection_set(index)
 
-        variables.cur_index = position
+        variables.cur_index = index
 
-    def handle_var_viewing(event):
+        args["Index"] = { selection : args["Index"][selection] for selection in variables.get(0, "end") }
+
+    def handle_var_selection(event):
         variables = event.widget
-        selection = variables.get(variables.curselection()[0])
-
         variables.cur_index = variables.nearest(event.y)
+
+        selection = variables.get(variables.cur_index)
 
         widgets["Listbox"]["Filters"].delete(0, "end")
 
@@ -168,33 +118,56 @@ def pivot(parameters, setting):
                 if args["Index"][selection].get(value):
                     widgets["Listbox"]["Filters"].selection_set("end")
 
-        print(args, variables.get(0, "end"))
-
-    def handle_var_selection(event):
+    def handle_var_update(event):
         variable = event.widget
-        selection = variable.get()
+        update = variable.get()
 
         selections = widgets["Listbox"]["Variables"].get(0, "end")
 
-        if selection in selections:
-            widgets["Listbox"]["Variables"].delete(selections.index(selection))
-            widgets["Listbox"]["Filters"].delete(0, "end")
+        if update in selections:
+            selection = widgets["Listbox"]["Variables"].get(widgets["Listbox"]["Variables"].curselection()[0])
+            index = selections.index(update)
+
+            if update == selection:
+                widgets["Listbox"]["Filters"].delete(0, "end")
+                widgets["Listbox"]["Variables"].selection_clear(index)
+
+            widgets["Listbox"]["Variables"].delete(index)
 
             args["Index"].pop(selection, None)
         else:
-            widgets["Listbox"]["Variables"].insert("end", selection)
+            widgets["Listbox"]["Variables"].insert("end", update)
 
-            args["Index"][selection] = {}
+            args["Index"][update] = {}
 
-            for value in sorted(df[selection].dropna().unique()):
-                args["Index"][selection][str(value)] = True
+            for value in sorted(df[update].dropna().unique()):
+                args["Index"][update][str(value)] = True
 
             widgets["Listbox"]["Variables"].selection_clear(0, "end")
             widgets["Listbox"]["Variables"].selection_set("end")
 
-            widgets["Listbox"]["Filters"].selection_set(0, "end")
+            widgets["Listbox"]["Filters"].delete(0, "end")
+
+            for value in args["Index"][update].keys():
+                widgets["Listbox"]["Filters"].insert("end", value)
+
+                if args["Index"][update].get(value):
+                    widgets["Listbox"]["Filters"].selection_set("end")
 
         variable.set("")
+
+    def handle_filter_selection(event):
+        filters = event.widget
+        filters.cur_index = filters.nearest(event.y)
+
+        selected = [filters.get(s) for s in filters.curselection()]
+
+        variable = widgets["Listbox"]["Variables"].get(widgets["Listbox"]["Variables"].curselection()[0])
+        filter = filters.get(filters.cur_index)
+
+        args["Index"][variable][filter] = filter not in selected
+
+        print(args["Index"])
 
     args = {
         "Index" : {},
@@ -268,9 +241,9 @@ def pivot(parameters, setting):
     widgets["Listbox"]["Variables"].configure(yscrollcommand = widgets["Scrollbar"]["Variables"].set)
     widgets["Listbox"]["Filters"].configure(yscrollcommand = widgets["Scrollbar"]["Filters"].set)
 
-    widgets["Listbox"]["Variables"].bind("<Button-1>", handle_var_viewing)
+    widgets["Listbox"]["Variables"].bind("<Button-1>", handle_var_selection)
     widgets["Listbox"]["Variables"].bind("<B1-Motion>", handle_var_dragging)
-    #widgets["Listbox"]["Filters"].bind("<<ListboxSelect>>", handle_fil_selection)
+    widgets["Listbox"]["Filters"].bind("<Button-1>", handle_filter_selection)
 
     widgets["Scrollbar"]["Variables"].place(relx = 0.5, x = -147, y = 157, anchor = "n", height = 120)
     widgets["Scrollbar"]["Filters"].place(relx = 0.5, x = 292, y = 157, anchor = "n", height = 120)
@@ -286,9 +259,15 @@ def pivot(parameters, setting):
     widgets["Combobox"]["Value"].configure(state = "readonly")
     widgets["Combobox"]["Aggregation"].configure(state = "readonly")
 
-    widgets["Combobox"]["Variable"].bind("<<ComboboxSelected>>", handle_var_selection)
+    widgets["Combobox"]["Variable"].bind("<<ComboboxSelected>>", handle_var_update)
 
-    initialize()
+    for default in defaults:
+        args["Index"][default] = {}
+
+        for value in sorted(df[default].dropna().unique()):
+                args["Index"][default][str(value)] = True
+
+    inform()
 
     while not finished.get():
         continue
@@ -398,7 +377,7 @@ def run(layers, parameters, setting):
 
     update()
     
-def flavor(layers, parameters, setting):
+def specifications(layers, parameters, setting):
     def transition():
         presets = ("TX", "TX Blind", "Typology", "New Typology", "ITOLD", "NCJC")
 
@@ -408,12 +387,12 @@ def flavor(layers, parameters, setting):
         parameters["Flavor"]["Actual"] = actual.get()
 
         if parameters["Flavor"]["Name"] in presets:
-            preset = preset(parameters["Flavor"]["Name"])
+            results = preset(parameters["Flavor"]["Name"])
 
-            matches = [parameters["Flavor"]["Phase"] == preset["Phase"], 
-                    parameters["Flavor"]["Participant"] == preset["Participant"], 
-                    parameters["Flavor"]["Target"] == preset["Target"], 
-                    parameters["Flavor"]["Actual"] == preset["Actual"]]
+            matches = [parameters["Flavor"]["Phase"] == results["Phase"], 
+                    parameters["Flavor"]["Participant"] == results["Participant"], 
+                    parameters["Flavor"]["Target"] == results["Target"], 
+                    parameters["Flavor"]["Actual"] == results["Actual"]]
 
             for match in matches:
                 if not match:
@@ -503,7 +482,7 @@ def query(layers, parameters, setting):
         parameters["Blanking"] = blanking.get()
 
         if specify:
-            sketch(layers, parameters, "Scene", flavor)
+            sketch(layers, parameters, "Scene", specifications)
         else:
             errormessage = "The following faulty inputs were identified:"
 
