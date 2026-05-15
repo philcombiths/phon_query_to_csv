@@ -49,16 +49,31 @@ def create_pivot_table(
     
     out_fp = os.path.join(directory, 'Compiled', 'merged_files', output_filename)
 
+    rows = specifications["Index"]
+    vals = specifications["Values"]
+    func = specifications["Aggfunc"]
+
     # Create pivot table
     try:
-        out_df = dataframe.pivot_table(index = list(specifications["Index"].keys()), values = specifications["Values"], aggfunc = specifications["Aggfunc"])
+        out_df = dataframe.pivot_table(index = rows.keys(), values = vals, aggfunc = func)
     except Exception as e:
         print(f"Error creating pivot table: {e}")
         return
+    
+    filters = {}
+
+    for row in rows.keys():
+        valid = []
+
+        for filter in rows[row].keys():
+            if rows[row].get(filter):
+                valid.append(filter)
+
+        filters[row] = valid
 
     # Apply subrow filters
-    for row in specifications["Index"].keys():
-        out_df = out_df[out_df.index.get_level_values(row).isin(specifications["Index"][row].keys())]
+    for row, valid in filters.items():
+        out_df = out_df[out_df.index.get_level_values(row).isin(valid)]
 
     # Prepare for output
     out_df = out_df.round(2).reset_index()

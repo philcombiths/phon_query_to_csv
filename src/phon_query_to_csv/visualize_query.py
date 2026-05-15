@@ -167,8 +167,6 @@ def pivot(parameters, setting):
 
         args["Index"][variable][filter] = filter not in selected
 
-        print(args["Index"])
-
     args = {
         "Index" : {},
         "Values" : None,
