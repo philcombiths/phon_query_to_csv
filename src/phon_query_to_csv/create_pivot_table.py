@@ -8,7 +8,7 @@ Generates:
   fitted to pivot table with specifications determined from user input
 
 Created on Fri Jul 11 09:14:22 2025
-@modified: 2025-07-28
+@modified: 2026-05-15
 @author: Francesco Vial
 """
 
@@ -29,22 +29,16 @@ def create_pivot_table(
     -----------
     directory : str
         Directory path containing the data files
-    rows : list, optional
-        List of column names to use as rows in the pivot table
-    value_column : str, optional
-        Column name to use for values in the pivot table
-    aggfunc : str, optional
-        Aggregation function to apply ('mean', 'sum', 'count', etc.)
-    subrow_filters : dict, optional
-        Dictionary of filters to apply to specific row columns
+    dataframe : DataFrame
+        DataFrame of the final table before pivoting
+    specifications : dict
+        Dictionary holding values for index, values, and aggfunc for pivoting
+    blanking : bool
+        Whether to blank repeated labels in the output for readability
+        If True, repeated values in row columns are replaced with empty strings
+        If False, all values are preserved as-is
     output_filename : str, default 'pivot_table_dataset.csv'
         Name of the output CSV file
-    show_preview : bool, default True
-        Whether to display a preview of the pivot table
-    blank_repeated_labels : bool, default True
-        Whether to blank repeated labels in the output for readability.
-        If True, repeated values in row columns are replaced with empty strings.
-        If False, all values are preserved as-is.
     """
     
     out_fp = os.path.join(directory, 'Compiled', 'merged_files', output_filename)
@@ -102,8 +96,5 @@ def create_pivot_table(
 # Example usage for testing
 if __name__ == "__main__":
     directory = ''
-    # Default behavior (blanks repeated labels)
+
     create_pivot_table(directory)
-    
-    # To preserve repeated labels, set blank_repeated_labels=False
-    # create_pivot_table(directory, blank_repeated_labels=False)

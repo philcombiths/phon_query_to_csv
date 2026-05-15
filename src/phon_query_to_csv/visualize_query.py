@@ -1,3 +1,13 @@
+# -*- coding: utf-8 -*-
+
+"""
+Algorithm for creating a GUI for phon_query_to_csv
+
+Created on Mon Mar 16 19:18:00 2026
+@modified: 2026-05-15
+@author: Francesco Vial
+"""
+
 from tkinter import Tk
 
 from tkinter.ttk import Frame
@@ -34,8 +44,10 @@ from phon_query_to_csv.create_pivot_table import create_pivot_table
 def pivot(parameters, setting):
     finished = BooleanVar(value = False)
 
+    # Transition to next setting
     def transition():
-        errormessage = ("Please check that variables have been chosen and each have at least one allowed value, "
+        # Catch invalid inputs
+        errormessage = ("Please check that variables have been chosen and each has at least one allowed value, "
                         "that there is a variable chosen for the table values, "
                         "and that there is an aggregation function selected.")
 
@@ -54,17 +66,19 @@ def pivot(parameters, setting):
             if not valid:
                 break
 
-        valid = valid and args["Values"] and args["Aggfunc"]
+        valid = valid and args["Index"] and args["Values"] and args["Aggfunc"]
         
         if not valid:
             mbox.showerror(title = "Unable to create the pivot table", message = errormessage)
         else:
+            # Remove parameters selection and resume run process
             finished.set(True)
 
             for category in widgets.keys():
                 for widget in widgets[category].keys():
                     widgets[category][widget].place_forget()
 
+    # Handle parameter selection guide
     def inform():
         helptext = [("The leftmost box contains the currently selected variables, which can be reordered via drag-and-drop. "
                     "Those that are selected can have filters applied to them by clicking on one of the selected and viewing the filters in the rightmost box. "),
@@ -78,6 +92,7 @@ def pivot(parameters, setting):
         for text in helptext:
             mbox.showinfo(title = "Helpful Information", message = "Creating the pivot table\n\n" + text)
 
+    # Handle reordering of variables via drag and drop
     def handle_var_dragging(event):
         variables = event.widget
 
@@ -101,8 +116,10 @@ def pivot(parameters, setting):
 
         variables.cur_index = index
 
+        # Reflect reordering in args dict
         args["Index"] = { selection : args["Index"][selection] for selection in variables.get(0, "end") }
 
+    # Handle visible filters adjustment upon variable selection
     def handle_var_selection(event):
         variables = event.widget
         variables.cur_index = variables.nearest(event.y)
@@ -118,24 +135,27 @@ def pivot(parameters, setting):
                 if args["Index"][selection].get(value):
                     widgets["Listbox"]["Filters"].selection_set("end")
 
+    # Handle variable update from combobox selection
     def handle_var_update(event):
         variable = event.widget
         update = variable.get()
 
         selections = widgets["Listbox"]["Variables"].get(0, "end")
-
-        if update in selections:
-            selection = widgets["Listbox"]["Variables"].get(widgets["Listbox"]["Variables"].curselection()[0])
+        
+        if update in selections: # Remove from list if it exists and clear out selection and filters if selected
+            curselection = widgets["Listbox"]["Variables"].curselection()
             index = selections.index(update)
 
-            if update == selection:
-                widgets["Listbox"]["Filters"].delete(0, "end")
-                widgets["Listbox"]["Variables"].selection_clear(index)
+            if curselection:
+                selection = widgets["Listbox"]["Variables"].get(curselection[0])
+
+                if update == selection:
+                    widgets["Listbox"]["Filters"].delete(0, "end")
+                    widgets["Listbox"]["Variables"].selection_clear(index)
 
             widgets["Listbox"]["Variables"].delete(index)
-
-            args["Index"].pop(selection, None)
-        else:
+            args["Index"].pop(update, None)
+        else: # Add to the list if it doesn't exist and automatically select it and populate filters
             widgets["Listbox"]["Variables"].insert("end", update)
 
             args["Index"][update] = {}
@@ -156,6 +176,7 @@ def pivot(parameters, setting):
 
         variable.set("")
 
+    # Handle filter selection in listbox
     def handle_filter_selection(event):
         filters = event.widget
         filters.cur_index = filters.nearest(event.y)
@@ -167,6 +188,7 @@ def pivot(parameters, setting):
 
         args["Index"][variable][filter] = filter not in selected
 
+    # Initialize important variables
     args = {
         "Index" : {},
         "Values" : None,
@@ -189,6 +211,7 @@ def pivot(parameters, setting):
     defaults = ['Participant', 'Phase', 'Language', 'Analysis', 'IPA Target']
     aggfuncs = ["Mean", "Sum", "Count", "Min", "Max", "Median", "STD"]
 
+    # Define all widgets to be used
     widgets = {
         "Label" : {
             "Prompt" : Label(setting, text = "Select variables and their filters, and values and their aggregation     󰋼 "),
@@ -215,6 +238,7 @@ def pivot(parameters, setting):
         }
     }
 
+    # Configure all widgets to be used
     widgets["Label"]["Prompt"].place(relx = 0.5, y = 115, anchor = "n")
     widgets["Label"]["ArrowOne"].place(relx = 0.5, x = -115, y = 153, anchor = "n")
     widgets["Label"]["ArrowTwo"].place(relx = 0.5, x = 115, y = 153, anchor = "n")
@@ -267,17 +291,20 @@ def pivot(parameters, setting):
 
     inform()
 
+    # Ensure pivoting doesn't finish before parameters are selected
     while not finished.get():
         continue
 
     return df, args
 
 def run(layers, parameters, setting):
+    # Handle display of program completion message
     def finish():
         widgets["Label"]["Close"].place(relx = 0.5, y = 165, anchor = "n")
 
         widgets["Label"]["Close"].configure(font = font.Font(size = 16, weight = font.BOLD), justify = "center")
 
+    # Handle updating progress bar percentage fill
     def update():
         try:
             while True:
@@ -294,16 +321,17 @@ def run(layers, parameters, setting):
 
         distance = target - current
 
-        if distance > 0.5:
+        if distance > 0.5: # Create visual drift of filling if reaching next threshold before step completion
             step = distance * 0.05
             widgets["Progressbar"]["Progress"]["value"] = current + step
-        else:
+        else: # Set progress bar value in accordance with target progress step
             widgets["Progressbar"]["Progress"]["value"] = target
 
         widgets["Label"]["Status"]["text"] = state.get("label", widgets["Label"]["Status"]["text"])
 
         setting.after(30, update)
 
+    # Handle analysis steps which coordinate with progress bar fill
     def analyze():
         steps = [(10.0, "Generating CSV files..."), 
                  (20.0, "Merging CSV files..."), 
@@ -312,6 +340,7 @@ def run(layers, parameters, setting):
                  (95.0, "Creating pivot table..."), 
                  (100.0, "Complete!")]
 
+        # Determine current step based on percentage of fill
         for s in range(len(steps) - 1):
             event_queue.put(steps[s])
 
@@ -346,12 +375,14 @@ def run(layers, parameters, setting):
 
         event_queue.put(steps[-1])
 
+    # Initialize important variables
     results = {
         "gen_csv" : None,
         "filepath" : None,
         "final" : None
     }
 
+    # Define all widgets to be used
     widgets = {
         "Label" : {
             "Process" : Label(setting, text = ("Running Query: " + parameters["Query"])),
@@ -363,10 +394,12 @@ def run(layers, parameters, setting):
         }
     }
 
+    # Configure all widgets to be used
     widgets["Label"]["Process"].place(relx = 0.5, y = 0, anchor = "n")
     widgets["Label"]["Status"].place(relx = 0.5, y = 70, anchor = "n")
     widgets["Progressbar"]["Progress"].place(relx = 0.5, y = 45, anchor = "n")
 
+    # Create event threads and queue updates for progress bar
     event_queue = queue.Queue()
     state = {"target" : 0, "label" : "Initializing data..."}
 
@@ -376,7 +409,9 @@ def run(layers, parameters, setting):
     update()
     
 def specifications(layers, parameters, setting):
+    # Transition to next setting
     def transition():
+        # Update parameters
         presets = ("TX", "TX Blind", "Typology", "New Typology", "ITOLD", "NCJC")
 
         parameters["Flavor"]["Phase"] = phase.get()
@@ -399,8 +434,10 @@ def specifications(layers, parameters, setting):
 
                     break
 
+        # Recreate parameter selection
         sketch(layers, parameters, "Scene", query)
 
+    # Handle regex clarification
     def inform():
         helptext = ("What is a regex?"
                 "\n\n"
@@ -411,6 +448,7 @@ def specifications(layers, parameters, setting):
         
         mbox.showinfo(title = "Helpful Information", message = helptext)
 
+    # Initialize important variables
     phase = StringVar()
     participant = StringVar()
     target = BooleanVar()
@@ -421,6 +459,7 @@ def specifications(layers, parameters, setting):
     target.set(parameters["Flavor"]["Target"])
     actual.set(parameters["Flavor"]["Actual"])
 
+    # Define all widgets to be used
     widgets = {
         "Label" : {
             "Name" : Label(setting, text = ("Flavor: " + parameters["Flavor"]["Name"])),
@@ -443,6 +482,7 @@ def specifications(layers, parameters, setting):
         }
     }
 
+    # Configure all widgets to be used
     widgets["Label"]["Name"].place(relx = 0.5, x = 0, y = 0, anchor = "n")
     widgets["Label"]["Regex"].place(relx = 0.5, x = 0, y = 55, anchor = "n")
     widgets["Label"]["Phase"].place(relx = 0.5, x = -125, y = 90, anchor = "n")
@@ -462,7 +502,9 @@ def specifications(layers, parameters, setting):
     widgets["Checkbutton"]["Actual"].place(relx = 0.5, x = -60, y = 225, anchor = "ne")
 
 def query(layers, parameters, setting):
+    # Transition to next setting
     def transition(specify):
+        # Update parameters
         presets = ("TX", "TX Blind", "Typology", "New Typology", "ITOLD", "NCJC")
 
         parameters["Query"] = name.get()
@@ -479,7 +521,9 @@ def query(layers, parameters, setting):
 
         parameters["Blanking"] = blanking.get()
 
+        # Detect for errors
         if specify:
+            # Create flavor specification
             sketch(layers, parameters, "Scene", specifications)
         else:
             errormessage = "The following faulty inputs were identified:"
@@ -495,6 +539,7 @@ def query(layers, parameters, setting):
 
             if errormessage == "The following faulty inputs were identified:":
                 if mbox.askyesno(title = "Confirmation", message = "Are you sure you want to run the analysis? Any existing files in the 'Compiled' directory will be overwritten"):
+                    # Create analysis run
                     sketch(layers, parameters, "Scene", run)
             else:
                 errormessage += "\n\nPlease ensure that a source label is specified, an existing directory is specified, and a flavor is selected and properly defined."
@@ -502,12 +547,14 @@ def query(layers, parameters, setting):
 
                 mbox.showerror(title = "Unable to run", message = errormessage)
 
+    # Handle directory browser window
     def browse():
         dir = dialog.askdirectory(initialdir = "/", title = "Select a Directory")
 
         if dir:
             directory.set(dir)
 
+    # Initialize important variables
     boxoptions = ("TX", "TX Blind", "Typology", "New Typology", "ITOLD", "NCJC", "Custom")
 
     name = StringVar()
@@ -520,6 +567,7 @@ def query(layers, parameters, setting):
     flavor.set(parameters["Flavor"]["Name"])
     blanking.set(parameters["Blanking"])
 
+    # Define all widgets to be used
     widgets = {
         "Label" : {
             "Name" : Label(setting, text = "Please specify a label for the source / source query below"),
@@ -543,6 +591,7 @@ def query(layers, parameters, setting):
         }
     }
 
+    # Configure all widgets to be used
     widgets["Label"]["Name"].place(relx = 0.5, x = 0, y = 0, anchor = "n")
     widgets["Label"]["Directory"].place(relx = 0.5, x = 0, y = 80, anchor = "n")
     widgets["Label"]["Flavor"].place(relx = 0.5, x = 0, y = 160, anchor = "n")
@@ -563,11 +612,14 @@ def query(layers, parameters, setting):
     widgets["Checkbutton"]["Blanking"].place(relx = 0.5, x = 0, y = 240, anchor = "n")
 
 def backdrop(layers, parameters, setting):
+    # Transition to next setting
     def transition():
         widgets["Button"]["Start"].destroy()
 
+        # Create parameter selection
         sketch(layers, parameters, "Scene", query)
 
+    # Define all widgets to be used
     widgets = {
         "Label" : {
             "Title" : Label(setting, text = "Phon Query to CSV"),
@@ -579,8 +631,7 @@ def backdrop(layers, parameters, setting):
         }
     }
 
-    root = layers["Root"]
-
+    # Configure all widgets to be used
     widgets["Label"]["Title"].place(relx = 0.5, x = 0, y = 60, anchor = "n")
     widgets["Label"]["Subtitle"].place(relx = 0.5, x = 0, y = 120, anchor = "n")
 
@@ -591,9 +642,10 @@ def backdrop(layers, parameters, setting):
     widgets["Button"]["Quit"].place(relx = 0.5, x = 0, y = 520, anchor = "n")
     
     widgets["Button"]["Start"].configure(command = lambda : transition())
-    widgets["Button"]["Quit"].configure(command = lambda : root.destroy())
+    widgets["Button"]["Quit"].configure(command = lambda : layers["Root"].destroy())
 
 def preset(flavor):
+    # Retrieve flavor presets
     specs = {
         "Phase" : "",
         "Participant" : "",
@@ -643,6 +695,7 @@ def sketch(layers, parameters, transition, structure):
     if transition in layers.keys():
         setting = layers[transition]
 
+        # Remove all visible widgets from the layer
         for widget in setting.winfo_children():
             widget.place_forget()
 
@@ -654,9 +707,11 @@ def sketch(layers, parameters, transition, structure):
             
         setting.lift()
 
+        # Create next setting via relevant function
         structure(layers, parameters, setting)
 
 def visualize_query(parameters):
+    # Set up GUI window
     root = Tk()
 
     root.title("Phon Query to CSV")
@@ -673,15 +728,10 @@ def visualize_query(parameters):
 
     font.nametofont("TkDefaultFont").configure(size = 12)
 
+    # Create backdrop
     sketch(layers, parameters, "Stage", backdrop)
 
+    # Run main loop
     root.mainloop()
 
     return
-
-"""
-
-Notes for improvemenet:
-- End goal: give user multiple ways to determine accuracy
-
-"""
