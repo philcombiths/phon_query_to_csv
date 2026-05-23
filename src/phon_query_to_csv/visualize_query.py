@@ -8,6 +8,8 @@ Created on Mon Mar 16 19:18:00 2026
 @author: Francesco Vial
 """
 
+from ctypes import windll
+
 from tkinter import Tk
 
 from tkinter.ttk import Frame
@@ -244,7 +246,7 @@ def pivot(parameters, setting):
     widgets["Label"]["ArrowTwo"].place(relx = 0.5, x = 115, y = 153, anchor = "n")
     widgets["Label"]["Divider"].place(relx = 0.5, y = 180, anchor = "n")
 
-    widgets["Button"]["Help"].place(relx = 0.5, x = 264, y = 111, anchor = "n")
+    widgets["Button"]["Help"].place(relx = 0.5, x = 290, y = 113, anchor = "n")
     widgets["Button"]["Finish"].place(relx = 0.5, x = 0, y = 332, anchor = "s")
 
     widgets["Button"]["Help"].configure(command = lambda : inform())
@@ -267,8 +269,8 @@ def pivot(parameters, setting):
     widgets["Listbox"]["Variables"].bind("<B1-Motion>", handle_var_dragging)
     widgets["Listbox"]["Filters"].bind("<Button-1>", handle_filter_selection)
 
-    widgets["Scrollbar"]["Variables"].place(relx = 0.5, x = -147, y = 157, anchor = "n", height = 120)
-    widgets["Scrollbar"]["Filters"].place(relx = 0.5, x = 292, y = 157, anchor = "n", height = 120)
+    widgets["Scrollbar"]["Variables"].place(relx = 0.5, x = -140, y = 157, anchor = "n", height = 121)
+    widgets["Scrollbar"]["Filters"].place(relx = 0.5, x = 300, y = 157, anchor = "n", height = 121)
 
     widgets["Scrollbar"]["Variables"].configure(command = widgets["Listbox"]["Variables"].yview)
     widgets["Scrollbar"]["Filters"].configure(command = widgets["Listbox"]["Filters"].yview)
@@ -489,7 +491,7 @@ def specifications(layers, parameters, setting):
     widgets["Label"]["Participant"].place(relx = 0.5, x = 125, y = 90, anchor = "n")
     widgets["Label"]["Booleans"].place(relx = 0.5, x = 0, y = 190, anchor = "n")
 
-    widgets["Button"]["Help"].place(relx = 0.5, x = 145, y = 52, anchor = "n")
+    widgets["Button"]["Help"].place(relx = 0.5, x = 165, y = 55, anchor = "n")
     widgets["Button"]["Save"].place(relx = 0.5, x = 0, y = 332, anchor = "s")
 
     widgets["Button"]["Help"].config(command = lambda : inform())
@@ -712,6 +714,8 @@ def sketch(layers, parameters, transition, structure):
 
 def visualize_query(parameters):
     # Set up GUI window
+    windll.shcore.SetProcessDpiAwareness(1)
+
     root = Tk()
 
     root.title("Phon Query to CSV")
