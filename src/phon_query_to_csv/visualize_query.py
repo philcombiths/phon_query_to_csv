@@ -718,7 +718,7 @@ def visualize_query(parameters):
     root.geometry("800x600")
 
     stage = Frame(root, width = 800, height = 600)
-    scene = Frame(stage, width = 680, height = 332, relief = "solid", borderwidth = 1)
+    scene = Frame(stage, width = 680, height = 332)
 
     layers = {
         "Root" : root,
