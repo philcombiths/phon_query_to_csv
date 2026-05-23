@@ -214,13 +214,13 @@ def pivot(parameters, setting):
     # Define all widgets to be used
     widgets = {
         "Label" : {
-            "Prompt" : Label(setting, text = "Select variables and their filters, and values and their aggregation     󰋼 "),
-            "ArrowOne" : Label(setting, text = "󰜱 ", font = font.Font(size = 14)),
-            "ArrowTwo" : Label(setting, text = "󰜴 ", font = font.Font(size = 14)),
-            "Divider" : Label(setting, text = "󰇘 󰇘 󰇘 󰇘 󰇘 ", font = font.Font(size = 14))
+            "Prompt" : Label(setting, text = "Select variables and their filters, and values and their aggregation     🛈"),
+            "ArrowOne" : Label(setting, text = "◀", font = font.Font(size = 14)),
+            "ArrowTwo" : Label(setting, text = "▶", font = font.Font(size = 14)),
+            "Divider" : Label(setting, text = "• • • • •", font = font.Font(size = 14))
         },
         "Button" : {
-            "Help" : Button(setting, text = "󰋼 ", width = 3),
+            "Help" : Button(setting, text = "🛈", width = 3),
             "Finish" : Button(setting, text = "Finish", width = 5)
         },
         "Listbox" : {
@@ -469,7 +469,7 @@ def specifications(layers, parameters, setting):
             "Booleans" : Label(setting, text = "Please specify if Target and / or Actual should be analyzed")
         },
         "Button" : {
-            "Help" : Button(setting, text = "󰋼 ", width = 3),
+            "Help" : Button(setting, text = "🛈", width = 3),
             "Save" : Button(setting, text = "Save", width = 5)
         },
         "Entry" : {
@@ -575,8 +575,8 @@ def query(layers, parameters, setting):
             "Flavor" : Label(setting, text = "Please specify the flavor of the source analysis below")
         },
         "Button" : {
-            "Directory" : Button(setting, text = "󰥨 ", width = 3),
-            "Flavor" : Button(setting, text = "󰝰 ", width = 3),
+            "Directory" : Button(setting, text = "🔍", width = 3),
+            "Flavor" : Button(setting, text = "📂", width = 3),
             "Run" : Button(setting, text = "Run", width = 5)
         },
         "Entry" : {
