@@ -4,7 +4,8 @@
 # TODO: Remove created temporary files.
 # TODO: Make ID of columns more of a generic function.
 #           Else make robust to different filenames
-# TODO: Potentially fix Probe Type and Probe columns. 
+# TODO: Potentially fix Probe Type and Probe columns.
+# TODO: Package source code as an executable
 
 """
 Series of functions to batch process Phon analysis 
