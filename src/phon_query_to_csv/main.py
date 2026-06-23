@@ -158,13 +158,13 @@ if __name__ == "__main__":
     pivot_blank_repeated_labels = False
 
     # Set Parameters Here:
-    directory = r"/Users/pcombiths/Library/CloudStorage/OneDrive-UniversityofIowa/CLD Lab (Director)/projects/SSD Tx IV/S418/phon_output/phone_listing"
+    directory = r"C:\Users\pcombiths\Downloads\phone_listing_S420"
     flavor = "tx"  # Specify flavor (see options below)
     overwrite = False
-    run_gen_csv = False
-    run_merge = False
-    run_accuracy = False
-    run_expand = False
+    run_gen_csv = True
+    run_merge = True
+    run_accuracy = True
+    run_expand = True
     run_pivot = True
     pivot_blank_repeated_labels = False
 
