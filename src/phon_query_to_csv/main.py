@@ -60,7 +60,7 @@ if __name__ == "__main__":
     nan_policy = "max"
 
     # Set Parameters Here:
-    directory = r"C:\Users\pcombiths\Downloads\phone_listing - Copy"
+    directory = r"C:\Users\pcombiths\Downloads\phone_listing_S421"
     query = "Queries_Target_v2"  # Write query name here: e.g., "Queries_Target_v2", "Queries_Actual_v2"
     flavor = "tx"  # Specify flavor (see options below)
     overwrite = False

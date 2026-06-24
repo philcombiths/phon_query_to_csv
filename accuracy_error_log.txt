@@ -1,9 +1,6 @@
 Accuracy Error Log
 
-Error at entry 5111 : Unrecognized IPA phone(s): ɚ
-	Alignment ~ e:N↔ɚ:N
-
-Total Error Count - 1
+Total Error Count - 0
 
 
 Specifications
