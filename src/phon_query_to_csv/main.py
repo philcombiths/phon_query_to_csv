@@ -158,7 +158,7 @@ if __name__ == "__main__":
     pivot_blank_repeated_labels = False
 
     # Set Parameters Here:
-    directory = r"C:\Users\pcombiths\Downloads\phone_listing_S420"
+    directory = r"R:\CLD_Lab\projects\spanish-tx_project\phase-IV\participant_data\S418\0_Preliminary\Pre\phone_listing"
     flavor = "tx"  # Specify flavor (see options below)
     overwrite = False
     run_gen_csv = True
