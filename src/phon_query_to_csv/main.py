@@ -158,14 +158,14 @@ if __name__ == "__main__":
     pivot_blank_repeated_labels = False
 
     # Set Parameters Here:
-    directory = r"R:\CLD_Lab\projects\spanish-tx_project\phase-IV\participant_data\S418\0_Preliminary\Pre\phone_listing"
+    directory = r"C:\Users\pcombiths\OneDrive - University of Iowa\CLD Lab (Director)\projects\SSD Tx IV\Spanish Arm Prelim Analysis\phon_output\2026-07-14"
     flavor = "tx"  # Specify flavor (see options below)
     overwrite = False
     run_gen_csv = True
     run_merge = True
     run_accuracy = True
     run_expand = True
-    run_pivot = True
+    run_pivot = False
     pivot_blank_repeated_labels = False
 
     if 'flavor' not in locals() or flavor is None:
